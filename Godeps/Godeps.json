@@ -48,6 +48,10 @@
 			"Rev": "97311d9f7767e3d6f422ea06661bc2c7a19e8a5d"
 		},
 		{
+			"ImportPath": "github.com/nu7hatch/gouuid",
+			"Rev": "179d4d0c4d8d407a32af483c2354df1d2c91e6c3"
+		},
+		{
 			"ImportPath": "github.com/olekukonko/tablewriter",
 			"Rev": "a7a4c189eb47ed33ce7b35f2880070a0c82a67d4"
 		},
