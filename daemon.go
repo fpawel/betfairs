@@ -13,12 +13,19 @@ import (
 	"encoding/json"
 	"compress/gzip"
 	"github.com/gorilla/websocket"
+	"heroku.com/betfairs/aping/apingEvents"
+	"heroku.com/betfairs/aping"
+	"fmt"
 )
 
 
 func daemon (){
 
-	footballCache := new(football.SyncReader)
+	apingSession := aping.NewSession(adminBetfairUser, adminBetfairPass)
+	fmt.Println( apingSession.GetSession() )
+
+	eventsReader := apingEvents.NewSyncReader(apingSession)
+	footballReader := new(football.SyncReader)
 	router := chi.NewRouter()
 	var websocketUpgrader = websocket.Upgrader{EnableCompression: true}
 
@@ -26,14 +33,14 @@ func daemon (){
 	FileServer(router, "/", http.Dir("assets"))
 
 	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
-		games,err := footballCache.Read()
+		games,err := footballReader.Read()
 		setJsonResult(w, games, err)
 	})
 
 	router.Get("/football", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := websocketUpgrader.Upgrade(w, r, nil)
 		check(err)
-		handleWebsocketFootball(footballCache,conn)
+		webSocketFootball(conn, footballReader, eventsReader)
 		conn.Close()
 	})
 

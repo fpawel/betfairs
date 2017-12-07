@@ -30,21 +30,22 @@ func NewSession(user, pass	string) *Session {
 	}
 }
 
-func (x *Session) Session() (<-chan SessionResult) {
-	result := make(chan SessionResult)
+func (x *Session) GetSession() SessionResult {
+
 	x.muSessionToken.RLock()
 	if x.appKey != "" && x.sessionToken != "" && time.Since(x.sessionTime) < 30*time.Minute {
 		x.muSessionToken.RUnlock()
-		go func() {
-			result <- SessionResult{SessionToken: x.sessionToken, AppKey:x.appKey, Error: nil}
-		}()
-		return result
+		return SessionResult{SessionToken: x.sessionToken, AppKey:x.appKey, Error: nil}
 	}
 	x.muSessionToken.RUnlock()
 
+
+	resultChan := make(chan SessionResult)
+
 	x.muConsumers.Lock()
-	defer x.muConsumers.Unlock()
-	x.consumers = append(x.consumers, result)
+	x.consumers = append(x.consumers, resultChan)
+
+
 	if len(x.consumers) == 1 {
 		go func() {
 			result := SessionResult{}
@@ -69,12 +70,15 @@ func (x *Session) Session() (<-chan SessionResult) {
 			x.consumers = nil
 		}()
 	}
-	return result
+
+	x.muConsumers.Unlock()
+
+	return <-resultChan
 }
 
 
 func (x *Session) getResponse(endpoint Endpoint, params interface{}) (responseBody []byte, err error) {
-	r := <- x.Session()
+	r := x.GetSession()
 	if r.Error != nil {
 		return nil, r.Error
 	}

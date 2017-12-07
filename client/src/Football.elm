@@ -1,6 +1,7 @@
 module Football exposing (..)
 
 import Json.Decode as D
+import Json.Decode.Pipeline exposing (decode, required)
 import Html exposing (Html, text)
 import Material.Table exposing (tr, td, th, tbody, table)
 
@@ -9,6 +10,8 @@ type alias Game =
     { id : Int
     , home : String
     , away : String
+    , competition : String
+    , country : String
     , scoreHome : Int
     , scoreAway : Int
     , time : String
@@ -30,6 +33,8 @@ renderGames games =
                 , "Счёт"
                 , "В гостях"
                 , "Время"
+                , "Страна"
+                , "Чемпионат"
                 ]
 
         rows =
@@ -46,6 +51,8 @@ renderGames games =
                         , td [] [ text strScore ]
                         , td [] [ text game.away ]
                         , td [] [ text game.time ]
+                        , td [] [ text game.country ]
+                        , td [] [ text game.competition ]
                         ]
                 )
                 games
@@ -66,11 +73,13 @@ parseGames =
 
 decoderGame : D.Decoder Game
 decoderGame =
-    D.map7 Game
-        (D.field "id" D.int)
-        (D.field "home" D.string)
-        (D.field "away" D.string)
-        (D.field "score_home" D.int)
-        (D.field "score_away" D.int)
-        (D.field "time" D.string)
-        (D.field "in_play" D.bool)
+    decode Game
+        |> required "id" D.int
+        |> required "home" D.string
+        |> required "away" D.string
+        |> required "competition" D.string
+        |> required "country" D.string
+        |> required "score_home" D.int
+        |> required "score_away" D.int
+        |> required "time" D.string
+        |> required "in_play" D.bool

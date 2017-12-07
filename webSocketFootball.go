@@ -7,11 +7,12 @@ import (
 	"heroku.com/betfairs/football"
 	"sync/atomic"
 
-
+	"heroku.com/betfairs/aping/apingEvents"
+	"heroku.com/betfairs/countries"
 )
 
 
-func handleWebsocketFootball(footballCache *football.SyncReader, conn *websocket.Conn) {
+func webSocketFootball(conn *websocket.Conn, footballReader *football.SyncReader, eventsReader *apingEvents.SyncReader) {
 	conn.EnableWriteCompression(true)
 	conn.SetReadLimit(100000)
 	conn.SetReadDeadline(time.Now().Add(20 * time.Second))
@@ -20,8 +21,14 @@ func handleWebsocketFootball(footballCache *football.SyncReader, conn *websocket
 		return nil
 	})
 
+	type game struct {
+		football.Game
+		Competition string `json:"competition"`
+		Country string `json:"country"`
+	}
+
 	pingTicker := time.NewTicker(5 * time.Second) // пинговать клиента раз в 5 секунд
-	sendGames := make(chan []football.Game)
+	sendGames := make(chan []game)
 	done := make(chan bool) // цикл записи завершён
 
 	var doneFlag int32
@@ -63,7 +70,7 @@ func handleWebsocketFootball(footballCache *football.SyncReader, conn *websocket
 
 	go func() {
 		for {
-			games, err := footballCache.Read()
+			xs, err := footballReader.Read()
 			if err != nil {
 				fmt.Println("ERROR football:", err )
 				continue
@@ -71,6 +78,25 @@ func handleWebsocketFootball(footballCache *football.SyncReader, conn *websocket
 			if atomic.LoadInt32(&doneFlag) > 0 {
 				return
 			}
+			var games []game
+			for _,x := range xs {
+				var game game
+				game.Game = x
+				event := eventsReader.Event(x.ID)
+				if event != nil {
+					if event.Competition != nil {
+						game.Competition = event.Competition.Name
+					}
+					if err == nil {
+						c := countries.ByAlpha2(event.CountryCode)
+						if c != nil {
+							game.Country = c.Name
+						}
+					}
+				}
+				games = append(games, game)
+			}
+
 			sendGames <- games
 
 			select {
