@@ -1,0 +1,63 @@
+{
+	"ImportPath": "heroku.com/betfairs",
+	"GoVersion": "go1.9",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/PuerkitoBio/goquery",
+			"Comment": "v1.1.0-11-g1a71cc7",
+			"Rev": "1a71cc719d0d5b9e4f14ae072bef08b576b0bab5"
+		},
+		{
+			"ImportPath": "github.com/andybalholm/cascadia",
+			"Rev": "349dd0209470eabd9514242c688c403c0926d266"
+		},
+		{
+			"ImportPath": "github.com/go-chi/chi",
+			"Comment": "v3.3.1",
+			"Rev": "687d2792aedd8e8ac3bbd8592cf55b91d7ea8ce9"
+		},
+		{
+			"ImportPath": "github.com/gorilla/websocket",
+			"Comment": "v1.2.0-7-g6f34763",
+			"Rev": "6f34763140ed8887aed6a044912009832b4733d7"
+		},
+		{
+			"ImportPath": "github.com/jmoiron/sqlx",
+			"Comment": "sqlx-v1.1-127-g99f3ad6",
+			"Rev": "99f3ad6d85ae53d0fecf788ab62d0e9734b3c117"
+		},
+		{
+			"ImportPath": "github.com/jmoiron/sqlx/reflectx",
+			"Comment": "sqlx-v1.1-127-g99f3ad6",
+			"Rev": "99f3ad6d85ae53d0fecf788ab62d0e9734b3c117"
+		},
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Comment": "go1.0-cutoff-195-g83612a5",
+			"Rev": "83612a56d3dd153a94a629cd64925371c9adad78"
+		},
+		{
+			"ImportPath": "github.com/lib/pq/oid",
+			"Comment": "go1.0-cutoff-195-g83612a5",
+			"Rev": "83612a56d3dd153a94a629cd64925371c9adad78"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-runewidth",
+			"Comment": "v0.0.2-3-g97311d9",
+			"Rev": "97311d9f7767e3d6f422ea06661bc2c7a19e8a5d"
+		},
+		{
+			"ImportPath": "github.com/olekukonko/tablewriter",
+			"Rev": "a7a4c189eb47ed33ce7b35f2880070a0c82a67d4"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "a8b9294777976932365dabb6640cf1468d95c70f"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html/atom",
+			"Rev": "a8b9294777976932365dabb6640cf1468d95c70f"
+		}
+	]
+}
