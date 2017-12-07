@@ -91,7 +91,10 @@ func webSocketFootball(conn *websocket.Conn, footballReader *football.SyncReader
 						c := countries.ByAlpha2(event.CountryCode)
 						if c != nil {
 							game.Country = c.Name
+						} else {
+							game.Country = event.CountryCode
 						}
+
 					}
 				}
 				games = append(games, game)

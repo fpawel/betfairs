@@ -1463,7 +1463,7 @@ var countries = []Country{
 	},
 	{
 		Name:            "Объединенные Арабские Эмираты",
-		FullName:        "",
+		FullName:        "Объединенные Арабские Эмираты",
 		English:         "United Arab Emirates",
 		Alpha2:          "AE",
 		Alpha3:          "ARE",
@@ -1483,7 +1483,7 @@ var countries = []Country{
 	},
 	{
 		Name:            "Остров Буве",
-		FullName:        "",
+		FullName:        "Остров Буве",
 		English:         "Bouvet Island",
 		Alpha2:          "BV",
 		Alpha3:          "BVT",
@@ -1493,7 +1493,7 @@ var countries = []Country{
 	},
 	{
 		Name:            "Остров Мэн",
-		FullName:        "",
+		FullName:        "Остров Мэн",
 		English:         "Isle of Man",
 		Alpha2:          "IM",
 		Alpha3:          "IMN",
@@ -1503,7 +1503,7 @@ var countries = []Country{
 	},
 	{
 		Name:            "Остров Норфолк",
-		FullName:        "",
+		FullName:        "Остров Норфолк",
 		English:         "Norfolk Island",
 		Alpha2:          "NF",
 		Alpha3:          "NFK",
@@ -1513,7 +1513,7 @@ var countries = []Country{
 	},
 	{
 		Name:            "Остров Рождества",
-		FullName:        "",
+		FullName:        "Остров Рождества",
 		English:         "Christmas Island",
 		Alpha2:          "CX",
 		Alpha3:          "CXR",
@@ -1522,8 +1522,8 @@ var countries = []Country{
 		LocationPrecise: "Индийский океан",
 	},
 	{
-		Name:            "Остров Херд и острова Макдональд",
-		FullName:        "",
+		Name:            "Херд и Макдональд",
+		FullName:        "Остров Херд и острова Макдональд",
 		English:         "Heard Island and McDonald Islands",
 		Alpha2:          "HM",
 		Alpha3:          "HMD",
