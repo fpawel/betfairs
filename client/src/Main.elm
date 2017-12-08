@@ -3,9 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Navigation exposing (Location)
 import Football
-import Utils exposing (..)
-import WebSocket
-import Debug
+import Material.Scheme
 
 
 --import Html.Attributes exposing (..)
@@ -26,24 +24,28 @@ main =
 -- MODEL
 
 
+type Msg
+    = LocationChanged Location
+    | FootballMsg Football.Msg
+
+
 type alias Model =
     { location : Location
-    , football : List Football.Game
+    , football : Football.Model
     }
 
 
 init : Location -> ( Model, Cmd Msg )
 init location =
-    ( Model location [], Cmd.none )
+    let
+        ( football, footballCmd ) =
+            Football.init location.protocol location.host
+    in
+        Model location football ! [ Cmd.map FootballMsg footballCmd ]
 
 
 
 -- UPDATE
-
-
-type Msg
-    = LocationChanged Location
-    | NewFootball (List Football.Game)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -52,8 +54,12 @@ update msg model =
         LocationChanged newLocation ->
             ( { model | location = newLocation }, Cmd.none )
 
-        NewFootball x ->
-            ( { model | football = x }, Cmd.none )
+        FootballMsg msgFootball ->
+            let
+                ( newFootball, footballCmd ) =
+                    Football.update msgFootball model.football
+            in
+                ( { model | football = newFootball }, Cmd.map FootballMsg footballCmd )
 
 
 
@@ -62,16 +68,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    WebSocket.listen
-        (websocketURL model.location.protocol model.location.host ++ "/football")
-        (\str ->
-            case Football.parseGames str of
-                Ok y ->
-                    NewFootball y
-
-                Err err ->
-                    Debug.crash err
-        )
+    Sub.map FootballMsg <| Football.subscriptions model.football
 
 
 
@@ -80,5 +77,15 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ Football.renderGames model.football ]
+    let
+        football =
+            Html.map FootballMsg <| Football.view model.football
+    in
+        div []
+            [ football
+            ]
+            |> Material.Scheme.top
+
+
+
+-- HELPERS

@@ -47,6 +47,8 @@ func parseGame ( node *goquery.Selection) (Game, error) {
 		x.InPlayTime = strings.TrimSpace(node.Find("span.date").Text())
 	}
 
+	x.InPlayTime = strings.Replace(x.InPlayTime, " (In-Play)", "", 1)
+
 	return x, nil
 }
 

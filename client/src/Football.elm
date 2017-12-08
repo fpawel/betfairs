@@ -1,13 +1,40 @@
-module Football exposing (..)
+module Football exposing (Model, Msg, init, update, view, subscriptions)
 
+import String
 import Json.Decode as D
-import Json.Decode.Pipeline exposing (decode, required)
+import Json.Decode.Pipeline exposing (decode, required, hardcoded)
 import Html exposing (Html, text)
-import Material.Table exposing (tr, td, th, tbody, table)
+import Material.Table exposing (tr, td, th, tbody, thead, table)
+import Material.Spinner
+import Utils exposing (..)
+import WebSocket
+
+
+-- MODEL
+
+
+type alias Model =
+    { protocol : String
+    , host : String
+    , games : List Game
+    , sort : Sort
+    }
+
+
+type Msg
+    = NewGames (List Game)
+    | Reorder Sort
+
+
+type Sort
+    = SortOrder
+    | SortCompetition
+    | SortCountry
 
 
 type alias Game =
-    { id : Int
+    { order : Int
+    , id : Int
     , home : String
     , away : String
     , competition : String
@@ -19,23 +46,75 @@ type alias Game =
     }
 
 
+init : String -> String -> ( Model, Cmd Msg )
+init protocol host =
+    ( { games = []
+      , sort = SortOrder
+      , protocol = protocol
+      , host = host
+      }
+    , Cmd.none
+    )
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        NewGames newGames ->
+            ( { model | games = newGames }, Cmd.none )
+
+        Reorder newSort ->
+            ( { model | sort = newSort }, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    WebSocket.listen
+        (websocketURL model.protocol model.host ++ "/football")
+        (\str ->
+            case parseGames str of
+                Ok y ->
+                    NewGames y
+
+                Err err ->
+                    Debug.crash err
+        )
+
+
 
 -- VIEW
 
 
-renderGames : List Game -> Html a
-renderGames games =
+view : Model -> Html Msg
+view { games } =
     let
+        hasCompetition =
+            hasNotEmpty .competition games
+
+        hasCountry =
+            hasNotEmpty .country games
+
         headRow =
-            List.map
-                (\x -> th [] [ text x ])
-                [ "Дома"
-                , "Счёт"
-                , "В гостях"
-                , "Время"
-                , "Страна"
-                , "Чемпионат"
-                ]
+            [ th [] [ text "№" ]
+            , th [] [ text "Дома" ]
+            , th [] [ text "Счёт" ]
+            , th [] [ text "В гостях" ]
+            , th [] [ text "Время" ]
+            ]
+                ++ (if hasCountry then
+                        [ th [] [ text "Страна" ] ]
+                    else
+                        []
+                   )
+                ++ (if hasCompetition then
+                        [ th [] [ text "Чемпионат" ] ]
+                    else
+                        []
+                   )
 
         rows =
             List.map
@@ -47,19 +126,34 @@ renderGames games =
                             else
                                 ""
                     in
-                        [ td [] [ text game.home ]
+                        [ td [ Material.Table.numeric ] [ text <| toString (game.order + 1) ]
+                        , td [] [ text game.home ]
                         , td [] [ text strScore ]
                         , td [] [ text game.away ]
                         , td [] [ text game.time ]
-                        , td [] [ text game.country ]
-                        , td [] [ text game.competition ]
                         ]
+                            ++ (if hasCountry then
+                                    [ td [] [ text game.country ] ]
+                                else
+                                    []
+                               )
+                            ++ (if hasCompetition then
+                                    [ td [] [ text game.competition ] ]
+                                else
+                                    []
+                               )
+                            |> tr []
                 )
                 games
     in
-        table
-            []
-            [ tbody [] (List.map (tr []) (headRow :: rows)) ]
+        if List.isEmpty games then
+            Material.Spinner.spinner [ Material.Spinner.active True ]
+        else
+            table
+                []
+                [ thead [] [ tr [] headRow ]
+                , tbody [] rows
+                ]
 
 
 
@@ -67,13 +161,16 @@ renderGames games =
 
 
 parseGames : String -> Result String (List Game)
-parseGames =
-    D.decodeString <| D.list decoderGame
+parseGames str =
+    Result.map
+        (List.indexedMap (\n x -> { x | order = n }))
+        (D.decodeString (D.list decoderGame) str)
 
 
 decoderGame : D.Decoder Game
 decoderGame =
     decode Game
+        |> hardcoded 0
         |> required "id" D.int
         |> required "home" D.string
         |> required "away" D.string
@@ -83,3 +180,15 @@ decoderGame =
         |> required "score_away" D.int
         |> required "time" D.string
         |> required "in_play" D.bool
+
+
+
+-- HELPERS
+
+
+hasNotEmpty : (a -> String) -> List a -> Bool
+hasNotEmpty f =
+    List.filter (f >> String.isEmpty >> not)
+        >> List.head
+        >> Maybe.map (\_ -> True)
+        >> Maybe.withDefault False

@@ -9979,6 +9979,565 @@ return {
 var _elm_lang$dom$Dom_LowLevel$onWindow = _elm_lang$dom$Native_Dom.onWindow;
 var _elm_lang$dom$Dom_LowLevel$onDocument = _elm_lang$dom$Native_Dom.onDocument;
 
+var _debois$elm_mdl$Material_Color$text = function (_p0) {
+	var _p1 = _p0;
+	return _debois$elm_mdl$Material_Options$cs(
+		A2(_elm_lang$core$Basics_ops['++'], 'mdl-color-text--', _p1._0));
+};
+var _debois$elm_mdl$Material_Color$background = function (_p2) {
+	var _p3 = _p2;
+	return _debois$elm_mdl$Material_Options$cs(
+		A2(_elm_lang$core$Basics_ops['++'], 'mdl-color--', _p3._0));
+};
+var _debois$elm_mdl$Material_Color$shadeName = function (shade) {
+	var _p4 = shade;
+	switch (_p4.ctor) {
+		case 'S50':
+			return '50';
+		case 'S100':
+			return '100';
+		case 'S200':
+			return '200';
+		case 'S300':
+			return '300';
+		case 'S400':
+			return '400';
+		case 'S500':
+			return '500';
+		case 'S600':
+			return '600';
+		case 'S700':
+			return '700';
+		case 'S800':
+			return '800';
+		case 'S900':
+			return '900';
+		case 'A100':
+			return 'A100';
+		case 'A200':
+			return 'A200';
+		case 'A400':
+			return 'A400';
+		default:
+			return 'A700';
+	}
+};
+var _debois$elm_mdl$Material_Color$hueName = function (color) {
+	var _p5 = color;
+	switch (_p5.ctor) {
+		case 'Indigo':
+			return 'indigo';
+		case 'Blue':
+			return 'blue';
+		case 'LightBlue':
+			return 'light-blue';
+		case 'Cyan':
+			return 'cyan';
+		case 'Teal':
+			return 'teal';
+		case 'Green':
+			return 'green';
+		case 'LightGreen':
+			return 'light-green';
+		case 'Lime':
+			return 'lime';
+		case 'Yellow':
+			return 'yellow';
+		case 'Amber':
+			return 'amber';
+		case 'Orange':
+			return 'orange';
+		case 'Brown':
+			return 'brown';
+		case 'BlueGrey':
+			return 'blue-grey';
+		case 'Grey':
+			return 'grey';
+		case 'DeepOrange':
+			return 'deep-orange';
+		case 'Red':
+			return 'red';
+		case 'Pink':
+			return 'pink';
+		case 'Purple':
+			return 'purple';
+		default:
+			return 'deep-purple';
+	}
+};
+var _debois$elm_mdl$Material_Color$scheme = F2(
+	function (primary, accent) {
+		var q = _elm_lang$core$String$map(
+			function (x) {
+				return _elm_lang$core$Native_Utils.eq(
+					x,
+					_elm_lang$core$Native_Utils.chr('-')) ? _elm_lang$core$Native_Utils.chr('_') : x;
+			});
+		var cssFile = function () {
+			var _p6 = accent;
+			switch (_p6.ctor) {
+				case 'Grey':
+					return '';
+				case 'Brown':
+					return '';
+				case 'BlueGrey':
+					return '';
+				default:
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						'.',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							q(
+								_debois$elm_mdl$Material_Color$hueName(primary)),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'-',
+								q(
+									_debois$elm_mdl$Material_Color$hueName(accent)))));
+			}
+		}();
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'material',
+			A2(_elm_lang$core$Basics_ops['++'], cssFile, '.min.css'));
+	});
+var _debois$elm_mdl$Material_Color$DeepPurple = {ctor: 'DeepPurple'};
+var _debois$elm_mdl$Material_Color$Purple = {ctor: 'Purple'};
+var _debois$elm_mdl$Material_Color$Pink = {ctor: 'Pink'};
+var _debois$elm_mdl$Material_Color$Red = {ctor: 'Red'};
+var _debois$elm_mdl$Material_Color$DeepOrange = {ctor: 'DeepOrange'};
+var _debois$elm_mdl$Material_Color$Grey = {ctor: 'Grey'};
+var _debois$elm_mdl$Material_Color$BlueGrey = {ctor: 'BlueGrey'};
+var _debois$elm_mdl$Material_Color$Brown = {ctor: 'Brown'};
+var _debois$elm_mdl$Material_Color$Orange = {ctor: 'Orange'};
+var _debois$elm_mdl$Material_Color$Amber = {ctor: 'Amber'};
+var _debois$elm_mdl$Material_Color$Yellow = {ctor: 'Yellow'};
+var _debois$elm_mdl$Material_Color$Lime = {ctor: 'Lime'};
+var _debois$elm_mdl$Material_Color$LightGreen = {ctor: 'LightGreen'};
+var _debois$elm_mdl$Material_Color$Green = {ctor: 'Green'};
+var _debois$elm_mdl$Material_Color$Teal = {ctor: 'Teal'};
+var _debois$elm_mdl$Material_Color$Cyan = {ctor: 'Cyan'};
+var _debois$elm_mdl$Material_Color$LightBlue = {ctor: 'LightBlue'};
+var _debois$elm_mdl$Material_Color$Blue = {ctor: 'Blue'};
+var _debois$elm_mdl$Material_Color$Indigo = {ctor: 'Indigo'};
+var _debois$elm_mdl$Material_Color$hues = _elm_lang$core$Array$fromList(
+	{
+		ctor: '::',
+		_0: _debois$elm_mdl$Material_Color$Indigo,
+		_1: {
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Color$Blue,
+			_1: {
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Color$LightBlue,
+				_1: {
+					ctor: '::',
+					_0: _debois$elm_mdl$Material_Color$Cyan,
+					_1: {
+						ctor: '::',
+						_0: _debois$elm_mdl$Material_Color$Teal,
+						_1: {
+							ctor: '::',
+							_0: _debois$elm_mdl$Material_Color$Green,
+							_1: {
+								ctor: '::',
+								_0: _debois$elm_mdl$Material_Color$LightGreen,
+								_1: {
+									ctor: '::',
+									_0: _debois$elm_mdl$Material_Color$Lime,
+									_1: {
+										ctor: '::',
+										_0: _debois$elm_mdl$Material_Color$Yellow,
+										_1: {
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Color$Amber,
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Color$Orange,
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Color$Brown,
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Color$BlueGrey,
+														_1: {
+															ctor: '::',
+															_0: _debois$elm_mdl$Material_Color$Grey,
+															_1: {
+																ctor: '::',
+																_0: _debois$elm_mdl$Material_Color$DeepOrange,
+																_1: {
+																	ctor: '::',
+																	_0: _debois$elm_mdl$Material_Color$Red,
+																	_1: {
+																		ctor: '::',
+																		_0: _debois$elm_mdl$Material_Color$Pink,
+																		_1: {
+																			ctor: '::',
+																			_0: _debois$elm_mdl$Material_Color$Purple,
+																			_1: {
+																				ctor: '::',
+																				_0: _debois$elm_mdl$Material_Color$DeepPurple,
+																				_1: {ctor: '[]'}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _debois$elm_mdl$Material_Color$accentHues = _elm_lang$core$Array$fromList(
+	{
+		ctor: '::',
+		_0: _debois$elm_mdl$Material_Color$Indigo,
+		_1: {
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Color$Blue,
+			_1: {
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Color$LightBlue,
+				_1: {
+					ctor: '::',
+					_0: _debois$elm_mdl$Material_Color$Cyan,
+					_1: {
+						ctor: '::',
+						_0: _debois$elm_mdl$Material_Color$Teal,
+						_1: {
+							ctor: '::',
+							_0: _debois$elm_mdl$Material_Color$Green,
+							_1: {
+								ctor: '::',
+								_0: _debois$elm_mdl$Material_Color$LightGreen,
+								_1: {
+									ctor: '::',
+									_0: _debois$elm_mdl$Material_Color$Lime,
+									_1: {
+										ctor: '::',
+										_0: _debois$elm_mdl$Material_Color$Yellow,
+										_1: {
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Color$Amber,
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Color$Orange,
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Color$DeepOrange,
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Color$Red,
+														_1: {
+															ctor: '::',
+															_0: _debois$elm_mdl$Material_Color$Pink,
+															_1: {
+																ctor: '::',
+																_0: _debois$elm_mdl$Material_Color$Purple,
+																_1: {
+																	ctor: '::',
+																	_0: _debois$elm_mdl$Material_Color$DeepPurple,
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _debois$elm_mdl$Material_Color$A700 = {ctor: 'A700'};
+var _debois$elm_mdl$Material_Color$A400 = {ctor: 'A400'};
+var _debois$elm_mdl$Material_Color$A200 = {ctor: 'A200'};
+var _debois$elm_mdl$Material_Color$A100 = {ctor: 'A100'};
+var _debois$elm_mdl$Material_Color$S900 = {ctor: 'S900'};
+var _debois$elm_mdl$Material_Color$S800 = {ctor: 'S800'};
+var _debois$elm_mdl$Material_Color$S700 = {ctor: 'S700'};
+var _debois$elm_mdl$Material_Color$S600 = {ctor: 'S600'};
+var _debois$elm_mdl$Material_Color$S500 = {ctor: 'S500'};
+var _debois$elm_mdl$Material_Color$S400 = {ctor: 'S400'};
+var _debois$elm_mdl$Material_Color$S300 = {ctor: 'S300'};
+var _debois$elm_mdl$Material_Color$S200 = {ctor: 'S200'};
+var _debois$elm_mdl$Material_Color$S100 = {ctor: 'S100'};
+var _debois$elm_mdl$Material_Color$S50 = {ctor: 'S50'};
+var _debois$elm_mdl$Material_Color$shades = _elm_lang$core$Array$fromList(
+	{
+		ctor: '::',
+		_0: _debois$elm_mdl$Material_Color$S50,
+		_1: {
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Color$S100,
+			_1: {
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Color$S200,
+				_1: {
+					ctor: '::',
+					_0: _debois$elm_mdl$Material_Color$S300,
+					_1: {
+						ctor: '::',
+						_0: _debois$elm_mdl$Material_Color$S400,
+						_1: {
+							ctor: '::',
+							_0: _debois$elm_mdl$Material_Color$S500,
+							_1: {
+								ctor: '::',
+								_0: _debois$elm_mdl$Material_Color$S600,
+								_1: {
+									ctor: '::',
+									_0: _debois$elm_mdl$Material_Color$S700,
+									_1: {
+										ctor: '::',
+										_0: _debois$elm_mdl$Material_Color$S800,
+										_1: {
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Color$S900,
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Color$A100,
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Color$A200,
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Color$A400,
+														_1: {
+															ctor: '::',
+															_0: _debois$elm_mdl$Material_Color$A700,
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _debois$elm_mdl$Material_Color$C = function (a) {
+	return {ctor: 'C', _0: a};
+};
+var _debois$elm_mdl$Material_Color$color = F2(
+	function (hue, shade) {
+		return _debois$elm_mdl$Material_Color$C(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_debois$elm_mdl$Material_Color$hueName(hue),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'-',
+					_debois$elm_mdl$Material_Color$shadeName(shade))));
+	});
+var _debois$elm_mdl$Material_Color$white = _debois$elm_mdl$Material_Color$C('white');
+var _debois$elm_mdl$Material_Color$black = _debois$elm_mdl$Material_Color$C('black');
+var _debois$elm_mdl$Material_Color$primary = _debois$elm_mdl$Material_Color$C('primary');
+var _debois$elm_mdl$Material_Color$primaryDark = _debois$elm_mdl$Material_Color$C('primary-dark');
+var _debois$elm_mdl$Material_Color$primaryContrast = _debois$elm_mdl$Material_Color$C('primary-contrast');
+var _debois$elm_mdl$Material_Color$accent = _debois$elm_mdl$Material_Color$C('accent');
+var _debois$elm_mdl$Material_Color$accentContrast = _debois$elm_mdl$Material_Color$C('accent-contrast');
+
+var _debois$elm_mdl$Material_Scheme$scheme = F2(
+	function (primary, accent) {
+		return A2(
+			_elm_lang$core$String$join,
+			'\n',
+			A2(
+				_elm_lang$core$List$map,
+				function (url) {
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						'@import url(',
+						A2(_elm_lang$core$Basics_ops['++'], url, ');'));
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$core$Basics_ops['++'],
+						'https://code.getmdl.io/1.3.0/',
+						A2(_debois$elm_mdl$Material_Color$scheme, primary, accent)),
+					_1: {
+						ctor: '::',
+						_0: 'https://fonts.googleapis.com/icon?family=Material+Icons',
+						_1: {
+							ctor: '::',
+							_0: 'https://fonts.googleapis.com/css?family=Roboto:400,300,500|Roboto+Mono|Roboto+Condensed:400,700&subset=latin,latin-ext',
+							_1: {ctor: '[]'}
+						}
+					}
+				}));
+	});
+var _debois$elm_mdl$Material_Scheme$topWithScheme = F3(
+	function (primary, accent, content) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A3(
+					_elm_lang$html$Html$node,
+					'style',
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$type_('text/css'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(_debois$elm_mdl$Material_Scheme$scheme, primary, accent)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: content,
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _debois$elm_mdl$Material_Scheme$top = function (content) {
+	return A3(_debois$elm_mdl$Material_Scheme$topWithScheme, _debois$elm_mdl$Material_Color$Grey, _debois$elm_mdl$Material_Color$Grey, content);
+};
+
+var _debois$elm_mdl$Material_Spinner$layer = function (n) {
+	return A2(
+		_debois$elm_mdl$Material_Options$div,
+		{
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Options$cs(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'mdl-spinner__layer mdl-spinner__layer-',
+					_elm_lang$core$Basics$toString(n))),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			_elm_lang$core$List$map,
+			F2(
+				function (x, y) {
+					return y(x);
+				})(
+				{
+					ctor: '::',
+					_0: A2(
+						_debois$elm_mdl$Material_Options$div,
+						{
+							ctor: '::',
+							_0: _debois$elm_mdl$Material_Options$cs('mdl-spinner__circle'),
+							_1: {ctor: '[]'}
+						},
+						{ctor: '[]'}),
+					_1: {ctor: '[]'}
+				}),
+			{
+				ctor: '::',
+				_0: _debois$elm_mdl$Material_Options$div(
+					{
+						ctor: '::',
+						_0: _debois$elm_mdl$Material_Options$cs('mdl-spinner__circle-clipper mdl-spinner__left'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _debois$elm_mdl$Material_Options$div(
+						{
+							ctor: '::',
+							_0: _debois$elm_mdl$Material_Options$cs('mdl-spinner__gap-patch'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _debois$elm_mdl$Material_Options$div(
+							{
+								ctor: '::',
+								_0: _debois$elm_mdl$Material_Options$cs('mdl-spinner__circle-clipper mdl-spinner__right'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}));
+};
+var _debois$elm_mdl$Material_Spinner$layers = A2(
+	_elm_lang$core$List$map,
+	_debois$elm_mdl$Material_Spinner$layer,
+	A2(_elm_lang$core$List$range, 1, 4));
+var _debois$elm_mdl$Material_Spinner$defaultConfig = {active: false, singleColor: false};
+var _debois$elm_mdl$Material_Spinner$singleColor = function (_p0) {
+	return _debois$elm_mdl$Material_Options_Internal$option(
+		F2(
+			function (value, config) {
+				return _elm_lang$core$Native_Utils.update(
+					config,
+					{singleColor: value});
+			})(_p0));
+};
+var _debois$elm_mdl$Material_Spinner$active = function (_p1) {
+	return _debois$elm_mdl$Material_Options_Internal$option(
+		F2(
+			function (value, config) {
+				return _elm_lang$core$Native_Utils.update(
+					config,
+					{active: value});
+			})(_p1));
+};
+var _debois$elm_mdl$Material_Spinner$spinner = function (options) {
+	var _p2 = A2(_debois$elm_mdl$Material_Options_Internal$collect, _debois$elm_mdl$Material_Spinner$defaultConfig, options);
+	var summary = _p2;
+	var config = _p2.config;
+	return A5(
+		_debois$elm_mdl$Material_Options_Internal$apply,
+		summary,
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _debois$elm_mdl$Material_Options$cs('mdl-spinner mdl-js-spinner is-upgraded'),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_debois$elm_mdl$Material_Options$when,
+					config.active,
+					_debois$elm_mdl$Material_Options$cs('is-active')),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_debois$elm_mdl$Material_Options$when,
+						config.singleColor,
+						_debois$elm_mdl$Material_Options$cs('mdl-spinner--single-color')),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		{ctor: '[]'},
+		_debois$elm_mdl$Material_Spinner$layers);
+};
+var _debois$elm_mdl$Material_Spinner$Config = F2(
+	function (a, b) {
+		return {active: a, singleColor: b};
+	});
+
 var _debois$elm_mdl$Material_Table$defaultCell = {numeric: false};
 var _debois$elm_mdl$Material_Table$td = F2(
 	function (options, html) {
@@ -11093,7 +11652,145 @@ var _elm_lang$websocket$WebSocket$onSelfMsg = F3(
 	});
 _elm_lang$core$Native_Platform.effectManagers['WebSocket'] = {pkg: 'elm-lang/websocket', init: _elm_lang$websocket$WebSocket$init, onEffects: _elm_lang$websocket$WebSocket$onEffects, onSelfMsg: _elm_lang$websocket$WebSocket$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$websocket$WebSocket$cmdMap, subMap: _elm_lang$websocket$WebSocket$subMap};
 
-var _user$project$Football$renderGames = function (games) {
+var _user$project$Utils$websocketURL = F2(
+	function (protocol, host) {
+		return (!A2(_elm_lang$core$String$startsWith, 'http', protocol)) ? _elm_lang$core$Native_Utils.crash(
+			'Utils',
+			{
+				start: {line: 10, column: 16},
+				end: {line: 10, column: 27}
+			})(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'wrong protocol `',
+				A2(_elm_lang$core$Basics_ops['++'], protocol, 'wrong name of the protocol - expected a string that starts with `http`'))) : A2(
+			_elm_lang$core$Basics_ops['++'],
+			'ws',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(_elm_lang$core$String$dropLeft, 4, protocol),
+				A2(_elm_lang$core$Basics_ops['++'], '//', host)));
+	});
+
+var _user$project$Football$hasNotEmpty = function (f) {
+	return function (_p0) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			false,
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (_p1) {
+					return true;
+				},
+				_elm_lang$core$List$head(
+					A2(
+						_elm_lang$core$List$filter,
+						function (_p2) {
+							return !_elm_lang$core$String$isEmpty(
+								f(_p2));
+						},
+						_p0))));
+	};
+};
+var _user$project$Football$view = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = _p4.games;
+	var hasCountry = A2(
+		_user$project$Football$hasNotEmpty,
+		function (_) {
+			return _.country;
+		},
+		_p5);
+	var hasCompetition = A2(
+		_user$project$Football$hasNotEmpty,
+		function (_) {
+			return _.competition;
+		},
+		_p5);
+	var headRow = A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: A2(
+				_debois$elm_mdl$Material_Table$th,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('№'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_debois$elm_mdl$Material_Table$th,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Дома'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_debois$elm_mdl$Material_Table$th,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Счёт'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_debois$elm_mdl$Material_Table$th,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('В гостях'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_debois$elm_mdl$Material_Table$th,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Время'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			hasCountry ? {
+				ctor: '::',
+				_0: A2(
+					_debois$elm_mdl$Material_Table$th,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Страна'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			} : {ctor: '[]'},
+			hasCompetition ? {
+				ctor: '::',
+				_0: A2(
+					_debois$elm_mdl$Material_Table$th,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Чемпионат'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			} : {ctor: '[]'}));
 	var rows = A2(
 		_elm_lang$core$List$map,
 		function (game) {
@@ -11104,34 +11801,24 @@ var _user$project$Football$renderGames = function (games) {
 					_elm_lang$core$Basics_ops['++'],
 					' - ',
 					_elm_lang$core$Basics$toString(game.scoreAway))) : '';
-			return {
-				ctor: '::',
-				_0: A2(
-					_debois$elm_mdl$Material_Table$td,
-					{ctor: '[]'},
+			return A2(
+				_debois$elm_mdl$Material_Table$tr,
+				{ctor: '[]'},
+				A2(
+					_elm_lang$core$Basics_ops['++'],
 					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(game.home),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_debois$elm_mdl$Material_Table$td,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(strScore),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
 						ctor: '::',
 						_0: A2(
 							_debois$elm_mdl$Material_Table$td,
-							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(game.away),
+								_0: _debois$elm_mdl$Material_Table$numeric,
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(game.order + 1)),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -11141,7 +11828,7 @@ var _user$project$Football$renderGames = function (games) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(game.time),
+									_0: _elm_lang$html$Html$text(game.home),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -11151,7 +11838,7 @@ var _user$project$Football$renderGames = function (games) {
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text(game.country),
+										_0: _elm_lang$html$Html$text(strScore),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -11161,75 +11848,130 @@ var _user$project$Football$renderGames = function (games) {
 										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text(game.competition),
+											_0: _elm_lang$html$Html$text(game.away),
 											_1: {ctor: '[]'}
 										}),
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_debois$elm_mdl$Material_Table$td,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(game.time),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
-					}
-				}
-			};
+					},
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						hasCountry ? {
+							ctor: '::',
+							_0: A2(
+								_debois$elm_mdl$Material_Table$td,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(game.country),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						} : {ctor: '[]'},
+						hasCompetition ? {
+							ctor: '::',
+							_0: A2(
+								_debois$elm_mdl$Material_Table$td,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(game.competition),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						} : {ctor: '[]'})));
 		},
-		games);
-	var headRow = A2(
-		_elm_lang$core$List$map,
-		function (x) {
-			return A2(
-				_debois$elm_mdl$Material_Table$th,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(x),
-					_1: {ctor: '[]'}
-				});
-		},
+		_p5);
+	return _elm_lang$core$List$isEmpty(_p5) ? _debois$elm_mdl$Material_Spinner$spinner(
 		{
 			ctor: '::',
-			_0: 'Дома',
-			_1: {
-				ctor: '::',
-				_0: 'Счёт',
-				_1: {
-					ctor: '::',
-					_0: 'В гостях',
-					_1: {
-						ctor: '::',
-						_0: 'Время',
-						_1: {
-							ctor: '::',
-							_0: 'Страна',
-							_1: {
-								ctor: '::',
-								_0: 'Чемпионат',
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}
-		});
-	return A2(
+			_0: _debois$elm_mdl$Material_Spinner$active(true),
+			_1: {ctor: '[]'}
+		}) : A2(
 		_debois$elm_mdl$Material_Table$table,
 		{ctor: '[]'},
 		{
 			ctor: '::',
 			_0: A2(
-				_debois$elm_mdl$Material_Table$tbody,
+				_debois$elm_mdl$Material_Table$thead,
 				{ctor: '[]'},
-				A2(
-					_elm_lang$core$List$map,
-					_debois$elm_mdl$Material_Table$tr(
-						{ctor: '[]'}),
-					{ctor: '::', _0: headRow, _1: rows})),
-			_1: {ctor: '[]'}
+				{
+					ctor: '::',
+					_0: A2(
+						_debois$elm_mdl$Material_Table$tr,
+						{ctor: '[]'},
+						headRow),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_debois$elm_mdl$Material_Table$tbody,
+					{ctor: '[]'},
+					rows),
+				_1: {ctor: '[]'}
+			}
 		});
 };
-var _user$project$Football$Game = F9(
-	function (a, b, c, d, e, f, g, h, i) {
-		return {id: a, home: b, away: c, competition: d, country: e, scoreHome: f, scoreAway: g, time: h, inplay: i};
+var _user$project$Football$update = F2(
+	function (msg, model) {
+		var _p6 = msg;
+		if (_p6.ctor === 'NewGames') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{games: _p6._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{sort: _p6._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
 	});
+var _user$project$Football$Model = F4(
+	function (a, b, c, d) {
+		return {protocol: a, host: b, games: c, sort: d};
+	});
+var _user$project$Football$Game = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return {order: a, id: b, home: c, away: d, competition: e, country: f, scoreHome: g, scoreAway: h, time: i, inplay: j};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var _user$project$Football$decoderGame = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'in_play',
@@ -11266,99 +12008,134 @@ var _user$project$Football$decoderGame = A3(
 									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 									'id',
 									_elm_lang$core$Json_Decode$int,
-									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Football$Game))))))))));
-var _user$project$Football$parseGames = _elm_lang$core$Json_Decode$decodeString(
-	_elm_lang$core$Json_Decode$list(_user$project$Football$decoderGame));
-
-var _user$project$Utils$websocketURL = F2(
-	function (protocol, host) {
-		return (!A2(_elm_lang$core$String$startsWith, 'http', protocol)) ? _elm_lang$core$Native_Utils.crash(
-			'Utils',
-			{
-				start: {line: 10, column: 16},
-				end: {line: 10, column: 27}
-			})(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'wrong protocol `',
-				A2(_elm_lang$core$Basics_ops['++'], protocol, 'wrong name of the protocol - expected a string that starts with `http`'))) : A2(
+									A2(
+										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
+										0,
+										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Football$Game)))))))))));
+var _user$project$Football$parseGames = function (str) {
+	return A2(
+		_elm_lang$core$Result$map,
+		_elm_lang$core$List$indexedMap(
+			F2(
+				function (n, x) {
+					return _elm_lang$core$Native_Utils.update(
+						x,
+						{order: n});
+				})),
+		A2(
+			_elm_lang$core$Json_Decode$decodeString,
+			_elm_lang$core$Json_Decode$list(_user$project$Football$decoderGame),
+			str));
+};
+var _user$project$Football$Reorder = function (a) {
+	return {ctor: 'Reorder', _0: a};
+};
+var _user$project$Football$NewGames = function (a) {
+	return {ctor: 'NewGames', _0: a};
+};
+var _user$project$Football$subscriptions = function (model) {
+	return A2(
+		_elm_lang$websocket$WebSocket$listen,
+		A2(
 			_elm_lang$core$Basics_ops['++'],
-			'ws',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				A2(_elm_lang$core$String$dropLeft, 4, protocol),
-				A2(_elm_lang$core$Basics_ops['++'], '//', host)));
+			A2(_user$project$Utils$websocketURL, model.protocol, model.host),
+			'/football'),
+		function (str) {
+			var _p7 = _user$project$Football$parseGames(str);
+			if (_p7.ctor === 'Ok') {
+				return _user$project$Football$NewGames(_p7._0);
+			} else {
+				return _elm_lang$core$Native_Utils.crashCase(
+					'Football',
+					{
+						start: {line: 79, column: 13},
+						end: {line: 84, column: 36}
+					},
+					_p7)(_p7._0);
+			}
+		});
+};
+var _user$project$Football$SortCountry = {ctor: 'SortCountry'};
+var _user$project$Football$SortCompetition = {ctor: 'SortCompetition'};
+var _user$project$Football$SortOrder = {ctor: 'SortOrder'};
+var _user$project$Football$init = F2(
+	function (protocol, host) {
+		return {
+			ctor: '_Tuple2',
+			_0: {
+				games: {ctor: '[]'},
+				sort: _user$project$Football$SortOrder,
+				protocol: protocol,
+				host: host
+			},
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
 	});
 
-var _user$project$Main$view = function (model) {
+var _user$project$Main$Model = F2(
+	function (a, b) {
+		return {location: a, football: b};
+	});
+var _user$project$Main$FootballMsg = function (a) {
+	return {ctor: 'FootballMsg', _0: a};
+};
+var _user$project$Main$init = function (location) {
+	var _p0 = A2(_user$project$Football$init, location.protocol, location.host);
+	var football = _p0._0;
+	var footballCmd = _p0._1;
 	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		A2(_user$project$Main$Model, location, football),
 		{
 			ctor: '::',
-			_0: _user$project$Football$renderGames(model.football),
+			_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$FootballMsg, footballCmd),
 			_1: {ctor: '[]'}
 		});
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		if (_p0.ctor === 'LocationChanged') {
+		var _p1 = msg;
+		if (_p1.ctor === 'LocationChanged') {
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{location: _p0._0}),
+					{location: _p1._0}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
+			var _p2 = A2(_user$project$Football$update, _p1._0, model.football);
+			var newFootball = _p2._0;
+			var footballCmd = _p2._1;
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{football: _p0._0}),
-				_1: _elm_lang$core$Platform_Cmd$none
+					{football: newFootball}),
+				_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$FootballMsg, footballCmd)
 			};
 		}
 	});
-var _user$project$Main$Model = F2(
-	function (a, b) {
-		return {location: a, football: b};
-	});
-var _user$project$Main$init = function (location) {
-	return {
-		ctor: '_Tuple2',
-		_0: A2(
-			_user$project$Main$Model,
-			location,
-			{ctor: '[]'}),
-		_1: _elm_lang$core$Platform_Cmd$none
-	};
-};
-var _user$project$Main$NewFootball = function (a) {
-	return {ctor: 'NewFootball', _0: a};
-};
 var _user$project$Main$subscriptions = function (model) {
 	return A2(
-		_elm_lang$websocket$WebSocket$listen,
+		_elm_lang$core$Platform_Sub$map,
+		_user$project$Main$FootballMsg,
+		_user$project$Football$subscriptions(model.football));
+};
+var _user$project$Main$view = function (model) {
+	var football = A2(
+		_elm_lang$html$Html$map,
+		_user$project$Main$FootballMsg,
+		_user$project$Football$view(model.football));
+	return _debois$elm_mdl$Material_Scheme$top(
 		A2(
-			_elm_lang$core$Basics_ops['++'],
-			A2(_user$project$Utils$websocketURL, model.location.protocol, model.location.host),
-			'/football'),
-		function (str) {
-			var _p1 = _user$project$Football$parseGames(str);
-			if (_p1.ctor === 'Ok') {
-				return _user$project$Main$NewFootball(_p1._0);
-			} else {
-				return _elm_lang$core$Native_Utils.crashCase(
-					'Main',
-					{
-						start: {line: 68, column: 13},
-						end: {line: 73, column: 36}
-					},
-					_p1)(_p1._0);
-			}
-		});
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: football,
+				_1: {ctor: '[]'}
+			}));
 };
 var _user$project$Main$LocationChanged = function (a) {
 	return {ctor: 'LocationChanged', _0: a};

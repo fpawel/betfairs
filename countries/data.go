@@ -1462,7 +1462,7 @@ var countries = []Country{
 		LocationPrecise: "Северная Европа",
 	},
 	{
-		Name:            "Объединенные Арабские Эмираты",
+		Name:            "ОАЭ",
 		FullName:        "Объединенные Арабские Эмираты",
 		English:         "United Arab Emirates",
 		Alpha2:          "AE",

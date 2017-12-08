@@ -30,7 +30,7 @@ func daemon (){
 	var websocketUpgrader = websocket.Upgrader{EnableCompression: true}
 
 
-	FileServer(router, "/", http.Dir("assets"))
+	fileServer(router, "/", http.Dir("assets"))
 
 	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
 		games,err := footballReader.Read()
@@ -56,11 +56,11 @@ func daemon (){
 
 
 
-// FileServer conveniently sets up a http.FileServer handler to serve
+// fileServer conveniently sets up a http.fileServer handler to serve
 // static files from a http.FileSystem.
-func FileServer(r chi.Router, path string, root http.FileSystem) {
+func fileServer(r chi.Router, path string, root http.FileSystem) {
 	if strings.ContainsAny(path, "{}*") {
-		panic("FileServer does not permit URL parameters.")
+		panic("fileServer does not permit URL parameters.")
 	}
 
 	fs := http.StripPrefix(path, http.FileServer(root))
