@@ -1,13 +1,14 @@
-module Football exposing (Model, Msg, init, update, view, subscriptions)
+module Football exposing (Model, Msg, init, update, view, subs)
 
 import String
 import Json.Decode as D
 import Json.Decode.Pipeline exposing (decode, required, hardcoded)
-import Html exposing (Html, text)
+import Html exposing (Html, text, div)
 import Material.Table exposing (tr, td, th, tbody, thead, table)
-import Material.Spinner
+import Material.Spinner as Spinner
 import Utils exposing (..)
 import WebSocket
+import Material.Grid as Grid
 
 
 -- MODEL
@@ -71,6 +72,11 @@ update msg model =
 -- SUBSCRIPTIONS
 
 
+subs : (Msg -> msg) -> Model -> Sub msg
+subs toMsg model =
+    Sub.map toMsg (subscriptions model)
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     WebSocket.listen
@@ -92,68 +98,91 @@ subscriptions model =
 view : Model -> Html Msg
 view { games } =
     let
+        noGames =
+            List.isEmpty games
+
+        spinner =
+            if List.isEmpty games then
+                [ Spinner.spinner [ Spinner.active True ] ]
+            else
+                []
+
+        gamesTable =
+            if List.isEmpty games then
+                []
+            else
+                [ renderGamesTable games ]
+    in
+        Grid.grid []
+            [ Grid.cell [ Grid.size Grid.All 3 ] spinner
+            , Grid.cell [ Grid.size Grid.All 9 ] gamesTable
+            ]
+
+
+renderGamesTable : List Game -> Html Msg
+renderGamesTable games =
+    let
         hasCompetition =
             hasNotEmpty .competition games
 
         hasCountry =
             hasNotEmpty .country games
-
-        headRow =
-            [ th [] [ text "№" ]
-            , th [] [ text "Дома" ]
-            , th [] [ text "Счёт" ]
-            , th [] [ text "В гостях" ]
-            , th [] [ text "Время" ]
-            ]
-                ++ (if hasCountry then
-                        [ th [] [ text "Страна" ] ]
-                    else
-                        []
-                   )
-                ++ (if hasCompetition then
-                        [ th [] [ text "Чемпионат" ] ]
-                    else
-                        []
-                   )
-
-        rows =
-            List.map
-                (\game ->
-                    let
-                        strScore =
-                            if game.inplay then
-                                toString game.scoreHome ++ " - " ++ toString game.scoreAway
-                            else
-                                ""
-                    in
-                        [ td [ Material.Table.numeric ] [ text <| toString (game.order + 1) ]
-                        , td [] [ text game.home ]
-                        , td [] [ text strScore ]
-                        , td [] [ text game.away ]
-                        , td [] [ text game.time ]
-                        ]
-                            ++ (if hasCountry then
-                                    [ td [] [ text game.country ] ]
-                                else
-                                    []
-                               )
-                            ++ (if hasCompetition then
-                                    [ td [] [ text game.competition ] ]
-                                else
-                                    []
-                               )
-                            |> tr []
-                )
-                games
     in
-        if List.isEmpty games then
-            Material.Spinner.spinner [ Material.Spinner.active True ]
-        else
-            table
+        table
+            []
+            [ thead [] <| renderGamesHeaderRow hasCountry hasCompetition
+            , tbody [] <| List.map (renderGameTableRow hasCompetition hasCountry) games
+            ]
+
+
+renderGameTableRow : Bool -> Bool -> Game -> Html Msg
+renderGameTableRow hasCountry hasCompetition game =
+    [ td [ Material.Table.numeric ] [ text <| toString (game.order + 1) ]
+    , td [] [ text game.home ]
+    , td []
+        [ (if game.inplay then
+            toString game.scoreHome ++ " - " ++ toString game.scoreAway
+           else
+            ""
+          )
+            |> text
+        ]
+    , td [] [ text game.away ]
+    , td [] [ text game.time ]
+    ]
+        ++ (if hasCountry then
+                [ td [] [ text game.country ] ]
+            else
                 []
-                [ thead [] [ tr [] headRow ]
-                , tbody [] rows
-                ]
+           )
+        ++ (if hasCompetition then
+                [ td [] [ text game.competition ] ]
+            else
+                []
+           )
+        |> tr []
+
+
+renderGamesHeaderRow : Bool -> Bool -> List (Html msg)
+renderGamesHeaderRow hasCountry hasCompetition =
+    [ th [] [ text "№" ]
+    , th [] [ text "Дома" ]
+    , th [] [ text "Счёт" ]
+    , th [] [ text "В гостях" ]
+    , th [] [ text "Время" ]
+    ]
+        ++ (if hasCountry then
+                [ th [] [ text "Страна" ] ]
+            else
+                []
+           )
+        ++ (if hasCompetition then
+                [ th [] [ text "Чемпионат" ] ]
+            else
+                []
+           )
+        |> tr []
+        |> List.singleton
 
 
 
