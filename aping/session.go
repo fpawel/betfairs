@@ -86,57 +86,79 @@ func (x *Session) getResponse(endpoint Endpoint, params interface{}) (responseBo
 }
 
 //ReadEvent - получить каталог события
-func (x *Session) ReadEvent(eventID int) (*Event,error) {
+func (x *Session) ListMarketCatalogue(eventID int) (MarketCatalogues, error) {
+
+	type listMarketCatalogueRequest struct {
+		Locale           string       `json:"locale"`
+		MarketProjection []string     `json:"marketProjection"`
+		MarketFilter     MarketFilter `json:"filter"`
+		MaxResults       int          `json:"maxResults"`
+	}
 
 	request := &listMarketCatalogueRequest{
 		Locale: "ru",
 		MarketFilter:MarketFilter{
 			EventIDs: []int{eventID},
 		},
-		MarketProjection: []string{"EVENT", "EVENT_TYPE", "COMPETITION"},
-		MaxResults: 1,
+		MarketProjection: []string{"EVENT", "EVENT_TYPE", "COMPETITION", "RUNNER_DESCRIPTION"},
+		MaxResults: 1000,
 	}
 
-	var response struct {
-		Markets []Market `json:"result"`
-	}
 
 	responseBody, err := x.getResponse(BettingAPIEndpoint("listMarketCatalogue"), &request)
-
-	if err != nil {
-		return nil,err
-	}
-
-	err = json.Unmarshal(responseBody, &response)
-	if err != nil {
-		return nil, fmt.Errorf("%q, %q", err, string(responseBody))
-	}
-
-	if len(response.Markets) == 0{
-		return nil, fmt.Errorf("no markets, %s", string(responseBody))
-	}
-
-	market := response.Markets[0]
-	event := market.Event
-	event.EventType = market.EventType
-	event.Competition = market.Competition
-
-
-	request.MarketProjection = []string{"RUNNER_DESCRIPTION"}
-	request.MaxResults = 1000
-
-
-	responseBody, err = x.getResponse(BettingAPIEndpoint("listMarketCatalogue"), &request)
 	if err != nil {
 		return nil, err
 	}
+
+	var response struct {
+		Result MarketCatalogues `json:"result"`
+	}
+
 	err = json.Unmarshal(responseBody, &response)
 	if err != nil {
 		return nil, fmt.Errorf("%q, %q", err, string(responseBody))
 	}
 
-	event.Markets = response.Markets
+	if len(response.Result) == 0{
+		return nil, fmt.Errorf("no markets in catalogue: %s", string(responseBody))
+	}
 
-	return  event, nil
+	return response.Result, nil
 }
+
+
+
+func (x *Session) ListMarketBook(marketIDs []string) (MarketBooks, error) {
+
+	type readMarketBookRequest struct {
+		Locale          string   `json:"locale"`
+		MarketIDs         []string `json:"marketIds"`
+		PriceProjection PriceProjection `json:"priceProjection"`
+	}
+
+	request := readMarketBookRequest{
+		Locale : "ru",
+		MarketIDs : marketIDs,
+		PriceProjection: PriceProjection{
+			PriceData: []string{"EX_BEST_OFFERS"},
+			Virtualise: true,
+		},
+	}
+	responseBody, err := x.getResponse(BettingAPIEndpoint("listMarketBook"), &request)
+	if err != nil {
+		return nil,err
+	}
+	var r struct {
+		Result MarketBooks `json:"result"`
+	}
+	err = json.Unmarshal(responseBody, &r)
+	if err != nil {
+		return nil, fmt.Errorf("%q, %q", err, string(responseBody))
+	}
+	if len(r.Result) == 0{
+		return nil, fmt.Errorf("no markets in book: %s", string(responseBody))
+	}
+	return r.Result,err
+}
+
 

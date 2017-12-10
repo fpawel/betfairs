@@ -4,11 +4,13 @@ import String
 import Json.Decode as D
 import Json.Decode.Pipeline exposing (decode, required, hardcoded)
 import Html exposing (Html, text, div)
+import Html.Attributes
 import Material.Table exposing (tr, td, th, tbody, thead, table)
 import Material.Spinner as Spinner
 import Utils exposing (..)
 import WebSocket
 import Material.Grid as Grid
+import Material.Options as Options
 
 
 -- MODEL
@@ -44,6 +46,7 @@ type alias Game =
     , scoreAway : Int
     , time : String
     , inplay : Bool
+    , mainPrices : List Float
     }
 
 
@@ -102,13 +105,13 @@ view { games } =
             List.isEmpty games
 
         spinner =
-            if List.isEmpty games then
+            if noGames then
                 [ Spinner.spinner [ Spinner.active True ] ]
             else
                 []
 
         gamesTable =
-            if List.isEmpty games then
+            if noGames then
                 []
             else
                 [ renderGamesTable games ]
@@ -137,52 +140,76 @@ renderGamesTable games =
 
 renderGameTableRow : Bool -> Bool -> Game -> Html Msg
 renderGameTableRow hasCountry hasCompetition game =
-    [ td [ Material.Table.numeric ] [ text <| toString (game.order + 1) ]
-    , td [] [ text game.home ]
-    , td []
-        [ (if game.inplay then
-            toString game.scoreHome ++ " - " ++ toString game.scoreAway
-           else
-            ""
-          )
-            |> text
+    let
+        pricesSection =
+            game.mainPrices
+                |> List.map
+                    (\x ->
+                        if x == 0 then
+                            ""
+                        else
+                            toString x
+                    )
+                |> List.map
+                    (text
+                        >> List.singleton
+                        >> td []
+                    )
+    in
+        [ td [ Material.Table.numeric ] [ text <| toString (game.order + 1) ]
+        , td [] [ text game.home ]
+        , td []
+            [ (if game.inplay then
+                toString game.scoreHome ++ " - " ++ toString game.scoreAway
+               else
+                ""
+              )
+                |> text
+            ]
+        , td [] [ text game.away ]
+        , td [] [ text game.time ]
         ]
-    , td [] [ text game.away ]
-    , td [] [ text game.time ]
-    ]
-        ++ (if hasCountry then
-                [ td [] [ text game.country ] ]
-            else
-                []
-           )
-        ++ (if hasCompetition then
-                [ td [] [ text game.competition ] ]
-            else
-                []
-           )
-        |> tr []
+            ++ pricesSection
+            ++ (if hasCountry then
+                    [ td [] [ text game.country ] ]
+                else
+                    []
+               )
+            ++ (if hasCompetition then
+                    [ td [] [ text game.competition ] ]
+                else
+                    []
+               )
+            |> tr []
 
 
 renderGamesHeaderRow : Bool -> Bool -> List (Html msg)
 renderGamesHeaderRow hasCountry hasCompetition =
-    [ th [] [ text "№" ]
-    , th [] [ text "Дома" ]
-    , th [] [ text "Счёт" ]
-    , th [] [ text "В гостях" ]
-    , th [] [ text "Время" ]
-    ]
-        ++ (if hasCountry then
-                [ th [] [ text "Страна" ] ]
-            else
-                []
-           )
-        ++ (if hasCompetition then
-                [ th [] [ text "Чемпионат" ] ]
-            else
-                []
-           )
-        |> tr []
-        |> List.singleton
+    let
+        colspan2 =
+            [ Options.attribute <| Html.Attributes.colspan 2 ]
+    in
+        [ th [] [ text "№" ]
+        , th [] [ text "Дома" ]
+        , th [] [ text "Счёт" ]
+        , th [] [ text "В гостях" ]
+        , th [] [ text "Время" ]
+        , td colspan2 [ text "П1" ]
+        , td colspan2 [ text "П2" ]
+        , td colspan2 [ text "Н" ]
+        ]
+            ++ (if hasCountry then
+                    [ th [] [ text "Страна" ] ]
+                else
+                    []
+               )
+            ++ (if hasCompetition then
+                    [ th [] [ text "Чемпионат" ] ]
+                else
+                    []
+               )
+            |> tr []
+            |> List.singleton
 
 
 
@@ -209,6 +236,7 @@ decoderGame =
         |> required "score_away" D.int
         |> required "time" D.string
         |> required "in_play" D.bool
+        |> required "main_prices" (D.list D.float)
 
 
 

@@ -7,17 +7,25 @@ import (
 	"heroku.com/betfairs/football"
 	"sync/atomic"
 
-	"heroku.com/betfairs/aping/apingEvents"
+	"heroku.com/betfairs/aping/listMarketCatalogue"
 	"heroku.com/betfairs/countries"
+	"heroku.com/betfairs/aping/listMarketBook"
 )
 
 
-func webSocketFootball(conn *websocket.Conn, footballReader *football.SyncReader, eventsReader *apingEvents.SyncReader) {
-	conn.EnableWriteCompression(true)
-	conn.SetReadLimit(100000)
-	conn.SetReadDeadline(time.Now().Add(20 * time.Second))
-	conn.SetPongHandler(func(string) error {
-		conn.SetReadDeadline(time.Now().Add(20 * time.Second))
+type webSocketFootballSession struct {
+	conn            *websocket.Conn
+	football        *football.SyncReader
+	marketCatalogue *listMarketCatalogue.Reader
+	marketBook      *listMarketBook.Reader
+}
+
+func (x webSocketFootballSession) run() {
+	x.conn.EnableWriteCompression(true)
+	x.conn.SetReadLimit(100000)
+	x.conn.SetReadDeadline(time.Now().Add(20 * time.Second))
+	x.conn.SetPongHandler(func(string) error {
+		x.conn.SetReadDeadline(time.Now().Add(20 * time.Second))
 		return nil
 	})
 
@@ -25,6 +33,7 @@ func webSocketFootball(conn *websocket.Conn, footballReader *football.SyncReader
 		football.Game
 		Competition string `json:"competition"`
 		Country string `json:"country"`
+		MainPrices [6]float64 `json:"main_prices,omitempty"`
 	}
 
 	pingTicker := time.NewTicker(5 * time.Second) // пинговать клиента раз в 5 секунд
@@ -42,21 +51,21 @@ func webSocketFootball(conn *websocket.Conn, footballReader *football.SyncReader
 			select {
 			case games, ok := <-sendGames:
 				if !ok { // если канал send закрыт, прервать цикл записи
-					conn.WriteMessage(websocket.CloseMessage, []byte{})
+					x.conn.WriteMessage(websocket.CloseMessage, []byte{})
 					return
 				}
 
-				conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
+				x.conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 
-				err := conn.WriteJSON(games)
+				err := x.conn.WriteJSON(games)
 				if err != nil {
 					println("WebSocket: error 1:", err)
 					return
 				}
 
 			case <-pingTicker.C:
-				conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-				err := conn.WriteMessage(websocket.PingMessage, []byte{})
+				x.conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
+				err := x.conn.WriteMessage(websocket.PingMessage, []byte{})
 				if err != nil {
 					println("WebSocket: error 2:", err)
 					return
@@ -69,8 +78,9 @@ func webSocketFootball(conn *websocket.Conn, footballReader *football.SyncReader
 	interruptReadGamesDelay := make(chan bool, 2) // прервать цикл поллинга футбола
 
 	go func() {
+
 		for {
-			xs, err := footballReader.Read()
+			xs, err := x.football.Read()
 			if err != nil {
 				fmt.Println("ERROR football:", err )
 				continue
@@ -79,22 +89,30 @@ func webSocketFootball(conn *websocket.Conn, footballReader *football.SyncReader
 				return
 			}
 			var games []game
-			for _,x := range xs {
+			for _,g := range xs {
 				var game game
-				game.Game = x
-				event := eventsReader.Event(x.ID)
-				if event != nil {
-					if event.Competition != nil {
-						game.Competition = event.Competition.Name
+				game.Game = g
+				marketCatalogues,ok := x.marketCatalogue.Get(game.ID)
+				if ok {
+					game.Competition = marketCatalogues[0].Competition.Name
+					c := countries.ByAlpha2(marketCatalogues[0].Event.CountryCode)
+					if c != nil {
+						game.Country = c.Name
+					} else {
+						game.Country = marketCatalogues[0].Event.CountryCode
 					}
-					if err == nil {
-						c := countries.ByAlpha2(event.CountryCode)
-						if c != nil {
-							game.Country = c.Name
-						} else {
-							game.Country = event.CountryCode
+					mainMarket,ok := marketCatalogues.MainMarket()
+					if ok {
+						t := time.Second
+						if !game.InPlay {
+							t = time.Minute
 						}
-
+						mainMarketBook, err := x.marketBook.Read([]string{mainMarket.ID}, t)
+						if ok {
+							game.MainPrices = mainMarketBook[0].Prices6()
+						} else {
+							fmt.Println(err)
+						}
 					}
 				}
 				games = append(games, game)
@@ -105,14 +123,14 @@ func webSocketFootball(conn *websocket.Conn, footballReader *football.SyncReader
 			select {
 			case <-interruptReadGamesDelay:
 				return
-			case <-time.After(10 * time.Second):
+			case <-time.After(5 * time.Second):
 				continue
 			}
 		}
 	}()
 
 	for {
-		messageType, _, err := conn.ReadMessage()
+		messageType, _, err := x.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
 				fmt.Println("WebSocket error 1:", err)

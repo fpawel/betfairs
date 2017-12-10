@@ -13,9 +13,11 @@ import (
 	"encoding/json"
 	"compress/gzip"
 	"github.com/gorilla/websocket"
-	"heroku.com/betfairs/aping/apingEvents"
+	"heroku.com/betfairs/aping/listMarketCatalogue"
 	"heroku.com/betfairs/aping"
 	"fmt"
+	"strconv"
+	"heroku.com/betfairs/aping/listMarketBook"
 )
 
 
@@ -24,7 +26,9 @@ func daemon (){
 	apingSession := aping.NewSession(adminBetfairUser, adminBetfairPass)
 	fmt.Println( apingSession.GetSession() )
 
-	eventsReader := apingEvents.NewSyncReader(apingSession)
+	listMarketCatalogue := listMarketCatalogue.New(apingSession)
+	listMarketBook := listMarketBook.New(apingSession)
+
 	footballReader := new(football.SyncReader)
 	router := chi.NewRouter()
 	var websocketUpgrader = websocket.Upgrader{EnableCompression: true}
@@ -37,10 +41,28 @@ func daemon (){
 		setJsonResult(w, games, err)
 	})
 
+	router.Get("/market-catalogue/{eventID}", func(w http.ResponseWriter, r *http.Request) {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		markets, error := listMarketCatalogue.Read(eventID)
+
+		setJsonResult(w, markets, error)
+	})
+
 	router.Get("/football", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := websocketUpgrader.Upgrade(w, r, nil)
 		check(err)
-		webSocketFootball(conn, footballReader, eventsReader)
+		webSocketFootballSession{
+			conn:            conn,
+			marketCatalogue: listMarketCatalogue,
+			football:        footballReader,
+			marketBook:      listMarketBook,
+		}.run()
+
+
 		conn.Close()
 	})
 
