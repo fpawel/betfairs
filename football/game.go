@@ -8,13 +8,14 @@ import (
 )
 
 type Game struct {
-	ID         int    `json:"id"`
-	Home       string `json:"home"`
-	Away       string `json:"away"`
-	ScoreHome  int    `json:"score_home"`
-	ScoreAway  int    `json:"score_away"`
-	InPlay     bool   `json:"in_play"`
-	InPlayTime string `json:"time"`
+	ID        int    `json:"id"`
+	Order 	  int  `json:"order"`
+	Home      string `json:"home"`
+	Away      string `json:"away"`
+	ScoreHome int    `json:"score_home"`
+	ScoreAway int    `json:"score_away"`
+	InPlay    bool   `json:"in_play"`
+	Time      string `json:"time"`
 }
 
 func (x Game) String() string {
@@ -22,7 +23,7 @@ func (x Game) String() string {
 	if x.InPlay {
 		strScore = fmt.Sprintf(" %d - %d", x.ScoreHome, x.ScoreAway)
 	}
-	return fmt.Sprintf("%d %s - %s %s%s", x.ID, x.Home, x.Away, x.InPlayTime, strScore)
+	return fmt.Sprintf("%d %s - %s %s%s", x.ID, x.Home, x.Away, x.Time, strScore)
 }
 
 
@@ -34,7 +35,7 @@ func PrintGames(games []Game){
 		if x.InPlay {
 			strScore = fmt.Sprintf("%d-%d", x.ScoreHome, x.ScoreAway)
 		}
-		table.Append([]string{strconv.Itoa(i + 1), strconv.Itoa(x.ID), x.Home, x.Away, strScore, x.InPlayTime })
+		table.Append([]string{strconv.Itoa(i + 1), strconv.Itoa(x.ID), x.Home, x.Away, strScore, x.Time})
 	}
 	table.Render()
 }

@@ -10359,162 +10359,6 @@ var _debois$elm_mdl$Material_Color$primaryContrast = _debois$elm_mdl$Material_Co
 var _debois$elm_mdl$Material_Color$accent = _debois$elm_mdl$Material_Color$C('accent');
 var _debois$elm_mdl$Material_Color$accentContrast = _debois$elm_mdl$Material_Color$C('accent-contrast');
 
-var _debois$elm_mdl$Material_Grid$clip = F3(
-	function (lower, upper, k) {
-		return A2(
-			_elm_lang$core$Basics$max,
-			lower,
-			A2(_elm_lang$core$Basics$min, k, upper));
-	});
-var _debois$elm_mdl$Material_Grid$stretch = _debois$elm_mdl$Material_Options$cs('mdl-cell--stretch');
-var _debois$elm_mdl$Material_Grid$align = function (a) {
-	var _p0 = a;
-	switch (_p0.ctor) {
-		case 'Top':
-			return _debois$elm_mdl$Material_Options$cs('mdl-cell--top');
-		case 'Middle':
-			return _debois$elm_mdl$Material_Options$cs('mdl-cell--middle');
-		default:
-			return _debois$elm_mdl$Material_Options$cs('mdl-cell--bottom');
-	}
-};
-var _debois$elm_mdl$Material_Grid$suffix = function (device) {
-	var _p1 = device;
-	switch (_p1.ctor) {
-		case 'All':
-			return '';
-		case 'Desktop':
-			return '-desktop';
-		case 'Tablet':
-			return '-tablet';
-		default:
-			return '-phone';
-	}
-};
-var _debois$elm_mdl$Material_Grid$size = F2(
-	function (device, k) {
-		var c = function () {
-			var _p2 = device;
-			switch (_p2.ctor) {
-				case 'All':
-					return A3(_debois$elm_mdl$Material_Grid$clip, 1, 12, k);
-				case 'Desktop':
-					return A3(_debois$elm_mdl$Material_Grid$clip, 1, 12, k);
-				case 'Tablet':
-					return A3(_debois$elm_mdl$Material_Grid$clip, 1, 8, k);
-				default:
-					return A3(_debois$elm_mdl$Material_Grid$clip, 1, 4, k);
-			}
-		}();
-		return _debois$elm_mdl$Material_Options$cs(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'mdl-cell--',
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(c),
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'-col',
-						_debois$elm_mdl$Material_Grid$suffix(device)))));
-	});
-var _debois$elm_mdl$Material_Grid$offset = F2(
-	function (device, k) {
-		var c = function () {
-			var _p3 = device;
-			switch (_p3.ctor) {
-				case 'All':
-					return A3(_debois$elm_mdl$Material_Grid$clip, 0, 11, k);
-				case 'Desktop':
-					return A3(_debois$elm_mdl$Material_Grid$clip, 0, 11, k);
-				case 'Tablet':
-					return A3(_debois$elm_mdl$Material_Grid$clip, 0, 7, k);
-				default:
-					return A3(_debois$elm_mdl$Material_Grid$clip, 0, 3, k);
-			}
-		}();
-		return _debois$elm_mdl$Material_Options$cs(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'mdl-cell--',
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(c),
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'-offset',
-						_debois$elm_mdl$Material_Grid$suffix(device)))));
-	});
-var _debois$elm_mdl$Material_Grid$hide = function (device) {
-	return _debois$elm_mdl$Material_Options$cs(
-		function () {
-			var _p4 = device;
-			if (_p4.ctor === 'All') {
-				return '';
-			} else {
-				return A2(
-					_elm_lang$core$Basics_ops['++'],
-					'mdl-cell--hide-',
-					_debois$elm_mdl$Material_Grid$suffix(device));
-			}
-		}());
-};
-var _debois$elm_mdl$Material_Grid$order = F2(
-	function (device, n) {
-		return _debois$elm_mdl$Material_Options$cs(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'mdl-cell--order-',
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(
-						A3(_debois$elm_mdl$Material_Grid$clip, 1, 12, n)),
-					_debois$elm_mdl$Material_Grid$suffix(device))));
-	});
-var _debois$elm_mdl$Material_Grid$grid = F2(
-	function (styling, cells) {
-		return A2(
-			_debois$elm_mdl$Material_Options$div,
-			{
-				ctor: '::',
-				_0: _debois$elm_mdl$Material_Options$cs('mdl-grid'),
-				_1: styling
-			},
-			A2(
-				_elm_lang$core$List$map,
-				function (_p5) {
-					var _p6 = _p5;
-					return _p6._0;
-				},
-				cells));
-	});
-var _debois$elm_mdl$Material_Grid$maxWidth = function (w) {
-	return A2(_debois$elm_mdl$Material_Options$css, 'max-width', w);
-};
-var _debois$elm_mdl$Material_Grid$noSpacing = _debois$elm_mdl$Material_Options$cs('mdl-grid--no-spacing');
-var _debois$elm_mdl$Material_Grid$Phone = {ctor: 'Phone'};
-var _debois$elm_mdl$Material_Grid$Tablet = {ctor: 'Tablet'};
-var _debois$elm_mdl$Material_Grid$Desktop = {ctor: 'Desktop'};
-var _debois$elm_mdl$Material_Grid$All = {ctor: 'All'};
-var _debois$elm_mdl$Material_Grid$Cell = function (a) {
-	return {ctor: 'Cell', _0: a};
-};
-var _debois$elm_mdl$Material_Grid$cell = F2(
-	function (styling, elms) {
-		return _debois$elm_mdl$Material_Grid$Cell(
-			A2(
-				_debois$elm_mdl$Material_Options$div,
-				{
-					ctor: '::',
-					_0: _debois$elm_mdl$Material_Options$cs('mdl-cell'),
-					_1: styling
-				},
-				elms));
-	});
-var _debois$elm_mdl$Material_Grid$Bottom = {ctor: 'Bottom'};
-var _debois$elm_mdl$Material_Grid$Middle = {ctor: 'Middle'};
-var _debois$elm_mdl$Material_Grid$Top = {ctor: 'Top'};
-
 var _debois$elm_mdl$Material_Scheme$scheme = F2(
 	function (primary, accent) {
 		return A2(
@@ -10870,6 +10714,137 @@ var _debois$elm_mdl$Material_Table$Descending = {ctor: 'Descending'};
 var _debois$elm_mdl$Material_Table$descending = _debois$elm_mdl$Material_Table$sorted(_debois$elm_mdl$Material_Table$Descending);
 var _debois$elm_mdl$Material_Table$Ascending = {ctor: 'Ascending'};
 var _debois$elm_mdl$Material_Table$ascending = _debois$elm_mdl$Material_Table$sorted(_debois$elm_mdl$Material_Table$Ascending);
+
+var _elm_lang$core$Set$foldr = F3(
+	function (f, b, _p0) {
+		var _p1 = _p0;
+		return A3(
+			_elm_lang$core$Dict$foldr,
+			F3(
+				function (k, _p2, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p1._0);
+	});
+var _elm_lang$core$Set$foldl = F3(
+	function (f, b, _p3) {
+		var _p4 = _p3;
+		return A3(
+			_elm_lang$core$Dict$foldl,
+			F3(
+				function (k, _p5, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p4._0);
+	});
+var _elm_lang$core$Set$toList = function (_p6) {
+	var _p7 = _p6;
+	return _elm_lang$core$Dict$keys(_p7._0);
+};
+var _elm_lang$core$Set$size = function (_p8) {
+	var _p9 = _p8;
+	return _elm_lang$core$Dict$size(_p9._0);
+};
+var _elm_lang$core$Set$member = F2(
+	function (k, _p10) {
+		var _p11 = _p10;
+		return A2(_elm_lang$core$Dict$member, k, _p11._0);
+	});
+var _elm_lang$core$Set$isEmpty = function (_p12) {
+	var _p13 = _p12;
+	return _elm_lang$core$Dict$isEmpty(_p13._0);
+};
+var _elm_lang$core$Set$Set_elm_builtin = function (a) {
+	return {ctor: 'Set_elm_builtin', _0: a};
+};
+var _elm_lang$core$Set$empty = _elm_lang$core$Set$Set_elm_builtin(_elm_lang$core$Dict$empty);
+var _elm_lang$core$Set$singleton = function (k) {
+	return _elm_lang$core$Set$Set_elm_builtin(
+		A2(
+			_elm_lang$core$Dict$singleton,
+			k,
+			{ctor: '_Tuple0'}));
+};
+var _elm_lang$core$Set$insert = F2(
+	function (k, _p14) {
+		var _p15 = _p14;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A3(
+				_elm_lang$core$Dict$insert,
+				k,
+				{ctor: '_Tuple0'},
+				_p15._0));
+	});
+var _elm_lang$core$Set$fromList = function (xs) {
+	return A3(_elm_lang$core$List$foldl, _elm_lang$core$Set$insert, _elm_lang$core$Set$empty, xs);
+};
+var _elm_lang$core$Set$map = F2(
+	function (f, s) {
+		return _elm_lang$core$Set$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				f,
+				_elm_lang$core$Set$toList(s)));
+	});
+var _elm_lang$core$Set$remove = F2(
+	function (k, _p16) {
+		var _p17 = _p16;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$remove, k, _p17._0));
+	});
+var _elm_lang$core$Set$union = F2(
+	function (_p19, _p18) {
+		var _p20 = _p19;
+		var _p21 = _p18;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$union, _p20._0, _p21._0));
+	});
+var _elm_lang$core$Set$intersect = F2(
+	function (_p23, _p22) {
+		var _p24 = _p23;
+		var _p25 = _p22;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$intersect, _p24._0, _p25._0));
+	});
+var _elm_lang$core$Set$diff = F2(
+	function (_p27, _p26) {
+		var _p28 = _p27;
+		var _p29 = _p26;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$diff, _p28._0, _p29._0));
+	});
+var _elm_lang$core$Set$filter = F2(
+	function (p, _p30) {
+		var _p31 = _p30;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(
+				_elm_lang$core$Dict$filter,
+				F2(
+					function (k, _p32) {
+						return p(k);
+					}),
+				_p31._0));
+	});
+var _elm_lang$core$Set$partition = F2(
+	function (p, _p33) {
+		var _p34 = _p33;
+		var _p35 = A2(
+			_elm_lang$core$Dict$partition,
+			F2(
+				function (k, _p36) {
+					return p(k);
+				}),
+			_p34._0);
+		var p1 = _p35._0;
+		var p2 = _p35._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Set$Set_elm_builtin(p1),
+			_1: _elm_lang$core$Set$Set_elm_builtin(p2)
+		};
+	});
 
 var _elm_lang$navigation$Native_Navigation = function() {
 
@@ -11848,25 +11823,36 @@ var _user$project$Football$hasNotEmpty = function (f) {
 						_p0))));
 	};
 };
-var _user$project$Football$renderGamesHeaderRow = function () {
-	var colspan2 = {
-		ctor: '::',
-		_0: _debois$elm_mdl$Material_Options$attribute(
-			_elm_lang$html$Html_Attributes$colspan(2)),
-		_1: {ctor: '[]'}
-	};
-	return _elm_lang$core$List$singleton(
-		A2(
-			_debois$elm_mdl$Material_Table$tr,
-			{ctor: '[]'},
-			{
+var _user$project$Football$decoderMaybe = F2(
+	function (fieldStr, d) {
+		return A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+			fieldStr,
+			_elm_lang$core$Json_Decode$maybe(d),
+			_elm_lang$core$Maybe$Nothing);
+	});
+var _user$project$Football$renderGamesHeaderRow = _elm_lang$core$List$singleton(
+	A2(
+		_debois$elm_mdl$Material_Table$tr,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_debois$elm_mdl$Material_Table$th,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('№'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
 				ctor: '::',
 				_0: A2(
 					_debois$elm_mdl$Material_Table$th,
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('№'),
+						_0: _elm_lang$html$Html$text('Дома'),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
@@ -11876,7 +11862,7 @@ var _user$project$Football$renderGamesHeaderRow = function () {
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Дома'),
+							_0: _elm_lang$html$Html$text('Счёт'),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -11886,7 +11872,7 @@ var _user$project$Football$renderGamesHeaderRow = function () {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Счёт'),
+								_0: _elm_lang$html$Html$text('В гостях'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -11896,7 +11882,7 @@ var _user$project$Football$renderGamesHeaderRow = function () {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('В гостях'),
+									_0: _elm_lang$html$Html$text('Время'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -11906,37 +11892,37 @@ var _user$project$Football$renderGamesHeaderRow = function () {
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Время'),
+										_0: _elm_lang$html$Html$text('П1+'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
 									ctor: '::',
 									_0: A2(
 										_debois$elm_mdl$Material_Table$th,
-										colspan2,
+										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('П1'),
+											_0: _elm_lang$html$Html$text('П1-'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
 										ctor: '::',
 										_0: A2(
 											_debois$elm_mdl$Material_Table$th,
-											colspan2,
+											{ctor: '[]'},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text('Н'),
+												_0: _elm_lang$html$Html$text('Н+'),
 												_1: {ctor: '[]'}
 											}),
 										_1: {
 											ctor: '::',
 											_0: A2(
 												_debois$elm_mdl$Material_Table$th,
-												colspan2,
+												{ctor: '[]'},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text('П2'),
+													_0: _elm_lang$html$Html$text('Н-'),
 													_1: {ctor: '[]'}
 												}),
 											_1: {
@@ -11946,7 +11932,7 @@ var _user$project$Football$renderGamesHeaderRow = function () {
 													{ctor: '[]'},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text('В паре'),
+														_0: _elm_lang$html$Html$text('П2+'),
 														_1: {ctor: '[]'}
 													}),
 												_1: {
@@ -11956,7 +11942,7 @@ var _user$project$Football$renderGamesHeaderRow = function () {
 														{ctor: '[]'},
 														{
 															ctor: '::',
-															_0: _elm_lang$html$Html$text('Не в паре'),
+															_0: _elm_lang$html$Html$text('П2-'),
 															_1: {ctor: '[]'}
 														}),
 													_1: {
@@ -11966,7 +11952,7 @@ var _user$project$Football$renderGamesHeaderRow = function () {
 															{ctor: '[]'},
 															{
 																ctor: '::',
-																_0: _elm_lang$html$Html$text('Страна'),
+																_0: _elm_lang$html$Html$text('В паре'),
 																_1: {ctor: '[]'}
 															}),
 														_1: {
@@ -11976,10 +11962,32 @@ var _user$project$Football$renderGamesHeaderRow = function () {
 																{ctor: '[]'},
 																{
 																	ctor: '::',
-																	_0: _elm_lang$html$Html$text('Чемпионат'),
+																	_0: _elm_lang$html$Html$text('Не в паре'),
 																	_1: {ctor: '[]'}
 																}),
-															_1: {ctor: '[]'}
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_debois$elm_mdl$Material_Table$th,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text('Страна'),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_debois$elm_mdl$Material_Table$th,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text('Чемпионат'),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {ctor: '[]'}
+																}
+															}
 														}
 													}
 												}
@@ -11991,40 +11999,38 @@ var _user$project$Football$renderGamesHeaderRow = function () {
 						}
 					}
 				}
-			}));
-}();
+			}
+		}));
 var _user$project$Football$numToStr = function (x) {
 	return _elm_lang$core$Native_Utils.eq(x, 0) ? '' : _elm_lang$core$Basics$toString(x);
 };
 var _user$project$Football$renderGameTableRow = function (game) {
-	var pricesSection = A2(
-		_elm_lang$core$List$map,
-		function (_p3) {
-			return A2(
-				_debois$elm_mdl$Material_Table$td,
-				{ctor: '[]'},
-				_elm_lang$core$List$singleton(
-					_elm_lang$html$Html$text(_p3)));
-		},
-		A2(_elm_lang$core$List$map, _user$project$Football$numToStr, game.mainPrices));
 	return A2(
 		_debois$elm_mdl$Material_Table$tr,
 		{ctor: '[]'},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
+		{
+			ctor: '::',
+			_0: A2(
+				_debois$elm_mdl$Material_Table$td,
+				{
+					ctor: '::',
+					_0: _debois$elm_mdl$Material_Table$numeric,
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(game.order + 1)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
 				ctor: '::',
 				_0: A2(
 					_debois$elm_mdl$Material_Table$td,
+					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _debois$elm_mdl$Material_Table$numeric,
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(game.order + 1)),
+						_0: _elm_lang$html$Html$text(game.home),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
@@ -12034,7 +12040,14 @@ var _user$project$Football$renderGameTableRow = function (game) {
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(game.home),
+							_0: _elm_lang$html$Html$text(
+								game.inplay ? A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(game.scoreHome),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										' - ',
+										_elm_lang$core$Basics$toString(game.scoreAway))) : ''),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -12044,14 +12057,7 @@ var _user$project$Football$renderGameTableRow = function (game) {
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									game.inplay ? A2(
-										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(game.scoreHome),
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											' - ',
-											_elm_lang$core$Basics$toString(game.scoreAway))) : ''),
+								_0: _elm_lang$html$Html$text(game.away),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -12061,7 +12067,7 @@ var _user$project$Football$renderGameTableRow = function (game) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(game.away),
+									_0: _elm_lang$html$Html$text(game.time),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -12071,65 +12077,123 @@ var _user$project$Football$renderGameTableRow = function (game) {
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text(game.time),
+										_0: _elm_lang$html$Html$text(
+											_user$project$Football$numToStr(game.winBack)),
 										_1: {ctor: '[]'}
 									}),
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_debois$elm_mdl$Material_Table$td,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												_user$project$Football$numToStr(game.winLay)),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_debois$elm_mdl$Material_Table$td,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(
+													_user$project$Football$numToStr(game.drawBack)),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_debois$elm_mdl$Material_Table$td,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text(
+														_user$project$Football$numToStr(game.drawLay)),
+													_1: {ctor: '[]'}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_debois$elm_mdl$Material_Table$td,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text(
+															_user$project$Football$numToStr(game.loseBack)),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_debois$elm_mdl$Material_Table$td,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(
+																_user$project$Football$numToStr(game.loseLay)),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_debois$elm_mdl$Material_Table$td,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text(
+																	_user$project$Football$numToStr(game.totalMatched)),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_debois$elm_mdl$Material_Table$td,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text(
+																		_user$project$Football$numToStr(game.totalAvailable)),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_debois$elm_mdl$Material_Table$td,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html$text(game.country),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_debois$elm_mdl$Material_Table$td,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: _elm_lang$html$Html$text(game.competition),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
 							}
 						}
 					}
 				}
-			},
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				pricesSection,
-				{
-					ctor: '::',
-					_0: A2(
-						_debois$elm_mdl$Material_Table$td,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								_user$project$Football$numToStr(game.totalMatched)),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_debois$elm_mdl$Material_Table$td,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									_user$project$Football$numToStr(game.totalAvailable)),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_debois$elm_mdl$Material_Table$td,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(game.country),
-									_1: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_debois$elm_mdl$Material_Table$td,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(game.competition),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				})));
+			}
+		});
 };
 var _user$project$Football$renderGamesTable = function (games) {
 	var hasCountry = A2(
@@ -12163,61 +12227,120 @@ var _user$project$Football$renderGamesTable = function (games) {
 			}
 		});
 };
-var _user$project$Football$view = function (_p4) {
-	var _p5 = _p4;
-	var _p6 = _p5.games;
-	var noGames = _elm_lang$core$List$isEmpty(_p6);
-	var spinner = noGames ? {
-		ctor: '::',
-		_0: _debois$elm_mdl$Material_Spinner$spinner(
-			{
-				ctor: '::',
-				_0: _debois$elm_mdl$Material_Spinner$active(true),
-				_1: {ctor: '[]'}
-			}),
-		_1: {ctor: '[]'}
-	} : {ctor: '[]'};
-	var gamesTable = noGames ? {ctor: '[]'} : {
-		ctor: '::',
-		_0: _user$project$Football$renderGamesTable(_p6),
-		_1: {ctor: '[]'}
-	};
-	return A2(
-		_debois$elm_mdl$Material_Grid$grid,
-		{ctor: '[]'},
+var _user$project$Football$view = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = _p4.games;
+	return _elm_lang$core$List$isEmpty(_p5) ? _debois$elm_mdl$Material_Spinner$spinner(
 		{
 			ctor: '::',
-			_0: A2(
-				_debois$elm_mdl$Material_Grid$cell,
-				{
-					ctor: '::',
-					_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 3),
-					_1: {ctor: '[]'}
-				},
-				spinner),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_debois$elm_mdl$Material_Grid$cell,
-					{
-						ctor: '::',
-						_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$All, 9),
-						_1: {ctor: '[]'}
-					},
-					gamesTable),
-				_1: {ctor: '[]'}
-			}
-		});
+			_0: _debois$elm_mdl$Material_Spinner$active(true),
+			_1: {ctor: '[]'}
+		}) : _user$project$Football$renderGamesTable(_p5);
 };
+var _user$project$Football$updateGame = F2(
+	function (x, y) {
+		var comp = F2(
+			function (fy, fx) {
+				var _p6 = fy(y);
+				if (_p6.ctor === 'Just') {
+					return !_elm_lang$core$Native_Utils.eq(
+						_p6._0,
+						fx(x));
+				} else {
+					return false;
+				}
+			});
+		return _elm_lang$core$Native_Utils.update(
+			x,
+			{
+				order: A2(_elm_lang$core$Maybe$withDefault, x.order, y.order),
+				competition: A2(_elm_lang$core$Maybe$withDefault, x.competition, y.competition),
+				country: A2(_elm_lang$core$Maybe$withDefault, x.country, y.country),
+				scoreHome: A2(_elm_lang$core$Maybe$withDefault, x.scoreHome, y.scoreHome),
+				scoreAway: A2(_elm_lang$core$Maybe$withDefault, x.scoreAway, y.scoreAway),
+				time: A2(_elm_lang$core$Maybe$withDefault, x.time, y.time),
+				inplay: A2(_elm_lang$core$Maybe$withDefault, x.inplay, y.inplay),
+				winBack: A2(_elm_lang$core$Maybe$withDefault, x.winBack, y.winBack),
+				winLay: A2(_elm_lang$core$Maybe$withDefault, x.winLay, y.winLay),
+				loseBack: A2(_elm_lang$core$Maybe$withDefault, x.loseBack, y.loseBack),
+				loseLay: A2(_elm_lang$core$Maybe$withDefault, x.loseLay, y.loseLay),
+				drawBack: A2(_elm_lang$core$Maybe$withDefault, x.drawBack, y.drawBack),
+				drawLay: A2(_elm_lang$core$Maybe$withDefault, x.drawLay, y.drawLay),
+				totalMatched: A2(_elm_lang$core$Maybe$withDefault, x.totalMatched, y.totalMatched),
+				totalAvailable: A2(_elm_lang$core$Maybe$withDefault, x.totalAvailable, y.totalAvailable)
+			});
+	});
+var _user$project$Football$updateGames = F2(
+	function (games, _p7) {
+		var _p8 = _p7;
+		var _p14 = _p8.$new;
+		if (_p8.reset) {
+			return _p14;
+		} else {
+			var isJust = function (_p9) {
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					false,
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (_p10) {
+							return true;
+						},
+						_p9));
+			};
+			var updM = _elm_lang$core$Dict$fromList(
+				A2(
+					_elm_lang$core$List$map,
+					function (x) {
+						return {ctor: '_Tuple2', _0: x.id, _1: x};
+					},
+					_p8.upd));
+			var newSet = _elm_lang$core$Set$fromList(
+				A2(
+					_elm_lang$core$List$map,
+					function (_) {
+						return _.id;
+					},
+					_p14));
+			var outSet = _elm_lang$core$Set$fromList(_p8.out);
+			var play = A2(
+				_elm_lang$core$List$map,
+				function (x) {
+					return A2(
+						_elm_lang$core$Maybe$withDefault,
+						x,
+						A2(
+							_elm_lang$core$Maybe$map,
+							_user$project$Football$updateGame(x),
+							A2(_elm_lang$core$Dict$get, x.id, updM)));
+				},
+				A2(
+					_elm_lang$core$List$filter,
+					function (_p11) {
+						var _p12 = _p11;
+						var _p13 = _p12.id;
+						return (!A2(_elm_lang$core$Set$member, _p13, outSet)) && (!A2(_elm_lang$core$Set$member, _p13, newSet));
+					},
+					games));
+			return A2(
+				_elm_lang$core$List$sortBy,
+				function (_) {
+					return _.order;
+				},
+				A2(_elm_lang$core$Basics_ops['++'], _p14, play));
+		}
+	});
 var _user$project$Football$update = F2(
 	function (msg, model) {
-		var _p7 = msg;
-		if (_p7.ctor === 'NewGames') {
+		var _p15 = msg;
+		if (_p15.ctor === 'NewGamesChanges') {
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{games: _p7._0}),
+					{
+						games: A2(_user$project$Football$updateGames, model.games, _p15._0)
+					}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
@@ -12225,7 +12348,7 @@ var _user$project$Football$update = F2(
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{sort: _p7._0}),
+					{sort: _p15._0}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		}
@@ -12247,7 +12370,17 @@ var _user$project$Football$Game = function (a) {
 										return function (k) {
 											return function (l) {
 												return function (m) {
-													return {order: a, id: b, home: c, away: d, competition: e, country: f, scoreHome: g, scoreAway: h, time: i, inplay: j, mainPrices: k, totalMatched: l, totalAvailable: m};
+													return function (n) {
+														return function (o) {
+															return function (p) {
+																return function (q) {
+																	return function (r) {
+																		return {id: a, home: b, away: c, order: d, competition: e, country: f, scoreHome: g, scoreAway: h, time: i, inplay: j, winBack: k, winLay: l, drawBack: m, drawLay: n, loseBack: o, loseLay: p, totalMatched: q, totalAvailable: r};
+																	};
+																};
+															};
+														};
+													};
 												};
 											};
 										};
@@ -12271,68 +12404,200 @@ var _user$project$Football$decoderGame = A3(
 		_elm_lang$core$Json_Decode$float,
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'main_prices',
-			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$float),
+			'lose_lay',
+			_elm_lang$core$Json_Decode$float,
 			A3(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'in_play',
-				_elm_lang$core$Json_Decode$bool,
+				'lose_back',
+				_elm_lang$core$Json_Decode$float,
 				A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'time',
-					_elm_lang$core$Json_Decode$string,
+					'draw_lay',
+					_elm_lang$core$Json_Decode$float,
 					A3(
 						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-						'score_away',
-						_elm_lang$core$Json_Decode$int,
+						'draw_back',
+						_elm_lang$core$Json_Decode$float,
 						A3(
 							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-							'score_home',
-							_elm_lang$core$Json_Decode$int,
+							'win_lay',
+							_elm_lang$core$Json_Decode$float,
 							A3(
 								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-								'country',
-								_elm_lang$core$Json_Decode$string,
+								'win_back',
+								_elm_lang$core$Json_Decode$float,
 								A3(
 									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-									'competition',
-									_elm_lang$core$Json_Decode$string,
+									'in_play',
+									_elm_lang$core$Json_Decode$bool,
 									A3(
 										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-										'away',
+										'time',
 										_elm_lang$core$Json_Decode$string,
 										A3(
 											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-											'home',
-											_elm_lang$core$Json_Decode$string,
+											'score_away',
+											_elm_lang$core$Json_Decode$int,
 											A3(
 												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-												'id',
+												'score_home',
 												_elm_lang$core$Json_Decode$int,
-												A2(
-													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
-													0,
-													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Football$Game))))))))))))));
+												A3(
+													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+													'country',
+													_elm_lang$core$Json_Decode$string,
+													A3(
+														_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+														'competition',
+														_elm_lang$core$Json_Decode$string,
+														A3(
+															_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+															'order',
+															_elm_lang$core$Json_Decode$int,
+															A3(
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																'away',
+																_elm_lang$core$Json_Decode$string,
+																A3(
+																	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																	'home',
+																	_elm_lang$core$Json_Decode$string,
+																	A3(
+																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																		'id',
+																		_elm_lang$core$Json_Decode$int,
+																		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Football$Game)))))))))))))))))));
+var _user$project$Football$GamesChanges = F4(
+	function (a, b, c, d) {
+		return {$new: a, out: b, upd: c, reset: d};
+	});
+var _user$project$Football$GameChanges = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return function (n) {
+														return function (o) {
+															return function (p) {
+																return {id: a, order: b, competition: c, country: d, scoreHome: e, scoreAway: f, time: g, inplay: h, winBack: i, winLay: j, drawBack: k, drawLay: l, loseBack: m, loseLay: n, totalMatched: o, totalAvailable: p};
+															};
+														};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _user$project$Football$decoderGameCahnges = A3(
+	_user$project$Football$decoderMaybe,
+	'total_available',
+	_elm_lang$core$Json_Decode$float,
+	A3(
+		_user$project$Football$decoderMaybe,
+		'total_matched',
+		_elm_lang$core$Json_Decode$float,
+		A3(
+			_user$project$Football$decoderMaybe,
+			'lose_lay',
+			_elm_lang$core$Json_Decode$float,
+			A3(
+				_user$project$Football$decoderMaybe,
+				'lose_back',
+				_elm_lang$core$Json_Decode$float,
+				A3(
+					_user$project$Football$decoderMaybe,
+					'draw_lay',
+					_elm_lang$core$Json_Decode$float,
+					A3(
+						_user$project$Football$decoderMaybe,
+						'draw_back',
+						_elm_lang$core$Json_Decode$float,
+						A3(
+							_user$project$Football$decoderMaybe,
+							'win_lay',
+							_elm_lang$core$Json_Decode$float,
+							A3(
+								_user$project$Football$decoderMaybe,
+								'win_back',
+								_elm_lang$core$Json_Decode$float,
+								A3(
+									_user$project$Football$decoderMaybe,
+									'in_play',
+									_elm_lang$core$Json_Decode$bool,
+									A3(
+										_user$project$Football$decoderMaybe,
+										'time',
+										_elm_lang$core$Json_Decode$string,
+										A3(
+											_user$project$Football$decoderMaybe,
+											'score_away',
+											_elm_lang$core$Json_Decode$int,
+											A3(
+												_user$project$Football$decoderMaybe,
+												'score_home',
+												_elm_lang$core$Json_Decode$int,
+												A3(
+													_user$project$Football$decoderMaybe,
+													'country',
+													_elm_lang$core$Json_Decode$string,
+													A3(
+														_user$project$Football$decoderMaybe,
+														'competition',
+														_elm_lang$core$Json_Decode$string,
+														A3(
+															_user$project$Football$decoderMaybe,
+															'order',
+															_elm_lang$core$Json_Decode$int,
+															A3(
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+																'id',
+																_elm_lang$core$Json_Decode$int,
+																_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Football$GameChanges)))))))))))))))));
+var _user$project$Football$decoderGamesChanges = A4(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+	'reset',
+	_elm_lang$core$Json_Decode$bool,
+	false,
+	A4(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+		'upd',
+		_elm_lang$core$Json_Decode$list(_user$project$Football$decoderGameCahnges),
+		{ctor: '[]'},
+		A4(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+			'out',
+			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$int),
+			{ctor: '[]'},
+			A4(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+				'new',
+				_elm_lang$core$Json_Decode$list(_user$project$Football$decoderGame),
+				{ctor: '[]'},
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Football$GamesChanges)))));
 var _user$project$Football$parseGames = function (str) {
-	return A2(
-		_elm_lang$core$Result$map,
-		_elm_lang$core$List$indexedMap(
-			F2(
-				function (n, x) {
-					return _elm_lang$core$Native_Utils.update(
-						x,
-						{order: n});
-				})),
-		A2(
-			_elm_lang$core$Json_Decode$decodeString,
-			_elm_lang$core$Json_Decode$list(_user$project$Football$decoderGame),
-			str));
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Football$decoderGamesChanges, str);
 };
 var _user$project$Football$Reorder = function (a) {
 	return {ctor: 'Reorder', _0: a};
 };
-var _user$project$Football$NewGames = function (a) {
-	return {ctor: 'NewGames', _0: a};
+var _user$project$Football$NewGamesChanges = function (a) {
+	return {ctor: 'NewGamesChanges', _0: a};
 };
 var _user$project$Football$subscriptions = function (model) {
 	return A2(
@@ -12342,17 +12607,17 @@ var _user$project$Football$subscriptions = function (model) {
 			A2(_user$project$Utils$websocketURL, model.protocol, model.host),
 			'/football'),
 		function (str) {
-			var _p8 = _user$project$Football$parseGames(str);
-			if (_p8.ctor === 'Ok') {
-				return _user$project$Football$NewGames(_p8._0);
+			var _p16 = _user$project$Football$parseGames(str);
+			if (_p16.ctor === 'Ok') {
+				return _user$project$Football$NewGamesChanges(_p16._0);
 			} else {
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Football',
 					{
-						start: {line: 90, column: 13},
-						end: {line: 95, column: 36}
+						start: {line: 193, column: 13},
+						end: {line: 198, column: 36}
 					},
-					_p8)(_p8._0);
+					_p16)(_p16._0);
 			}
 		});
 };

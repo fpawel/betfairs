@@ -4,7 +4,6 @@ import (
 	"strings"
 	"os"
 	"strconv"
-	"io/ioutil"
 	"fmt"
 	"heroku.com/betfairs/webclient"
 	"github.com/PuerkitoBio/goquery"
@@ -42,12 +41,12 @@ func parseGame ( node *goquery.Selection) (Game, error) {
 		}
 	}
 
-	x.InPlayTime = strings.TrimSpace(node.Find("span.inplay").Text())
-	if x.InPlayTime == "" {
-		x.InPlayTime = strings.TrimSpace(node.Find("span.date").Text())
+	x.Time = strings.TrimSpace(node.Find("span.inplay").Text())
+	if x.Time == "" {
+		x.Time = strings.TrimSpace(node.Find("span.date").Text())
 	}
 
-	x.InPlayTime = strings.Replace(x.InPlayTime, " (In-Play)", "", 1)
+	x.Time = strings.Replace(x.Time, " (In-Play)", "", 1)
 
 	return x, nil
 }
@@ -57,14 +56,13 @@ func parseGames (document *goquery.Document) ( games []Game, err error) {
 	document.Find("div[data-eventid] div.details-event div a").Each(func(i int, node *goquery.Selection) {
 		var x Game
 		x, err = parseGame(node)
+		x.Order = i
 		if err == nil {
 			games = append(games, x)
 		}
 	})
 
 	if len(games) == 0{
-		htmlStr,_ := document.Html()
-		ioutil.WriteFile("nogames.html", []byte(htmlStr), os.ModeExclusive)
 		err = ErrorNoGames
 	}
 	return

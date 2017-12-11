@@ -12,7 +12,7 @@ import (
 
 func TestEventPrices(t *testing.T) {
 
-	const eventID = 28513272
+	const eventID = 28500450
 
 	session :=  aping.NewSession(adminBetfairUser, adminBetfairPass)
 	if err := session.GetSession().Error; err != nil {

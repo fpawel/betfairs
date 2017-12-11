@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"strconv"
 	"heroku.com/betfairs/aping/listMarketBook"
+	"heroku.com/betfairs/football2"
 )
 
 
@@ -56,9 +57,12 @@ func daemon (){
 		check(err)
 		webSocketFootballSession{
 			conn:            conn,
-			listMarketCatalogue: listMarketCatalogue,
-			football:        footballReader,
-			listMarketBook:      listMarketBook,
+			GamesReader: &football2.GamesReader{
+				ListMarketCatalogue: listMarketCatalogue,
+				FootballReader: footballReader,
+				ListMarketBook: listMarketBook,
+			},
+
 		}.run()
 
 
