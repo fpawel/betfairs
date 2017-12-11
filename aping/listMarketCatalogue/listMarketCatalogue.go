@@ -78,7 +78,7 @@ func (x *Reader) update(eventID int) ([]aping.MarketCatalogue, error) {
 	return r.Markets.Dub(), r.Error
 }
 
-func (x *Reader) Read(eventID int)  ([]aping.MarketCatalogue, error){
+func (x *Reader) Read(eventID int)  (aping.MarketCatalogues, error){
 
 	x.muCache.Lock()
 	// вычистить из кеша тухляк

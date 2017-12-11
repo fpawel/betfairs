@@ -11848,28 +11848,45 @@ var _user$project$Football$hasNotEmpty = function (f) {
 						_p0))));
 	};
 };
-var _user$project$Football$renderGamesHeaderRow = F2(
-	function (hasCountry, hasCompetition) {
-		var colspan2 = {
-			ctor: '::',
-			_0: _debois$elm_mdl$Material_Options$attribute(
-				_elm_lang$html$Html_Attributes$colspan(2)),
-			_1: {ctor: '[]'}
-		};
-		return _elm_lang$core$List$singleton(
-			A2(
-				_debois$elm_mdl$Material_Table$tr,
-				{ctor: '[]'},
-				A2(
-					_elm_lang$core$Basics_ops['++'],
+var _user$project$Football$renderGamesHeaderRow = function () {
+	var colspan2 = {
+		ctor: '::',
+		_0: _debois$elm_mdl$Material_Options$attribute(
+			_elm_lang$html$Html_Attributes$colspan(2)),
+		_1: {ctor: '[]'}
+	};
+	return _elm_lang$core$List$singleton(
+		A2(
+			_debois$elm_mdl$Material_Table$tr,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_debois$elm_mdl$Material_Table$th,
+					{ctor: '[]'},
 					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('№'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_debois$elm_mdl$Material_Table$th,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Дома'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
 						ctor: '::',
 						_0: A2(
 							_debois$elm_mdl$Material_Table$th,
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('№'),
+								_0: _elm_lang$html$Html$text('Счёт'),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -11879,7 +11896,7 @@ var _user$project$Football$renderGamesHeaderRow = F2(
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Дома'),
+									_0: _elm_lang$html$Html$text('В гостях'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -11889,60 +11906,82 @@ var _user$project$Football$renderGamesHeaderRow = F2(
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Счёт'),
+										_0: _elm_lang$html$Html$text('Время'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
 									ctor: '::',
 									_0: A2(
 										_debois$elm_mdl$Material_Table$th,
-										{ctor: '[]'},
+										colspan2,
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('В гостях'),
+											_0: _elm_lang$html$Html$text('П1'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
 										ctor: '::',
 										_0: A2(
 											_debois$elm_mdl$Material_Table$th,
-											{ctor: '[]'},
+											colspan2,
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text('Время'),
+												_0: _elm_lang$html$Html$text('Н'),
 												_1: {ctor: '[]'}
 											}),
 										_1: {
 											ctor: '::',
 											_0: A2(
-												_debois$elm_mdl$Material_Table$td,
+												_debois$elm_mdl$Material_Table$th,
 												colspan2,
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text('П1'),
+													_0: _elm_lang$html$Html$text('П2'),
 													_1: {ctor: '[]'}
 												}),
 											_1: {
 												ctor: '::',
 												_0: A2(
-													_debois$elm_mdl$Material_Table$td,
-													colspan2,
+													_debois$elm_mdl$Material_Table$th,
+													{ctor: '[]'},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text('П2'),
+														_0: _elm_lang$html$Html$text('В паре'),
 														_1: {ctor: '[]'}
 													}),
 												_1: {
 													ctor: '::',
 													_0: A2(
-														_debois$elm_mdl$Material_Table$td,
-														colspan2,
+														_debois$elm_mdl$Material_Table$th,
+														{ctor: '[]'},
 														{
 															ctor: '::',
-															_0: _elm_lang$html$Html$text('Н'),
+															_0: _elm_lang$html$Html$text('Не в паре'),
 															_1: {ctor: '[]'}
 														}),
-													_1: {ctor: '[]'}
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_debois$elm_mdl$Material_Table$th,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text('Страна'),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_debois$elm_mdl$Material_Table$th,
+																{ctor: '[]'},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text('Чемпионат'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {ctor: '[]'}
+														}
+													}
 												}
 											}
 										}
@@ -11950,69 +11989,52 @@ var _user$project$Football$renderGamesHeaderRow = F2(
 								}
 							}
 						}
-					},
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						hasCountry ? {
-							ctor: '::',
-							_0: A2(
-								_debois$elm_mdl$Material_Table$th,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Страна'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						} : {ctor: '[]'},
-						hasCompetition ? {
-							ctor: '::',
-							_0: A2(
-								_debois$elm_mdl$Material_Table$th,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Чемпионат'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						} : {ctor: '[]'}))));
-	});
-var _user$project$Football$renderGameTableRow = F3(
-	function (hasCountry, hasCompetition, game) {
-		var pricesSection = A2(
-			_elm_lang$core$List$map,
-			function (_p3) {
-				return A2(
+					}
+				}
+			}));
+}();
+var _user$project$Football$numToStr = function (x) {
+	return _elm_lang$core$Native_Utils.eq(x, 0) ? '' : _elm_lang$core$Basics$toString(x);
+};
+var _user$project$Football$renderGameTableRow = function (game) {
+	var pricesSection = A2(
+		_elm_lang$core$List$map,
+		function (_p3) {
+			return A2(
+				_debois$elm_mdl$Material_Table$td,
+				{ctor: '[]'},
+				_elm_lang$core$List$singleton(
+					_elm_lang$html$Html$text(_p3)));
+		},
+		A2(_elm_lang$core$List$map, _user$project$Football$numToStr, game.mainPrices));
+	return A2(
+		_debois$elm_mdl$Material_Table$tr,
+		{ctor: '[]'},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: A2(
 					_debois$elm_mdl$Material_Table$td,
-					{ctor: '[]'},
-					_elm_lang$core$List$singleton(
-						_elm_lang$html$Html$text(_p3)));
-			},
-			A2(
-				_elm_lang$core$List$map,
-				function (x) {
-					return _elm_lang$core$Native_Utils.eq(x, 0) ? '' : _elm_lang$core$Basics$toString(x);
-				},
-				game.mainPrices));
-		return A2(
-			_debois$elm_mdl$Material_Table$tr,
-			{ctor: '[]'},
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				{
+					{
+						ctor: '::',
+						_0: _debois$elm_mdl$Material_Table$numeric,
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_elm_lang$core$Basics$toString(game.order + 1)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
 					ctor: '::',
 					_0: A2(
 						_debois$elm_mdl$Material_Table$td,
+						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _debois$elm_mdl$Material_Table$numeric,
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								_elm_lang$core$Basics$toString(game.order + 1)),
+							_0: _elm_lang$html$Html$text(game.home),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -12022,7 +12044,14 @@ var _user$project$Football$renderGameTableRow = F3(
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(game.home),
+								_0: _elm_lang$html$Html$text(
+									game.inplay ? A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(game.scoreHome),
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											' - ',
+											_elm_lang$core$Basics$toString(game.scoreAway))) : ''),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -12032,14 +12061,7 @@ var _user$project$Football$renderGameTableRow = F3(
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(
-										game.inplay ? A2(
-											_elm_lang$core$Basics_ops['++'],
-											_elm_lang$core$Basics$toString(game.scoreHome),
-											A2(
-												_elm_lang$core$Basics_ops['++'],
-												' - ',
-												_elm_lang$core$Basics$toString(game.scoreAway))) : ''),
+									_0: _elm_lang$html$Html$text(game.away),
 									_1: {ctor: '[]'}
 								}),
 							_1: {
@@ -12049,31 +12071,41 @@ var _user$project$Football$renderGameTableRow = F3(
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text(game.away),
+										_0: _elm_lang$html$Html$text(game.time),
 										_1: {ctor: '[]'}
 									}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_debois$elm_mdl$Material_Table$td,
-										{ctor: '[]'},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text(game.time),
-											_1: {ctor: '[]'}
-										}),
-									_1: {ctor: '[]'}
-								}
+								_1: {ctor: '[]'}
 							}
 						}
 					}
-				},
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					pricesSection,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						hasCountry ? {
+				}
+			},
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				pricesSection,
+				{
+					ctor: '::',
+					_0: A2(
+						_debois$elm_mdl$Material_Table$td,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								_user$project$Football$numToStr(game.totalMatched)),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_debois$elm_mdl$Material_Table$td,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_user$project$Football$numToStr(game.totalAvailable)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
 							ctor: '::',
 							_0: A2(
 								_debois$elm_mdl$Material_Table$td,
@@ -12083,21 +12115,22 @@ var _user$project$Football$renderGameTableRow = F3(
 									_0: _elm_lang$html$Html$text(game.country),
 									_1: {ctor: '[]'}
 								}),
-							_1: {ctor: '[]'}
-						} : {ctor: '[]'},
-						hasCompetition ? {
-							ctor: '::',
-							_0: A2(
-								_debois$elm_mdl$Material_Table$td,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(game.competition),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						} : {ctor: '[]'}))));
-	});
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_debois$elm_mdl$Material_Table$td,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(game.competition),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				})));
+};
 var _user$project$Football$renderGamesTable = function (games) {
 	var hasCountry = A2(
 		_user$project$Football$hasNotEmpty,
@@ -12119,16 +12152,13 @@ var _user$project$Football$renderGamesTable = function (games) {
 			_0: A2(
 				_debois$elm_mdl$Material_Table$thead,
 				{ctor: '[]'},
-				A2(_user$project$Football$renderGamesHeaderRow, hasCountry, hasCompetition)),
+				_user$project$Football$renderGamesHeaderRow),
 			_1: {
 				ctor: '::',
 				_0: A2(
 					_debois$elm_mdl$Material_Table$tbody,
 					{ctor: '[]'},
-					A2(
-						_elm_lang$core$List$map,
-						A2(_user$project$Football$renderGameTableRow, hasCompetition, hasCountry),
-						games)),
+					A2(_elm_lang$core$List$map, _user$project$Football$renderGameTableRow, games)),
 				_1: {ctor: '[]'}
 			}
 		});
@@ -12215,7 +12245,11 @@ var _user$project$Football$Game = function (a) {
 								return function (i) {
 									return function (j) {
 										return function (k) {
-											return {order: a, id: b, home: c, away: d, competition: e, country: f, scoreHome: g, scoreAway: h, time: i, inplay: j, mainPrices: k};
+											return function (l) {
+												return function (m) {
+													return {order: a, id: b, home: c, away: d, competition: e, country: f, scoreHome: g, scoreAway: h, time: i, inplay: j, mainPrices: k, totalMatched: l, totalAvailable: m};
+												};
+											};
 										};
 									};
 								};
@@ -12229,48 +12263,56 @@ var _user$project$Football$Game = function (a) {
 };
 var _user$project$Football$decoderGame = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'main_prices',
-	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$float),
+	'total_available',
+	_elm_lang$core$Json_Decode$float,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'in_play',
-		_elm_lang$core$Json_Decode$bool,
+		'total_matched',
+		_elm_lang$core$Json_Decode$float,
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'time',
-			_elm_lang$core$Json_Decode$string,
+			'main_prices',
+			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$float),
 			A3(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'score_away',
-				_elm_lang$core$Json_Decode$int,
+				'in_play',
+				_elm_lang$core$Json_Decode$bool,
 				A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'score_home',
-					_elm_lang$core$Json_Decode$int,
+					'time',
+					_elm_lang$core$Json_Decode$string,
 					A3(
 						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-						'country',
-						_elm_lang$core$Json_Decode$string,
+						'score_away',
+						_elm_lang$core$Json_Decode$int,
 						A3(
 							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-							'competition',
-							_elm_lang$core$Json_Decode$string,
+							'score_home',
+							_elm_lang$core$Json_Decode$int,
 							A3(
 								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-								'away',
+								'country',
 								_elm_lang$core$Json_Decode$string,
 								A3(
 									_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-									'home',
+									'competition',
 									_elm_lang$core$Json_Decode$string,
 									A3(
 										_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-										'id',
-										_elm_lang$core$Json_Decode$int,
-										A2(
-											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
-											0,
-											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Football$Game))))))))))));
+										'away',
+										_elm_lang$core$Json_Decode$string,
+										A3(
+											_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+											'home',
+											_elm_lang$core$Json_Decode$string,
+											A3(
+												_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+												'id',
+												_elm_lang$core$Json_Decode$int,
+												A2(
+													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$hardcoded,
+													0,
+													_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Football$Game))))))))))))));
 var _user$project$Football$parseGames = function (str) {
 	return A2(
 		_elm_lang$core$Result$map,
@@ -12307,8 +12349,8 @@ var _user$project$Football$subscriptions = function (model) {
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Football',
 					{
-						start: {line: 88, column: 13},
-						end: {line: 93, column: 36}
+						start: {line: 90, column: 13},
+						end: {line: 95, column: 36}
 					},
 					_p8)(_p8._0);
 			}

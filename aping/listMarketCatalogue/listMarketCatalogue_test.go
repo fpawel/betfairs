@@ -14,7 +14,7 @@ import (
 
 func TestEvent(t *testing.T) {
 
-	const eventID = 28494326
+	const eventID = 28513272
 	// 28490325
 
 	//startTime := time.Now()

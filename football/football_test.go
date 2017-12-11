@@ -15,7 +15,7 @@ func TestFetchGames(t *testing.T) {
 }
 
 func TestCache(t *testing.T) {
-	cache := new(SyncReader)
+	cache := new(GamesReader)
 
 	startTime := time.Now()
 	for i:=0; i<20; i++ {

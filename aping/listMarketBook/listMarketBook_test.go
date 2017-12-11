@@ -12,7 +12,7 @@ import (
 
 func TestEventPrices(t *testing.T) {
 
-	const eventID = 28494326
+	const eventID = 28513272
 
 	session :=  aping.NewSession(adminBetfairUser, adminBetfairPass)
 	if err := session.GetSession().Error; err != nil {
@@ -31,7 +31,7 @@ func TestEventPrices(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			for _,xs := range marketCalogues.Take40MarketIDs(){
-				tmp,err := reader.ReadMarkets(xs, time.Hour)
+				tmp,err := reader.Read(xs, time.Hour)
 				if err == nil {
 					tmp[0].ID = "sdfsdf"
 					tmp[0].Runners[0].ID = 0
@@ -44,7 +44,7 @@ func TestEventPrices(t *testing.T) {
 		wg.Add(1)
 		var marketBooks aping.MarketBooks
 		for _,xs := range marketCalogues.Take40MarketIDs(){
-			ms,err := reader.ReadMarkets(xs, time.Hour)
+			ms,err := reader.Read(xs, time.Hour)
 			if err != nil {
 				t.Fatal(err)
 				wg.Done()

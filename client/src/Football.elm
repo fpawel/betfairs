@@ -47,6 +47,8 @@ type alias Game =
     , time : String
     , inplay : Bool
     , mainPrices : List Float
+    , totalMatched : Float
+    , totalAvailable : Float
     }
 
 
@@ -133,23 +135,25 @@ renderGamesTable games =
     in
         table
             []
-            [ thead [] <| renderGamesHeaderRow hasCountry hasCompetition
-            , tbody [] <| List.map (renderGameTableRow hasCompetition hasCountry) games
+            [ thead [] <| renderGamesHeaderRow
+            , tbody [] <| List.map renderGameTableRow games
             ]
 
 
-renderGameTableRow : Bool -> Bool -> Game -> Html Msg
-renderGameTableRow hasCountry hasCompetition game =
+numToStr : number -> String
+numToStr x =
+    if x == 0 then
+        ""
+    else
+        toString x
+
+
+renderGameTableRow : Game -> Html Msg
+renderGameTableRow game =
     let
         pricesSection =
             game.mainPrices
-                |> List.map
-                    (\x ->
-                        if x == 0 then
-                            ""
-                        else
-                            toString x
-                    )
+                |> List.map numToStr
                 |> List.map
                     (text
                         >> List.singleton
@@ -170,21 +174,16 @@ renderGameTableRow hasCountry hasCompetition game =
         , td [] [ text game.time ]
         ]
             ++ pricesSection
-            ++ (if hasCountry then
-                    [ td [] [ text game.country ] ]
-                else
-                    []
-               )
-            ++ (if hasCompetition then
-                    [ td [] [ text game.competition ] ]
-                else
-                    []
-               )
+            ++ [ td [] [ text <| numToStr <| game.totalMatched ]
+               , td [] [ text <| numToStr <| game.totalAvailable ]
+               , td [] [ text game.country ]
+               , td [] [ text game.competition ]
+               ]
             |> tr []
 
 
-renderGamesHeaderRow : Bool -> Bool -> List (Html msg)
-renderGamesHeaderRow hasCountry hasCompetition =
+renderGamesHeaderRow : List (Html msg)
+renderGamesHeaderRow =
     let
         colspan2 =
             [ Options.attribute <| Html.Attributes.colspan 2 ]
@@ -194,20 +193,14 @@ renderGamesHeaderRow hasCountry hasCompetition =
         , th [] [ text "Счёт" ]
         , th [] [ text "В гостях" ]
         , th [] [ text "Время" ]
-        , td colspan2 [ text "П1" ]
-        , td colspan2 [ text "П2" ]
-        , td colspan2 [ text "Н" ]
+        , th colspan2 [ text "П1" ]
+        , th colspan2 [ text "Н" ]
+        , th colspan2 [ text "П2" ]
+        , th [] [ text "В паре" ]
+        , th [] [ text "Не в паре" ]
+        , th [] [ text "Страна" ]
+        , th [] [ text "Чемпионат" ]
         ]
-            ++ (if hasCountry then
-                    [ th [] [ text "Страна" ] ]
-                else
-                    []
-               )
-            ++ (if hasCompetition then
-                    [ th [] [ text "Чемпионат" ] ]
-                else
-                    []
-               )
             |> tr []
             |> List.singleton
 
@@ -237,6 +230,8 @@ decoderGame =
         |> required "time" D.string
         |> required "in_play" D.bool
         |> required "main_prices" (D.list D.float)
+        |> required "total_matched" D.float
+        |> required "total_available" D.float
 
 
 

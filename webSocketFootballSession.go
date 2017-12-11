@@ -4,20 +4,21 @@ import (
 	"github.com/gorilla/websocket"
 	"fmt"
 	"time"
-	"heroku.com/betfairs/football"
 	"sync/atomic"
 
+	"heroku.com/betfairs/football2"
+	"heroku.com/betfairs/football"
 	"heroku.com/betfairs/aping/listMarketCatalogue"
-	"heroku.com/betfairs/countries"
 	"heroku.com/betfairs/aping/listMarketBook"
 )
 
 
 type webSocketFootballSession struct {
 	conn            *websocket.Conn
-	football        *football.SyncReader
-	marketCatalogue *listMarketCatalogue.Reader
-	marketBook      *listMarketBook.Reader
+	football        *football.GamesReader
+	listMarketCatalogue *listMarketCatalogue.Reader
+	listMarketBook *listMarketBook.Reader
+
 }
 
 func (x webSocketFootballSession) run() {
@@ -29,15 +30,10 @@ func (x webSocketFootballSession) run() {
 		return nil
 	})
 
-	type game struct {
-		football.Game
-		Competition string `json:"competition"`
-		Country string `json:"country"`
-		MainPrices [6]float64 `json:"main_prices,omitempty"`
-	}
+
 
 	pingTicker := time.NewTicker(5 * time.Second) // пинговать клиента раз в 5 секунд
-	sendGames := make(chan []game)
+	sendGames := make(chan []football2.Game)
 	done := make(chan bool) // цикл записи завершён
 
 	var doneFlag int32
@@ -88,38 +84,19 @@ func (x webSocketFootballSession) run() {
 			if atomic.LoadInt32(&doneFlag) > 0 {
 				return
 			}
-			var games []game
-			for _,g := range xs {
-				var game game
-				game.Game = g
-				marketCatalogues,ok := x.marketCatalogue.Get(game.ID)
-				if ok {
-					game.Competition = marketCatalogues[0].Competition.Name
-					c := countries.ByAlpha2(marketCatalogues[0].Event.CountryCode)
-					if c != nil {
-						game.Country = c.Name
-					} else {
-						game.Country = marketCatalogues[0].Event.CountryCode
-					}
-					mainMarket,ok := marketCatalogues.MainMarket()
-					if ok {
-						t := time.Second
-						if !game.InPlay {
-							t = time.Minute
-						}
-						mainMarketBook, err := x.marketBook.Read([]string{mainMarket.ID}, t)
-						if ok {
-							game.MainPrices = mainMarketBook[0].Prices6()
-						} else {
-							fmt.Println(err)
-						}
-					}
-				}
+			var games []football2.Game
+			t := time.Now()
+			for _,game := range xs {
+				game := football2.Game{Game:game}
+				game.Read(x.listMarketCatalogue,x.listMarketBook)
 				games = append(games, game)
+			}
+			fmt.Println(time.Since(t))
+			if atomic.LoadInt32(&doneFlag) > 0 {
+				return
 			}
 
 			sendGames <- games
-
 			select {
 			case <-interruptReadGamesDelay:
 				return

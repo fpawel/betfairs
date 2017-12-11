@@ -6,13 +6,13 @@ import (
 
 )
 
-type SyncReader struct {
+type GamesReader struct {
 	muConsumers   sync.RWMutex
-	consumers     []chan gamesResult
+	consumers     []chan resultReadGames
 
 }
 
-type gamesResult struct {
+type resultReadGames struct {
 	games []Game
 	error error
 }
@@ -20,11 +20,11 @@ type gamesResult struct {
 
 
 
-func (x *SyncReader) read() {
-	var r gamesResult
+func (x *GamesReader) read() {
+	var r resultReadGames
 	r.games, r.error = FetchGames()
 	x.muConsumers.Lock()
-	consumers := make([]chan gamesResult, len(x.consumers))
+	consumers := make([]chan resultReadGames, len(x.consumers))
 	copy(consumers, x.consumers )
 	x.consumers = nil
 	x.muConsumers.Unlock()
@@ -39,9 +39,9 @@ func (x *SyncReader) read() {
 	//fmt.Println(len(consumers), "consumers")
 }
 
-func (x *SyncReader) Read()  ([]Game, error) {
+func (x *GamesReader) Read()  ([]Game, error) {
 
-	ch := make(chan gamesResult)
+	ch := make(chan resultReadGames)
 	x.muConsumers.Lock()
 	if x.consumers == nil {
 		go x.read()

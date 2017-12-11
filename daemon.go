@@ -28,8 +28,7 @@ func daemon (){
 
 	listMarketCatalogue := listMarketCatalogue.New(apingSession)
 	listMarketBook := listMarketBook.New(apingSession)
-
-	footballReader := new(football.SyncReader)
+	footballReader := new(football.GamesReader)
 	router := chi.NewRouter()
 	var websocketUpgrader = websocket.Upgrader{EnableCompression: true}
 
@@ -57,9 +56,9 @@ func daemon (){
 		check(err)
 		webSocketFootballSession{
 			conn:            conn,
-			marketCatalogue: listMarketCatalogue,
+			listMarketCatalogue: listMarketCatalogue,
 			football:        footballReader,
-			marketBook:      listMarketBook,
+			listMarketBook:      listMarketBook,
 		}.run()
 
 
