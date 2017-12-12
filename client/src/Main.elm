@@ -2,12 +2,7 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Navigation exposing (Location)
-import Football
-import Material.Scheme as Scheme
-
-
---import Html.Attributes exposing (..)
---import Html.Events exposing (onClick)
+import Football.Football as Football
 
 
 main : Program Never Model Msg
@@ -86,7 +81,7 @@ view model =
         football =
             Html.map FootballMsg <| Football.view model.football
     in
-        Scheme.top football
+        football
 
 
 

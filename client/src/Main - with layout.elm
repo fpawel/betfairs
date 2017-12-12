@@ -144,3 +144,48 @@ drawer =
 
 
 -- HELPERS
+{-
+   dialog : Material.Model -> Html Msg
+   dialog mdl =
+       Dialog.view
+           []
+           [ Dialog.title [] [ text "Greetings" ]
+           , Dialog.content []
+               [ p [] [ text "A strange game—the only winning move is not to play." ]
+               , p [] [ text "How about a nice game of chess?" ]
+               ]
+           , Dialog.actions []
+               [ Button.render Mdl
+                   [ 0 ]
+                   mdl
+                   [ Dialog.closeOn "click" ]
+                   [ text "Chess" ]
+               , Button.render Mdl
+                   [ 0 ]
+                   mdl
+                   [ Dialog.closeOn "click"
+                   ]
+                   [ text "GTNW" ]
+               ]
+           ]
+
+
+           [ Button.render Mdl
+                    [ 0 ]
+                    mdl
+                    [ Button.icon
+                    , Button.fab
+                    , Dialog.openOn "click"
+                    ]
+                    [ div []
+                        [ Icon.view "settings" [ Tooltip.attach Mdl [ 0 ] ]
+                        , Tooltip.render Mdl
+                            [ 0 ]
+                            mdl
+                            [ Tooltip.left ]
+                            [ text "Default tooltip" ]
+                        ]
+                    ]
+                , dialog mdl
+                ]
+-}
