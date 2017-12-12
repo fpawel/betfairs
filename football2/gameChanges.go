@@ -18,6 +18,7 @@ type GameChanges struct {
 	LoseLay        *float64 `json:"lose_back,omitempty"`
 	TotalMatched   *float64 `json:"total_matched,omitempty"`
 	TotalAvailable *float64 `json:"total_available,omitempty"`
+	Error           *string  `json:"error,omitempty"`
 }
 
 func (x GameChanges) Empty() bool {

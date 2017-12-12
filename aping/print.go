@@ -7,7 +7,33 @@ import (
 
 	"strings"
 	"strconv"
+
 )
+
+func PrintMarketCatalogues(markets MarketCatalogues) {
+	event := markets[0].Event
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"event", event.Name})
+	table.Append([]string{ "date", fmt.Sprintf("%v", event.OpenDate)  })
+	table.Append([]string{ "country code", event.CountryCode  })
+	table.Append([]string{ "competition", markets[0].Competition.Name  })
+	table.Append([]string{ "sport", markets[0].EventType.Name  })
+	table.Render()
+
+	table = tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"№", "ID", "MARKET NAME", "RUNNER NAME"})
+	for i, x := range markets {
+		if strings.Contains( x.Name, "Азиатск") || len(x.Runners) == 0 {
+			continue
+		}
+		table.Append([]string{ strconv.Itoa(i), x.ID, x.Name, x.Runners[0].Name  })
+		for _,r := range x.Runners[1:] {
+			table.Append([]string{"","", "", r.Name, })
+		}
+	}
+	table.Render()
+}
+
 
 func PrintMarketBook(books MarketBooks, catalogues MarketCatalogues) {
 	table := tablewriter.NewWriter(os.Stdout)

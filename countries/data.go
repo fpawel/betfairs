@@ -1881,6 +1881,18 @@ var countries = []Country{
 		Location:        "Европа",
 		LocationPrecise: "Южная Европа",
 	},
+
+	{
+		Name:            "Сербия",
+		FullName:        "Республика Сербия",
+		English:         "Serbia",
+		Alpha2:          "CS",
+		Alpha3:          "SRB",
+		ISO:             "688",
+		Location:        "Европа",
+		LocationPrecise: "Южная Европа",
+	},
+
 	{
 		Name:            "Сейшелы",
 		FullName:        "Республика Сейшелы",

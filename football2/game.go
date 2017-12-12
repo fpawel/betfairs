@@ -25,7 +25,7 @@ type Game struct {
 	DrawLay float64 `json:"draw_lay"`
 	TotalMatched float64 `json:"total_matched"`
 	TotalAvailable float64 `json:"total_available"`
-	Error error `json:"error"`
+	Error string `json:"error"`
 }
 
 
@@ -82,14 +82,25 @@ func (x Game) Changes(y Game) (r GameChanges){
 	if x.TotalAvailable != y.TotalAvailable {
 		r.TotalAvailable = &y.TotalAvailable
 	}
+
+	if x.Error != y.Error {
+		r.Error = &y.Error
+	}
 	return
 }
 
 
 func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBookReader  *listMarketBook.Reader)  {
-	var mc aping.MarketCatalogues
-	mc,x.Error = marketCatalogueReader.Read(x.ID)
-	if x.Error != nil {
+	mc,err := marketCatalogueReader.Read(x.ID)
+	defer func() {
+		if err != nil {
+			x.Error = err.Error()
+		} else {
+			x.Error = ""
+		}
+	}()
+
+	if err != nil {
 		return
 	}
 	x.Competition = mc[0].Competition.Name
@@ -101,12 +112,12 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 	}
 	mainMarket,ok := mc.MainMarket()
 	if !ok {
-		x.Error = fmt.Errorf("рынок ставок на результат не найден")
+		err = fmt.Errorf("рынок ставок на результат не найден")
 		return
 	}
 
 	if len(mainMarket.Runners) != 3 {
-		x.Error = fmt.Errorf("main market must have 3 runners")
+		err = fmt.Errorf("main market must have 3 runners")
 		return
 	}
 
@@ -116,15 +127,15 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 	}
 
 	var mb aping.MarketBooks
-	mb, x.Error = marketBookReader.Read([]string{mainMarket.ID}, t)
-	if x.Error != nil {
+	mb, err = marketBookReader.Read([]string{mainMarket.ID}, t)
+	if err != nil {
 		return
 	}
 	xs := mb[0].Prices6()
 	x.WinBack, x.WinLay, x.LoseBack, x.LoseLay, x.DrawBack, x.DrawLay = xs[0],xs[1],xs[2],xs[3],xs[4],xs[5]
 	x.TotalMatched = Float64ToFixed(mb[0].TotalMatched,0)
 	x.TotalAvailable = Float64ToFixed(mb[0].TotalAvailable,0)
-	x.Error = nil
+
 }
 
 func RoundFloat64(num float64) int {

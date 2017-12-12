@@ -67,11 +67,12 @@ func (x webSocketFootballSession) run() {
 				x.conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 				changes := games.Changes(nextGames)
 
-
-				err := x.conn.WriteJSON(changes)
-				if err != nil {
-					fmt.Println("WebSocket: error 1:", err)
-					return
+				if !changes.Empty() {
+					err := x.conn.WriteJSON(changes)
+					if err != nil {
+						fmt.Println("WebSocket: error 1:", err)
+						return
+					}
 				}
 				games = nextGames
 
