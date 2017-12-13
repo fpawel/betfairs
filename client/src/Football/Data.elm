@@ -201,6 +201,46 @@ decoderGameCahnges =
 
 
 -- HELPERS
+--competitions : List Game -> List (string, List Game)
+
+
+groupByCompetitions : List Game -> List ( String, List Game )
+groupByCompetitions xs =
+    Dict.merge
+        (\k game -> Dict.insert k [ game ])
+        (\k game games -> Dict.insert k (game :: games))
+        Dict.insert
+        Dict.empty
+        (xs
+            |> List.map (\x -> ( x.competition, [ x ] ))
+            |> Dict.fromList
+        )
+        Dict.empty
+        |> Dict.toList
+
+
+gamesCompetitions : List Game -> List String
+gamesCompetitions games =
+    games
+        |> groupByCompetitions
+        |> List.map
+            (\( k, xs ) ->
+                ( k
+                , xs
+                    |> List.map .totalAvailable
+                    |> List.sum
+                )
+            )
+        |> List.sortBy (Tuple.second >> (*) -1)
+        |> List.map Tuple.first
+
+
+gamesHasInplay : List { a | inplay : Bool } -> Bool
+gamesHasInplay =
+    List.filter .inplay
+        >> List.head
+        >> Maybe.map (\_ -> True)
+        >> Maybe.withDefault False
 
 
 reverse : comparable -> comparable -> Basics.Order

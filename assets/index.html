@@ -4,18 +4,32 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        /*table {
+        table.footbal-table {
             border-spacing: 0;
             border-collapse: collapse;
-        }*/
-        th {
+            width: 100%;
+        }
+        table.footbal-table th {
             position: sticky;
             top: 1px;
             background-color: #FFFFFF;
             height: 40px;
         }
-        tr:nth-child(even) {
-            background-color: lightgrey;
+        table.footbal-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        table.footbal-table th, table.footbal-table td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        table.footbal-table td {
+            text-align: left;
+            padding: 2px 4px;
+        }
+
+        table.footbal-table td.dollar {
+            text-align: right;
+            font-style: italic;
         }
 
     </style>

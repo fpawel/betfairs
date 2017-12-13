@@ -10554,6 +10554,367 @@ var _elm_lang$html$Html_Lazy$lazy3 = _elm_lang$virtual_dom$VirtualDom$lazy3;
 var _elm_lang$html$Html_Lazy$lazy2 = _elm_lang$virtual_dom$VirtualDom$lazy2;
 var _elm_lang$html$Html_Lazy$lazy = _elm_lang$virtual_dom$VirtualDom$lazy;
 
+var _elm_lang$http$Native_Http = function() {
+
+
+// ENCODING AND DECODING
+
+function encodeUri(string)
+{
+	return encodeURIComponent(string);
+}
+
+function decodeUri(string)
+{
+	try
+	{
+		return _elm_lang$core$Maybe$Just(decodeURIComponent(string));
+	}
+	catch(e)
+	{
+		return _elm_lang$core$Maybe$Nothing;
+	}
+}
+
+
+// SEND REQUEST
+
+function toTask(request, maybeProgress)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var xhr = new XMLHttpRequest();
+
+		configureProgress(xhr, maybeProgress);
+
+		xhr.addEventListener('error', function() {
+			callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'NetworkError' }));
+		});
+		xhr.addEventListener('timeout', function() {
+			callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'Timeout' }));
+		});
+		xhr.addEventListener('load', function() {
+			callback(handleResponse(xhr, request.expect.responseToResult));
+		});
+
+		try
+		{
+			xhr.open(request.method, request.url, true);
+		}
+		catch (e)
+		{
+			return callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'BadUrl', _0: request.url }));
+		}
+
+		configureRequest(xhr, request);
+		send(xhr, request.body);
+
+		return function() { xhr.abort(); };
+	});
+}
+
+function configureProgress(xhr, maybeProgress)
+{
+	if (maybeProgress.ctor === 'Nothing')
+	{
+		return;
+	}
+
+	xhr.addEventListener('progress', function(event) {
+		if (!event.lengthComputable)
+		{
+			return;
+		}
+		_elm_lang$core$Native_Scheduler.rawSpawn(maybeProgress._0({
+			bytes: event.loaded,
+			bytesExpected: event.total
+		}));
+	});
+}
+
+function configureRequest(xhr, request)
+{
+	function setHeader(pair)
+	{
+		xhr.setRequestHeader(pair._0, pair._1);
+	}
+
+	A2(_elm_lang$core$List$map, setHeader, request.headers);
+	xhr.responseType = request.expect.responseType;
+	xhr.withCredentials = request.withCredentials;
+
+	if (request.timeout.ctor === 'Just')
+	{
+		xhr.timeout = request.timeout._0;
+	}
+}
+
+function send(xhr, body)
+{
+	switch (body.ctor)
+	{
+		case 'EmptyBody':
+			xhr.send();
+			return;
+
+		case 'StringBody':
+			xhr.setRequestHeader('Content-Type', body._0);
+			xhr.send(body._1);
+			return;
+
+		case 'FormDataBody':
+			xhr.send(body._0);
+			return;
+	}
+}
+
+
+// RESPONSES
+
+function handleResponse(xhr, responseToResult)
+{
+	var response = toResponse(xhr);
+
+	if (xhr.status < 200 || 300 <= xhr.status)
+	{
+		response.body = xhr.responseText;
+		return _elm_lang$core$Native_Scheduler.fail({
+			ctor: 'BadStatus',
+			_0: response
+		});
+	}
+
+	var result = responseToResult(response);
+
+	if (result.ctor === 'Ok')
+	{
+		return _elm_lang$core$Native_Scheduler.succeed(result._0);
+	}
+	else
+	{
+		response.body = xhr.responseText;
+		return _elm_lang$core$Native_Scheduler.fail({
+			ctor: 'BadPayload',
+			_0: result._0,
+			_1: response
+		});
+	}
+}
+
+function toResponse(xhr)
+{
+	return {
+		status: { code: xhr.status, message: xhr.statusText },
+		headers: parseHeaders(xhr.getAllResponseHeaders()),
+		url: xhr.responseURL,
+		body: xhr.response
+	};
+}
+
+function parseHeaders(rawHeaders)
+{
+	var headers = _elm_lang$core$Dict$empty;
+
+	if (!rawHeaders)
+	{
+		return headers;
+	}
+
+	var headerPairs = rawHeaders.split('\u000d\u000a');
+	for (var i = headerPairs.length; i--; )
+	{
+		var headerPair = headerPairs[i];
+		var index = headerPair.indexOf('\u003a\u0020');
+		if (index > 0)
+		{
+			var key = headerPair.substring(0, index);
+			var value = headerPair.substring(index + 2);
+
+			headers = A3(_elm_lang$core$Dict$update, key, function(oldValue) {
+				if (oldValue.ctor === 'Just')
+				{
+					return _elm_lang$core$Maybe$Just(value + ', ' + oldValue._0);
+				}
+				return _elm_lang$core$Maybe$Just(value);
+			}, headers);
+		}
+	}
+
+	return headers;
+}
+
+
+// EXPECTORS
+
+function expectStringResponse(responseToResult)
+{
+	return {
+		responseType: 'text',
+		responseToResult: responseToResult
+	};
+}
+
+function mapExpect(func, expect)
+{
+	return {
+		responseType: expect.responseType,
+		responseToResult: function(response) {
+			var convertedResponse = expect.responseToResult(response);
+			return A2(_elm_lang$core$Result$map, func, convertedResponse);
+		}
+	};
+}
+
+
+// BODY
+
+function multipart(parts)
+{
+	var formData = new FormData();
+
+	while (parts.ctor !== '[]')
+	{
+		var part = parts._0;
+		formData.append(part._0, part._1);
+		parts = parts._1;
+	}
+
+	return { ctor: 'FormDataBody', _0: formData };
+}
+
+return {
+	toTask: F2(toTask),
+	expectStringResponse: expectStringResponse,
+	mapExpect: F2(mapExpect),
+	multipart: multipart,
+	encodeUri: encodeUri,
+	decodeUri: decodeUri
+};
+
+}();
+
+var _elm_lang$http$Http_Internal$map = F2(
+	function (func, request) {
+		return _elm_lang$core$Native_Utils.update(
+			request,
+			{
+				expect: A2(_elm_lang$http$Native_Http.mapExpect, func, request.expect)
+			});
+	});
+var _elm_lang$http$Http_Internal$RawRequest = F7(
+	function (a, b, c, d, e, f, g) {
+		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g};
+	});
+var _elm_lang$http$Http_Internal$Request = function (a) {
+	return {ctor: 'Request', _0: a};
+};
+var _elm_lang$http$Http_Internal$Expect = {ctor: 'Expect'};
+var _elm_lang$http$Http_Internal$FormDataBody = {ctor: 'FormDataBody'};
+var _elm_lang$http$Http_Internal$StringBody = F2(
+	function (a, b) {
+		return {ctor: 'StringBody', _0: a, _1: b};
+	});
+var _elm_lang$http$Http_Internal$EmptyBody = {ctor: 'EmptyBody'};
+var _elm_lang$http$Http_Internal$Header = F2(
+	function (a, b) {
+		return {ctor: 'Header', _0: a, _1: b};
+	});
+
+var _elm_lang$http$Http$decodeUri = _elm_lang$http$Native_Http.decodeUri;
+var _elm_lang$http$Http$encodeUri = _elm_lang$http$Native_Http.encodeUri;
+var _elm_lang$http$Http$expectStringResponse = _elm_lang$http$Native_Http.expectStringResponse;
+var _elm_lang$http$Http$expectJson = function (decoder) {
+	return _elm_lang$http$Http$expectStringResponse(
+		function (response) {
+			return A2(_elm_lang$core$Json_Decode$decodeString, decoder, response.body);
+		});
+};
+var _elm_lang$http$Http$expectString = _elm_lang$http$Http$expectStringResponse(
+	function (response) {
+		return _elm_lang$core$Result$Ok(response.body);
+	});
+var _elm_lang$http$Http$multipartBody = _elm_lang$http$Native_Http.multipart;
+var _elm_lang$http$Http$stringBody = _elm_lang$http$Http_Internal$StringBody;
+var _elm_lang$http$Http$jsonBody = function (value) {
+	return A2(
+		_elm_lang$http$Http_Internal$StringBody,
+		'application/json',
+		A2(_elm_lang$core$Json_Encode$encode, 0, value));
+};
+var _elm_lang$http$Http$emptyBody = _elm_lang$http$Http_Internal$EmptyBody;
+var _elm_lang$http$Http$header = _elm_lang$http$Http_Internal$Header;
+var _elm_lang$http$Http$request = _elm_lang$http$Http_Internal$Request;
+var _elm_lang$http$Http$post = F3(
+	function (url, body, decoder) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {ctor: '[]'},
+				url: url,
+				body: body,
+				expect: _elm_lang$http$Http$expectJson(decoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _elm_lang$http$Http$get = F2(
+	function (url, decoder) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'GET',
+				headers: {ctor: '[]'},
+				url: url,
+				body: _elm_lang$http$Http$emptyBody,
+				expect: _elm_lang$http$Http$expectJson(decoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _elm_lang$http$Http$getString = function (url) {
+	return _elm_lang$http$Http$request(
+		{
+			method: 'GET',
+			headers: {ctor: '[]'},
+			url: url,
+			body: _elm_lang$http$Http$emptyBody,
+			expect: _elm_lang$http$Http$expectString,
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false
+		});
+};
+var _elm_lang$http$Http$toTask = function (_p0) {
+	var _p1 = _p0;
+	return A2(_elm_lang$http$Native_Http.toTask, _p1._0, _elm_lang$core$Maybe$Nothing);
+};
+var _elm_lang$http$Http$send = F2(
+	function (resultToMessage, request) {
+		return A2(
+			_elm_lang$core$Task$attempt,
+			resultToMessage,
+			_elm_lang$http$Http$toTask(request));
+	});
+var _elm_lang$http$Http$Response = F4(
+	function (a, b, c, d) {
+		return {url: a, status: b, headers: c, body: d};
+	});
+var _elm_lang$http$Http$BadPayload = F2(
+	function (a, b) {
+		return {ctor: 'BadPayload', _0: a, _1: b};
+	});
+var _elm_lang$http$Http$BadStatus = function (a) {
+	return {ctor: 'BadStatus', _0: a};
+};
+var _elm_lang$http$Http$NetworkError = {ctor: 'NetworkError'};
+var _elm_lang$http$Http$Timeout = {ctor: 'Timeout'};
+var _elm_lang$http$Http$BadUrl = function (a) {
+	return {ctor: 'BadUrl', _0: a};
+};
+var _elm_lang$http$Http$StringPart = F2(
+	function (a, b) {
+		return {ctor: 'StringPart', _0: a, _1: b};
+	});
+var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
+
 var _elm_lang$lazy$Native_Lazy = function() {
 
 function memoize(thunk)
@@ -12543,6 +12904,269 @@ var _gdotdesign$elm_ui$Html_Events_Extra$unobtrusiveClick = function (msg) {
 	return A3(_elm_lang$html$Html_Events$onWithOptions, 'click', _gdotdesign$elm_ui$Html_Events_Options$stopOptions, decoder);
 };
 
+//download.js v4.1, by dandavis; 2008-2015. [CCBY2] see http://danml.com/download.html for tests/usage
+window.download = function(data, strFileName, strMimeType) {
+  var self = window, // this script is only for browsers anyway...
+    defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
+    mimeType = strMimeType || defaultMime,
+    payload = data,
+    url = !strFileName && !strMimeType && payload,
+    anchor = document.createElement("a"),
+    toString = function(a){return String(a);},
+    myBlob = (self.Blob || self.MozBlob || self.WebKitBlob || toString),
+    fileName = strFileName || "download",
+    blob,
+    reader;
+    myBlob= myBlob.call ? myBlob.bind(self) : Blob ;
+
+  if(String(this)==="true"){ //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
+    payload=[payload, mimeType];
+    mimeType=payload[0];
+    payload=payload[1];
+  }
+
+
+  if(url && url.length< 2048){ // if no filename and no mime, assume a url was passed as the only argument
+    fileName = url.split("/").pop().split("?")[0];
+    anchor.href = url; // assign href prop to temp anchor
+      if(anchor.href.indexOf(url) !== -1){ // if the browser determines that it's a potentially valid url path:
+          var ajax=new XMLHttpRequest();
+          ajax.open( "GET", url, true);
+          ajax.responseType = 'blob';
+          ajax.onload= function(e){
+        download(e.target.response, fileName, defaultMime);
+      };
+          setTimeout(function(){ ajax.send();}, 0); // allows setting custom ajax headers using the return:
+        return ajax;
+    } // end if valid url?
+  } // end if url?
+
+
+  //go ahead and download dataURLs right away
+  if(/^data\:[\w+\-]+\/[\w+\-]+[,;]/.test(payload)){
+
+    if(payload.length > (1024*1024*1.999) && myBlob !== toString ){
+      payload=dataUrlToBlob(payload);
+      mimeType=payload.type || defaultMime;
+    }else{
+      return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
+        navigator.msSaveBlob(dataUrlToBlob(payload), fileName) :
+        saver(payload) ; // everyone else can save dataURLs un-processed
+    }
+
+  }//end if dataURL passed?
+
+  blob = payload instanceof myBlob ?
+    payload :
+    new myBlob([payload], {type: mimeType}) ;
+
+
+  function dataUrlToBlob(strUrl) {
+    var parts= strUrl.split(/[:;,]/),
+    type= parts[1],
+    decoder= parts[2] == "base64" ? atob : decodeURIComponent,
+    binData= decoder( parts.pop() ),
+    mx= binData.length,
+    i= 0,
+    uiArr= new Uint8Array(mx);
+
+    for(i;i<mx;++i) uiArr[i]= binData.charCodeAt(i);
+
+    return new myBlob([uiArr], {type: type});
+   }
+
+  function saver(url, winMode){
+
+    if ('download' in anchor) { //html5 A[download]
+      anchor.href = url;
+      anchor.setAttribute("download", fileName);
+      anchor.className = "download-js-link";
+      anchor.innerHTML = "downloading...";
+      anchor.style.display = "none";
+      document.body.appendChild(anchor);
+      setTimeout(function() {
+        anchor.click();
+        document.body.removeChild(anchor);
+        if(winMode===true){setTimeout(function(){ self.URL.revokeObjectURL(anchor.href);}, 250 );}
+      }, 66);
+      return true;
+    }
+
+    // handle non-a[download] safari as best we can:
+    if(/(Version)\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari\//.test(navigator.userAgent)) {
+      url=url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+      if(!window.open(url)){ // popup blocked, offer direct download:
+        if(confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")){ location.href=url; }
+      }
+      return true;
+    }
+
+    //do iframe dataURL download (old ch+FF):
+    var f = document.createElement("iframe");
+    document.body.appendChild(f);
+
+    if(!winMode){ // force a mime that will download:
+      url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+    }
+    f.src=url;
+    setTimeout(function(){ document.body.removeChild(f); }, 333);
+
+  }//end saver
+
+
+
+
+  if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
+    return navigator.msSaveBlob(blob, fileName);
+  }
+
+  if(self.URL){ // simple fast and modern way using Blob and URL:
+    saver(self.URL.createObjectURL(blob), true);
+  }else{
+    // handle non-Blob()+non-URL browsers:
+    if(typeof blob === "string" || blob.constructor===toString ){
+      try{
+        return saver( "data:" +  mimeType   + ";base64,"  +  self.btoa(blob)  );
+      }catch(y){
+        return saver( "data:" +  mimeType   + "," + encodeURIComponent(blob)  );
+      }
+    }
+
+    // Blob but not URL support:
+    reader=new FileReader();
+    reader.onload=function(e){
+      saver(this.result);
+    };
+    reader.readAsDataURL(blob);
+  }
+  return true;
+}
+
+var _gdotdesign$elm_ui$Native_FileManager = function() {
+  var isChromeApp = window.chrome && window.chrome.fileSystem
+
+
+  function createInput(){
+    var input = document.createElement('input')
+
+    input.style.width = '1px'
+    input.style.height = '1px'
+    input.style.position = 'absolute'
+    input.style.left = '-1px'
+    input.style.top = '-1px'
+    input.type = 'file'
+    input.callback = null
+
+    document.body.appendChild(input)
+
+    return input;
+  }
+
+
+  function createFile(file) {
+    return {
+      name: file.name,
+      size: file.size,
+      mimeType: file.type,
+      data: file
+    }
+  }
+
+  function reader(callback) {
+    var reader = new FileReader();
+    reader.addEventListener('load', function(event){
+      callback(_elm_lang$core$Native_Scheduler.succeed(event.target.result))
+    })
+    return reader
+  }
+
+  function readAsString(file) {
+    return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback){
+      reader(callback).readAsText(file.data)
+    })
+  }
+
+  function readAsDataURL(file) {
+    return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback){
+      reader(callback).readAsDataURL(file.data)
+    })
+  }
+
+  function toFormData(file) {
+    return file.data
+  }
+
+  function downloadFunc(name,mimeType,data){
+    if(isChromeApp){
+      return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback){
+        chrome.fileSystem.chooseEntry({type: 'saveFile',
+                                       suggestedName: name}, function(fileEntry){
+          blob = new Blob([data], {type: "text/plain"})
+          fileEntry.createWriter(function(writer) {
+            writer.onwriteend = function() {
+              if (writer.length === 0) {
+                writer.write(blob)
+              } else {
+                callback(_elm_lang$core$Native_Scheduler.succeed(""))
+              }
+            }
+            writer.truncate(0)
+          })
+        })
+      })
+    } else {
+      download(data,name,mimeType)
+      return _elm_lang$core$Native_Scheduler.succeed("")
+    }
+  }
+
+  var Json = _elm_lang$core$Native_Json
+  var valueDecoder = Json.decodePrimitive("value")
+
+  function openMultipleDecoder(accept){
+    return Json.andThen(function(_){
+      var input = createInput()
+      input.accept = accept
+      input.multiple = false
+      input.click()
+      var task = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback){
+        input.addEventListener('change', function(){
+          var filesArray = Array.prototype.slice.call(input.files)
+          var filesObjects = filesArray.map(function(file) { return createFile(file) })
+          var files = _elm_lang$core$Native_List.fromArray(filesObjects)
+          callback(_elm_lang$core$Native_Scheduler.succeed(files))
+        })
+      })
+      return Json.succeed(task)
+    })(valueDecoder)
+  }
+
+  function openSingleDecoder(accept){
+    return Json.andThen(function(_){
+      var input = createInput()
+      input.accept = accept
+      input.click()
+      var task = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback){
+        input.addEventListener('change', function(){
+          callback(_elm_lang$core$Native_Scheduler.succeed(createFile(input.files[0])))
+        })
+      })
+      return Json.succeed(task)
+    })(valueDecoder)
+  }
+
+  return {
+    readAsDataURL: readAsDataURL,
+    readAsString: readAsString,
+    download: F3(downloadFunc),
+    openMultipleDecoder: openMultipleDecoder,
+    openSingleDecoder: openSingleDecoder,
+    identity: function(value){ return value },
+    identitiyTag: F2(function(tagger, value){ return tagger(value) }),
+    toFormData: toFormData,
+  }
+}()
+
 var _gdotdesign$elm_ui$Native_Styles = function() {
   if(typeof document === "undefined") {
     return {patchStyles: function() {}};
@@ -12609,6 +13233,29 @@ var _gdotdesign$elm_ui$Native_Styles = function() {
   /* Interface */
   return {
     patchStyles: patchStyles
+  }
+}()
+
+var _gdotdesign$elm_ui$Native_Uid = function() {
+  function s(n) {
+    return h((Math.random() * (1<<(n<<2)))^Date.now()).slice(-n)
+  }
+
+  function h(n) {
+    return (n|0).toString(16)
+  }
+
+  function uid(){
+    return [
+      s(4) + s(4), s(4), '4' + s(3),
+      h(8|(Math.random()*4)) + s(3),
+      Date.now().toString(16).slice(-10) + s(2)
+    ].join('-')
+  }
+
+  /* Interface */
+  return {
+    uid: uid
   }
 }()
 
@@ -14463,6 +15110,237 @@ var _gdotdesign$elm_ui$Ui_Button$Model = F5(
 		return {disabled: a, readonly: b, kind: c, size: d, text: e};
 	});
 
+var _gdotdesign$elm_ui$Ui_Native_FileManager$download = F3(
+	function (filename, mimeType, data) {
+		return A3(_gdotdesign$elm_ui$Native_FileManager.download, filename, mimeType, data);
+	});
+var _gdotdesign$elm_ui$Ui_Native_FileManager$openMultipleDecoder = F2(
+	function (accept, msg) {
+		return A2(
+			_elm_lang$core$Json_Decode$map,
+			msg,
+			_gdotdesign$elm_ui$Native_FileManager.openMultipleDecoder(accept));
+	});
+var _gdotdesign$elm_ui$Ui_Native_FileManager$openSingleDecoder = F2(
+	function (accept, msg) {
+		return A2(
+			_elm_lang$core$Json_Decode$map,
+			msg,
+			_gdotdesign$elm_ui$Native_FileManager.openSingleDecoder(accept));
+	});
+var _gdotdesign$elm_ui$Ui_Native_FileManager$toFormData = F2(
+	function (key, file) {
+		return A2(
+			_elm_lang$http$Http$stringPart,
+			key,
+			_gdotdesign$elm_ui$Native_FileManager.toFormData(file));
+	});
+var _gdotdesign$elm_ui$Ui_Native_FileManager$readAsDataURL = function (file) {
+	return _gdotdesign$elm_ui$Native_FileManager.readAsDataURL(file);
+};
+var _gdotdesign$elm_ui$Ui_Native_FileManager$readAsString = function (file) {
+	return _gdotdesign$elm_ui$Native_FileManager.readAsString(file);
+};
+var _gdotdesign$elm_ui$Ui_Native_FileManager$File = F4(
+	function (a, b, c, d) {
+		return {mimeType: a, name: b, size: c, data: d};
+	});
+var _gdotdesign$elm_ui$Ui_Native_FileManager$Data = {ctor: 'Data'};
+
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$onSelfMsg = F3(
+	function (router, message, model) {
+		return _elm_lang$core$Task$succeed(model);
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$onEffects = F4(
+	function (router, commands, subscriptions, model) {
+		var send = F3(
+			function (targetId, value, _p0) {
+				var _p1 = _p0;
+				return A2(
+					_elm_lang$core$Platform$sendToApp,
+					router,
+					_p1._1(value));
+			});
+		var sendCommandMessages = function (_p2) {
+			var _p3 = _p2;
+			var _p6 = _p3._0;
+			return A2(
+				_elm_lang$core$List$map,
+				A2(send, _p6, _p3._1),
+				A2(
+					_elm_lang$core$List$filter,
+					function (_p4) {
+						var _p5 = _p4;
+						return _elm_lang$core$Native_Utils.eq(_p5._0, _p6);
+					},
+					subscriptions));
+		};
+		var tasks = A3(
+			_elm_lang$core$List$foldr,
+			F2(
+				function (x, y) {
+					return A2(_elm_lang$core$Basics_ops['++'], x, y);
+				}),
+			{ctor: '[]'},
+			A2(_elm_lang$core$List$map, sendCommandMessages, commands));
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (_p7) {
+				return _elm_lang$core$Task$succeed(model);
+			},
+			_elm_lang$core$Task$sequence(tasks));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$init = _elm_lang$core$Task$succeed(
+	{});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$decode = F4(
+	function (decoder, $default, msg, value) {
+		return msg(
+			A2(
+				_elm_lang$core$Result$withDefault,
+				$default,
+				A2(_elm_lang$core$Json_Decode$decodeValue, decoder, value)));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$decodeString = F2(
+	function ($default, msg) {
+		return A3(_gdotdesign$elm_ui$Ui_Helpers_Emitter$decode, _elm_lang$core$Json_Decode$string, $default, msg);
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$decodeFloat = F2(
+	function ($default, msg) {
+		return A3(_gdotdesign$elm_ui$Ui_Helpers_Emitter$decode, _elm_lang$core$Json_Decode$float, $default, msg);
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$decodeInt = F2(
+	function ($default, msg) {
+		return A3(_gdotdesign$elm_ui$Ui_Helpers_Emitter$decode, _elm_lang$core$Json_Decode$int, $default, msg);
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$decodeBool = F2(
+	function ($default, msg) {
+		return A3(_gdotdesign$elm_ui$Ui_Helpers_Emitter$decode, _elm_lang$core$Json_Decode$bool, $default, msg);
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$subscription = _elm_lang$core$Native_Platform.leaf('Ui.Helpers.Emitter');
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$command = _elm_lang$core$Native_Platform.leaf('Ui.Helpers.Emitter');
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$State = {};
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$Send = F2(
+	function (a, b) {
+		return {ctor: 'Send', _0: a, _1: b};
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$send = F2(
+	function (id, value) {
+		return _gdotdesign$elm_ui$Ui_Helpers_Emitter$command(
+			A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$Send, id, value));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$sendString = F2(
+	function (id, value) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$send,
+			id,
+			_elm_lang$core$Json_Encode$string(value));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$sendFloat = F2(
+	function (id, value) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$send,
+			id,
+			_elm_lang$core$Json_Encode$float(value));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$sendInt = F2(
+	function (id, value) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$send,
+			id,
+			_elm_lang$core$Json_Encode$int(value));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$sendBool = F2(
+	function (id, value) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$send,
+			id,
+			_elm_lang$core$Json_Encode$bool(value));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$sendFile = F2(
+	function (id, value) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$send,
+			id,
+			_gdotdesign$elm_ui$Native_FileManager.identity(value));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$sendNaked = function (id) {
+	return _gdotdesign$elm_ui$Ui_Helpers_Emitter$command(
+		A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$Send, id, _elm_lang$core$Json_Encode$null));
+};
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$cmdMap = F2(
+	function (_p9, _p8) {
+		var _p10 = _p8;
+		return A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$Send, _p10._0, _p10._1);
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$Listen = F2(
+	function (a, b) {
+		return {ctor: 'Listen', _0: a, _1: b};
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$listen = F2(
+	function (id, tagger) {
+		return _gdotdesign$elm_ui$Ui_Helpers_Emitter$subscription(
+			A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$Listen, id, tagger));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$listenNaked = F2(
+	function (id, msg) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$listen,
+			id,
+			function (_p11) {
+				return msg;
+			});
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$listenString = F2(
+	function (id, tagger) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$listen,
+			id,
+			A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$decodeString, '', tagger));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$listenFloat = F2(
+	function (id, tagger) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$listen,
+			id,
+			A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$decodeFloat, 0, tagger));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$listenInt = F2(
+	function (id, tagger) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$listen,
+			id,
+			A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$decodeInt, 0, tagger));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$listenBool = F2(
+	function (id, tagger) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$listen,
+			id,
+			A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$decodeBool, false, tagger));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$listenFile = F2(
+	function (id, tagger) {
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$listen,
+			id,
+			_gdotdesign$elm_ui$Native_FileManager.identitiyTag(tagger));
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$subMap = F2(
+	function (func, sub) {
+		var _p12 = sub;
+		return A2(
+			_gdotdesign$elm_ui$Ui_Helpers_Emitter$Listen,
+			_p12._0,
+			function (_p13) {
+				return func(
+					_p12._1(_p13));
+			});
+	});
+var _gdotdesign$elm_ui$Ui_Helpers_Emitter$Msg = {ctor: 'Msg'};
+_elm_lang$core$Native_Platform.effectManagers['Ui.Helpers.Emitter'] = {pkg: 'gdotdesign/elm-ui', init: _gdotdesign$elm_ui$Ui_Helpers_Emitter$init, onEffects: _gdotdesign$elm_ui$Ui_Helpers_Emitter$onEffects, onSelfMsg: _gdotdesign$elm_ui$Ui_Helpers_Emitter$onSelfMsg, tag: 'fx', cmdMap: _gdotdesign$elm_ui$Ui_Helpers_Emitter$cmdMap, subMap: _gdotdesign$elm_ui$Ui_Helpers_Emitter$subMap};
+
+var _gdotdesign$elm_ui$Ui_Native_Uid$uid = _gdotdesign$elm_ui$Native_Uid.uid;
+
 var _gdotdesign$elm_ui$Ui_Styles_Container$style = function (theme) {
 	return _gdotdesign$elm_ui$Ui_Css$mixin(
 		{
@@ -14721,6 +15599,892 @@ var _gdotdesign$elm_ui$Ui_Icons$search = _gdotdesign$elm_ui$Ui_Icons$icon('\n   
 var _gdotdesign$elm_ui$Ui_Icons$starFull = _gdotdesign$elm_ui$Ui_Icons$icon('\n    M23.055 12.826L18 .89l-5.056 11.936L0 13.936l9.82 8.514-2.944 12.66L18\n    28.397l11.123 6.71L26.18 22.45 36 13.937\n    ');
 var _gdotdesign$elm_ui$Ui_Icons$starEmpty = _gdotdesign$elm_ui$Ui_Icons$icon('\n    M36 13.937l-12.945-1.11L18 .89l-5.056 11.936L0 13.936l9.82 8.513-2.944\n    12.66L18 28.397l11.123 6.71L26.18 22.45 36 13.937zm-16.527 12.02L18\n    25.066l-1.473.89-5.345 3.224 1.415-6.085.39-1.674-1.3-1.125L6.965\n    16.2l6.223-.533 1.71-.147.67-1.582L18 8.2l2.43 5.738.67 1.582 1.712.147\n    6.223.534-4.722 4.095-1.3 1.126.39 1.675 1.415 6.086-5.345-3.224z\n    ');
 var _gdotdesign$elm_ui$Ui_Icons$calendar = _gdotdesign$elm_ui$Ui_Icons$icon('\n    M9 0C7.578 0 6.428 1.15 6.428 2.572v2.57c0 1.423 1.15 2.573 2.572 2.573\n    1.422 0 2.572-1.15 2.572-2.572v-2.57C11.572 1.15 10.422 0 9 0zm18 0c-1.422\n    0-2.572 1.15-2.572 2.572v2.57c0 1.423 1.15 2.573 2.572 2.573 1.422 0\n    2.572-1.15 2.572-2.572v-2.57C29.572 1.15 28.422 0 27 0zM.643 2.572c-.354\n    0-.643.29-.643.643v32.142c0 .354.29.643.643.643h34.714c.354 0\n    .643-.29.643-.643V3.215c0-.354-.29-.643-.643-.643h-4.5v3.27C30.857 7.65\n    28.993 9 27.064 9c-1.928 0-3.92-1.35-3.92-3.158v-3.27H12.856v3.27C12.857\n    7.65 10.93 9 9 9 7.07 9 5.143 7.65 5.143 5.842v-3.27h-4.5zm3.214\n    9h28.286v20.57H3.857v-20.57z\n    ');
+
+var _gdotdesign$elm_ui$Ui_Styles_Checkbox$style = function (theme) {
+	return _gdotdesign$elm_ui$Ui_Css$mixin(
+		{
+			ctor: '::',
+			_0: _gdotdesign$elm_ui$Ui_Styles_Mixins$defaults,
+			_1: {
+				ctor: '::',
+				_0: _gdotdesign$elm_ui$Ui_Styles_Mixins$focusedIdle(theme),
+				_1: {
+					ctor: '::',
+					_0: _gdotdesign$elm_ui$Ui_Css_Properties$fontFamily(theme.fontFamily),
+					_1: {
+						ctor: '::',
+						_0: _gdotdesign$elm_ui$Ui_Css_Properties$border(
+							A2(
+								_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+								A2(
+									_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+									_gdotdesign$elm_ui$Ui_Css_Properties$px(1),
+									_gdotdesign$elm_ui$Ui_Css_Properties$solid),
+								theme.colors.border)),
+						_1: {
+							ctor: '::',
+							_0: _gdotdesign$elm_ui$Ui_Css_Properties$backgroundColor(theme.colors.input.color),
+							_1: {
+								ctor: '::',
+								_0: _gdotdesign$elm_ui$Ui_Css_Properties$color(theme.colors.input.bw),
+								_1: {
+									ctor: '::',
+									_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$inlineBlock),
+									_1: {
+										ctor: '::',
+										_0: _gdotdesign$elm_ui$Ui_Css_Properties$cursor(_gdotdesign$elm_ui$Ui_Css_Properties$pointer),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_gdotdesign$elm_ui$Ui_Css$selector,
+												'&[readonly]',
+												{
+													ctor: '::',
+													_0: _gdotdesign$elm_ui$Ui_Styles_Mixins$readonly,
+													_1: {ctor: '[]'}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_gdotdesign$elm_ui$Ui_Css$selector,
+													'&[disabled]',
+													{
+														ctor: '::',
+														_0: _gdotdesign$elm_ui$Ui_Styles_Mixins$disabledColors(theme),
+														_1: {
+															ctor: '::',
+															_0: _gdotdesign$elm_ui$Ui_Styles_Mixins$disabled,
+															_1: {
+																ctor: '::',
+																_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderColor(_gdotdesign$elm_ui$Ui_Css_Properties$transparent),
+																_1: {ctor: '[]'}
+															}
+														}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_gdotdesign$elm_ui$Ui_Css$selector,
+														'&:focus',
+														{
+															ctor: '::',
+															_0: _gdotdesign$elm_ui$Ui_Styles_Mixins$focused(theme),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_gdotdesign$elm_ui$Ui_Css$selector,
+															'&[kind=checkbox]',
+															{
+																ctor: '::',
+																_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderRadius(theme.borderRadius),
+																_1: {
+																	ctor: '::',
+																	_0: _gdotdesign$elm_ui$Ui_Css_Properties$justifyContent(_gdotdesign$elm_ui$Ui_Css_Properties$center),
+																	_1: {
+																		ctor: '::',
+																		_0: _gdotdesign$elm_ui$Ui_Css_Properties$alignItems(_gdotdesign$elm_ui$Ui_Css_Properties$center),
+																		_1: {
+																			ctor: '::',
+																			_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$flex),
+																			_1: {
+																				ctor: '::',
+																				_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+																					_gdotdesign$elm_ui$Ui_Css_Properties$px(36)),
+																				_1: {
+																					ctor: '::',
+																					_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
+																						_gdotdesign$elm_ui$Ui_Css_Properties$px(36)),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(
+																							_gdotdesign$elm_ui$Ui_Css$selector,
+																							'svg',
+																							{
+																								ctor: '::',
+																								_0: _gdotdesign$elm_ui$Ui_Css_Properties$transition(
+																									{
+																										ctor: '::',
+																										_0: {
+																											duration: _gdotdesign$elm_ui$Ui_Css_Properties$ms(200),
+																											property: 'all',
+																											easing: 'ease',
+																											delay: _gdotdesign$elm_ui$Ui_Css_Properties$ms(0)
+																										},
+																										_1: {ctor: '[]'}
+																									}),
+																								_1: {
+																									ctor: '::',
+																									_0: _gdotdesign$elm_ui$Ui_Css_Properties$transform(
+																										{
+																											ctor: '::',
+																											_0: _gdotdesign$elm_ui$Ui_Css_Properties$scale(0.4),
+																											_1: {
+																												ctor: '::',
+																												_0: _gdotdesign$elm_ui$Ui_Css_Properties$rotate(45),
+																												_1: {ctor: '[]'}
+																											}
+																										}),
+																									_1: {
+																										ctor: '::',
+																										_0: _gdotdesign$elm_ui$Ui_Css_Properties$fill(_gdotdesign$elm_ui$Ui_Css_Properties$currentColor),
+																										_1: {
+																											ctor: '::',
+																											_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+																												_gdotdesign$elm_ui$Ui_Css_Properties$px(16)),
+																											_1: {
+																												ctor: '::',
+																												_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
+																													_gdotdesign$elm_ui$Ui_Css_Properties$px(16)),
+																												_1: {
+																													ctor: '::',
+																													_0: _gdotdesign$elm_ui$Ui_Css_Properties$opacity(0),
+																													_1: {ctor: '[]'}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}),
+																						_1: {
+																							ctor: '::',
+																							_0: A2(
+																								_gdotdesign$elm_ui$Ui_Css$selector,
+																								'&:focus svg',
+																								{
+																									ctor: '::',
+																									_0: _gdotdesign$elm_ui$Ui_Css_Properties$fill(theme.colors.primary.color),
+																									_1: {ctor: '[]'}
+																								}),
+																							_1: {
+																								ctor: '::',
+																								_0: A2(
+																									_gdotdesign$elm_ui$Ui_Css$selector,
+																									'&[checked] svg',
+																									{
+																										ctor: '::',
+																										_0: _gdotdesign$elm_ui$Ui_Css_Properties$transform(
+																											{
+																												ctor: '::',
+																												_0: _gdotdesign$elm_ui$Ui_Css_Properties$scale(1),
+																												_1: {ctor: '[]'}
+																											}),
+																										_1: {
+																											ctor: '::',
+																											_0: _gdotdesign$elm_ui$Ui_Css_Properties$opacity(1),
+																											_1: {ctor: '[]'}
+																										}
+																									}),
+																								_1: {ctor: '[]'}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_gdotdesign$elm_ui$Ui_Css$selector,
+																'&[kind=toggle]',
+																{
+																	ctor: '::',
+																	_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderRadius(theme.borderRadius),
+																	_1: {
+																		ctor: '::',
+																		_0: _gdotdesign$elm_ui$Ui_Css_Properties$justifyContent(_gdotdesign$elm_ui$Ui_Css_Properties$center),
+																		_1: {
+																			ctor: '::',
+																			_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$inlineFlex),
+																			_1: {
+																				ctor: '::',
+																				_0: _gdotdesign$elm_ui$Ui_Css_Properties$alignItems(_gdotdesign$elm_ui$Ui_Css_Properties$center),
+																				_1: {
+																					ctor: '::',
+																					_0: _gdotdesign$elm_ui$Ui_Css_Properties$position(_gdotdesign$elm_ui$Ui_Css_Properties$relative),
+																					_1: {
+																						ctor: '::',
+																						_0: _gdotdesign$elm_ui$Ui_Css_Properties$minWidth(
+																							_gdotdesign$elm_ui$Ui_Css_Properties$px(76)),
+																						_1: {
+																							ctor: '::',
+																							_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+																								_gdotdesign$elm_ui$Ui_Css_Properties$px(36)),
+																							_1: {
+																								ctor: '::',
+																								_0: A2(
+																									_gdotdesign$elm_ui$Ui_Css$selector,
+																									'ui-checkbox-toggle-bg',
+																									{
+																										ctor: '::',
+																										_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(_gdotdesign$elm_ui$Ui_Css_Properties$inherit),
+																										_1: {
+																											ctor: '::',
+																											_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$flex),
+																											_1: {
+																												ctor: '::',
+																												_0: _gdotdesign$elm_ui$Ui_Css_Properties$flex_('1'),
+																												_1: {
+																													ctor: '::',
+																													_0: A2(
+																														_gdotdesign$elm_ui$Ui_Css$selector,
+																														'ui-checkbox-toggle-span',
+																														{
+																															ctor: '::',
+																															_0: _gdotdesign$elm_ui$Ui_Css_Properties$justifyContent(_gdotdesign$elm_ui$Ui_Css_Properties$center),
+																															_1: {
+																																ctor: '::',
+																																_0: _gdotdesign$elm_ui$Ui_Css_Properties$alignItems(_gdotdesign$elm_ui$Ui_Css_Properties$center),
+																																_1: {
+																																	ctor: '::',
+																																	_0: _gdotdesign$elm_ui$Ui_Css_Properties$fontSize(
+																																		_gdotdesign$elm_ui$Ui_Css_Properties$px(12)),
+																																	_1: {
+																																		ctor: '::',
+																																		_0: _gdotdesign$elm_ui$Ui_Css_Properties$fontWeight(_gdotdesign$elm_ui$Ui_Css_Properties$bold),
+																																		_1: {
+																																			ctor: '::',
+																																			_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$flex),
+																																			_1: {
+																																				ctor: '::',
+																																				_0: _gdotdesign$elm_ui$Ui_Css_Properties$flex_('1'),
+																																				_1: {ctor: '[]'}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}),
+																													_1: {ctor: '[]'}
+																												}
+																											}
+																										}
+																									}),
+																								_1: {
+																									ctor: '::',
+																									_0: A2(
+																										_gdotdesign$elm_ui$Ui_Css$selector,
+																										'ui-checkbox-toggle-handle',
+																										{
+																											ctor: '::',
+																											_0: _gdotdesign$elm_ui$Ui_Css_Properties$transition(
+																												{
+																													ctor: '::',
+																													_0: {
+																														duration: _gdotdesign$elm_ui$Ui_Css_Properties$ms(200),
+																														property: 'all',
+																														easing: 'ease',
+																														delay: _gdotdesign$elm_ui$Ui_Css_Properties$ms(0)
+																													},
+																													_1: {ctor: '[]'}
+																												}),
+																											_1: {
+																												ctor: '::',
+																												_0: _gdotdesign$elm_ui$Ui_Css_Properties$backgroundColor(theme.colors.primary.color),
+																												_1: {
+																													ctor: '::',
+																													_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderRadius(theme.borderRadius),
+																													_1: {
+																														ctor: '::',
+																														_0: _gdotdesign$elm_ui$Ui_Css_Properties$width('calc(50% - 5px)'),
+																														_1: {
+																															ctor: '::',
+																															_0: _gdotdesign$elm_ui$Ui_Css_Properties$position(_gdotdesign$elm_ui$Ui_Css_Properties$absolute),
+																															_1: {
+																																ctor: '::',
+																																_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$block),
+																																_1: {
+																																	ctor: '::',
+																																	_0: _gdotdesign$elm_ui$Ui_Css_Properties$bottom(
+																																		_gdotdesign$elm_ui$Ui_Css_Properties$px(5)),
+																																	_1: {
+																																		ctor: '::',
+																																		_0: _gdotdesign$elm_ui$Ui_Css_Properties$left(
+																																			_gdotdesign$elm_ui$Ui_Css_Properties$px(5)),
+																																		_1: {
+																																			ctor: '::',
+																																			_0: _gdotdesign$elm_ui$Ui_Css_Properties$top(
+																																				_gdotdesign$elm_ui$Ui_Css_Properties$px(5)),
+																																			_1: {ctor: '[]'}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}),
+																									_1: {
+																										ctor: '::',
+																										_0: A2(
+																											_gdotdesign$elm_ui$Ui_Css$selector,
+																											'&[checked] ui-checkbox-toggle-handle',
+																											{
+																												ctor: '::',
+																												_0: _gdotdesign$elm_ui$Ui_Css_Properties$left(
+																													_gdotdesign$elm_ui$Ui_Css_Properties$pct(50)),
+																												_1: {ctor: '[]'}
+																											}),
+																										_1: {
+																											ctor: '::',
+																											_0: A2(
+																												_gdotdesign$elm_ui$Ui_Css$selector,
+																												'&[disabled] ui-checkbox-toggle-handle',
+																												{
+																													ctor: '::',
+																													_0: _gdotdesign$elm_ui$Ui_Css_Properties$backgroundColor(theme.colors.disabledSecondary.color),
+																													_1: {ctor: '[]'}
+																												}),
+																											_1: {
+																												ctor: '::',
+																												_0: A2(
+																													_gdotdesign$elm_ui$Ui_Css$selector,
+																													'&:focus ui-checkbox-toggle-handle',
+																													{
+																														ctor: '::',
+																														_0: _gdotdesign$elm_ui$Ui_Css_Properties$backgroundColor(theme.colors.focus.color),
+																														_1: {ctor: '[]'}
+																													}),
+																												_1: {ctor: '[]'}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_gdotdesign$elm_ui$Ui_Css$selector,
+																	'&[kind=radio]',
+																	{
+																		ctor: '::',
+																		_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderRadius(
+																			_gdotdesign$elm_ui$Ui_Css_Properties$pct(50)),
+																		_1: {
+																			ctor: '::',
+																			_0: _gdotdesign$elm_ui$Ui_Css_Properties$position(_gdotdesign$elm_ui$Ui_Css_Properties$relative),
+																			_1: {
+																				ctor: '::',
+																				_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+																					_gdotdesign$elm_ui$Ui_Css_Properties$px(36)),
+																				_1: {
+																					ctor: '::',
+																					_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
+																						_gdotdesign$elm_ui$Ui_Css_Properties$px(36)),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(
+																							_gdotdesign$elm_ui$Ui_Css$selector,
+																							'ui-checkbox-radio-circle',
+																							{
+																								ctor: '::',
+																								_0: _gdotdesign$elm_ui$Ui_Css_Properties$transform(
+																									{
+																										ctor: '::',
+																										_0: _gdotdesign$elm_ui$Ui_Css_Properties$scale(0.4),
+																										_1: {ctor: '[]'}
+																									}),
+																								_1: {
+																									ctor: '::',
+																									_0: _gdotdesign$elm_ui$Ui_Css_Properties$opacity(0),
+																									_1: {
+																										ctor: '::',
+																										_0: _gdotdesign$elm_ui$Ui_Css_Properties$backgroundColor(theme.colors.primary.color),
+																										_1: {
+																											ctor: '::',
+																											_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderRadius(
+																												_gdotdesign$elm_ui$Ui_Css_Properties$pct(50)),
+																											_1: {
+																												ctor: '::',
+																												_0: _gdotdesign$elm_ui$Ui_Css_Properties$position(_gdotdesign$elm_ui$Ui_Css_Properties$absolute),
+																												_1: {
+																													ctor: '::',
+																													_0: _gdotdesign$elm_ui$Ui_Css_Properties$bottom(
+																														_gdotdesign$elm_ui$Ui_Css_Properties$px(8)),
+																													_1: {
+																														ctor: '::',
+																														_0: _gdotdesign$elm_ui$Ui_Css_Properties$right(
+																															_gdotdesign$elm_ui$Ui_Css_Properties$px(8)),
+																														_1: {
+																															ctor: '::',
+																															_0: _gdotdesign$elm_ui$Ui_Css_Properties$left(
+																																_gdotdesign$elm_ui$Ui_Css_Properties$px(8)),
+																															_1: {
+																																ctor: '::',
+																																_0: _gdotdesign$elm_ui$Ui_Css_Properties$top(
+																																	_gdotdesign$elm_ui$Ui_Css_Properties$px(8)),
+																																_1: {
+																																	ctor: '::',
+																																	_0: _gdotdesign$elm_ui$Ui_Css_Properties$transition(
+																																		{
+																																			ctor: '::',
+																																			_0: {
+																																				easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+																																				duration: _gdotdesign$elm_ui$Ui_Css_Properties$ms(200),
+																																				property: 'all',
+																																				delay: _gdotdesign$elm_ui$Ui_Css_Properties$ms(0)
+																																			},
+																																			_1: {ctor: '[]'}
+																																		}),
+																																	_1: {ctor: '[]'}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}),
+																						_1: {
+																							ctor: '::',
+																							_0: A2(
+																								_gdotdesign$elm_ui$Ui_Css$selector,
+																								'&[checked] ui-checkbox-radio-circle',
+																								{
+																									ctor: '::',
+																									_0: _gdotdesign$elm_ui$Ui_Css_Properties$transform(
+																										{
+																											ctor: '::',
+																											_0: _gdotdesign$elm_ui$Ui_Css_Properties$scale(1),
+																											_1: {ctor: '[]'}
+																										}),
+																									_1: {
+																										ctor: '::',
+																										_0: _gdotdesign$elm_ui$Ui_Css_Properties$opacity(1),
+																										_1: {ctor: '[]'}
+																									}
+																								}),
+																							_1: {
+																								ctor: '::',
+																								_0: A2(
+																									_gdotdesign$elm_ui$Ui_Css$selector,
+																									'&[disabled] ui-checkbox-radio-circle',
+																									{
+																										ctor: '::',
+																										_0: _gdotdesign$elm_ui$Ui_Css_Properties$backgroundColor(theme.colors.disabledSecondary.color),
+																										_1: {ctor: '[]'}
+																									}),
+																								_1: {
+																									ctor: '::',
+																									_0: A2(
+																										_gdotdesign$elm_ui$Ui_Css$selector,
+																										'&:focus ui-checkbox-radio-circle',
+																										{
+																											ctor: '::',
+																											_0: _gdotdesign$elm_ui$Ui_Css_Properties$backgroundColor(theme.colors.focus.color),
+																											_1: {ctor: '[]'}
+																										}),
+																									_1: {ctor: '[]'}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}),
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Styles_Checkbox$defaultStyle = _gdotdesign$elm_ui$Ui_Styles$attributes(
+	_gdotdesign$elm_ui$Ui_Styles_Checkbox$style(_gdotdesign$elm_ui$Ui_Styles_Theme$default));
+
+var _gdotdesign$elm_ui$Ui_Checkbox$setValue = F2(
+	function (value, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{value: value});
+	});
+var _gdotdesign$elm_ui$Ui_Checkbox$update = F2(
+	function (action, model) {
+		var _p0 = action;
+		var value = !model.value;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{value: value}),
+			_1: A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$sendBool, model.uid, value)
+		};
+	});
+var _gdotdesign$elm_ui$Ui_Checkbox$onChange = F2(
+	function (msg, model) {
+		return A2(_gdotdesign$elm_ui$Ui_Helpers_Emitter$listenBool, model.uid, msg);
+	});
+var _gdotdesign$elm_ui$Ui_Checkbox$init = function (_p1) {
+	return {
+		uid: _gdotdesign$elm_ui$Ui_Native_Uid$uid(
+			{ctor: '_Tuple0'}),
+		disabled: false,
+		readonly: false,
+		value: false
+	};
+};
+var _gdotdesign$elm_ui$Ui_Checkbox$Model = F4(
+	function (a, b, c, d) {
+		return {disabled: a, readonly: b, value: c, uid: d};
+	});
+var _gdotdesign$elm_ui$Ui_Checkbox$Toggle = {ctor: 'Toggle'};
+var _gdotdesign$elm_ui$Ui_Checkbox$attributes = F2(
+	function (kind, model) {
+		return _elm_lang$core$List$concat(
+			{
+				ctor: '::',
+				_0: _gdotdesign$elm_ui$Ui$attributeList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'disabled', _1: model.disabled},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'readonly', _1: model.readonly},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'checked', _1: model.value},
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_gdotdesign$elm_ui$Ui$enabledActions,
+						model,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(_gdotdesign$elm_ui$Ui_Checkbox$Toggle),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_gdotdesign$elm_ui$Html_Events_Extra$onKeys,
+									true,
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 13, _1: _gdotdesign$elm_ui$Ui_Checkbox$Toggle},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 32, _1: _gdotdesign$elm_ui$Ui_Checkbox$Toggle},
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _gdotdesign$elm_ui$Ui_Styles$apply(_gdotdesign$elm_ui$Ui_Styles_Checkbox$defaultStyle),
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '::',
+								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'kind', kind),
+								_1: {ctor: '[]'}
+							},
+							_1: {
+								ctor: '::',
+								_0: _gdotdesign$elm_ui$Ui$tabIndex(model),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			});
+	});
+var _gdotdesign$elm_ui$Ui_Checkbox$render = function (model) {
+	return A3(
+		_elm_lang$html$Html$node,
+		'ui-checkbox',
+		A2(_gdotdesign$elm_ui$Ui_Checkbox$attributes, 'checkbox', model),
+		{
+			ctor: '::',
+			_0: _gdotdesign$elm_ui$Ui_Icons$checkmark(
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Checkbox$view = function (model) {
+	return A2(_elm_lang$html$Html_Lazy$lazy, _gdotdesign$elm_ui$Ui_Checkbox$render, model);
+};
+var _gdotdesign$elm_ui$Ui_Checkbox$renderRadio = function (model) {
+	return A3(
+		_elm_lang$html$Html$node,
+		'ui-checkbox',
+		A2(_gdotdesign$elm_ui$Ui_Checkbox$attributes, 'radio', model),
+		{
+			ctor: '::',
+			_0: A3(
+				_elm_lang$html$Html$node,
+				'ui-checkbox-radio-circle',
+				{ctor: '[]'},
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Checkbox$viewRadio = function (model) {
+	return A2(_elm_lang$html$Html_Lazy$lazy, _gdotdesign$elm_ui$Ui_Checkbox$renderRadio, model);
+};
+var _gdotdesign$elm_ui$Ui_Checkbox$renderToggle = function (model) {
+	return A3(
+		_elm_lang$html$Html$node,
+		'ui-checkbox',
+		A2(_gdotdesign$elm_ui$Ui_Checkbox$attributes, 'toggle', model),
+		{
+			ctor: '::',
+			_0: A3(
+				_elm_lang$html$Html$node,
+				'ui-checkbox-toggle-bg',
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: A3(
+						_elm_lang$html$Html$node,
+						'ui-checkbox-toggle-span',
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('ON'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A3(
+							_elm_lang$html$Html$node,
+							'ui-checkbox-toggle-span',
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('OFF'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A3(
+					_elm_lang$html$Html$node,
+					'ui-checkbox-toggle-handle',
+					{ctor: '[]'},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Checkbox$viewToggle = function (model) {
+	return A2(_elm_lang$html$Html_Lazy$lazy, _gdotdesign$elm_ui$Ui_Checkbox$renderToggle, model);
+};
+
+var _gdotdesign$elm_ui$Ui_Styles_IconButton$style = function (theme) {
+	return _gdotdesign$elm_ui$Ui_Css$mixin(
+		{
+			ctor: '::',
+			_0: _gdotdesign$elm_ui$Ui_Styles_Button$style(theme),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_gdotdesign$elm_ui$Ui_Css$selector,
+					'ui-icon-button-icon + span:not(:empty)',
+					{
+						ctor: '::',
+						_0: _gdotdesign$elm_ui$Ui_Css_Properties$marginLeft(
+							_gdotdesign$elm_ui$Ui_Css_Properties$em(0.625)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_gdotdesign$elm_ui$Ui_Css$selector,
+						'span:not(:empty) + ui-icon-button-icon',
+						{
+							ctor: '::',
+							_0: _gdotdesign$elm_ui$Ui_Css_Properties$marginLeft(
+								_gdotdesign$elm_ui$Ui_Css_Properties$em(0.625)),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_gdotdesign$elm_ui$Ui_Css$selector,
+							'ui-icon-button-icon',
+							{
+								ctor: '::',
+								_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$inlineFlex),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_gdotdesign$elm_ui$Ui_Css$selector,
+										'> *',
+										{
+											ctor: '::',
+											_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(_gdotdesign$elm_ui$Ui_Css_Properties$inherit),
+											_1: {
+												ctor: '::',
+												_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(_gdotdesign$elm_ui$Ui_Css_Properties$inherit),
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_gdotdesign$elm_ui$Ui_Css$selector,
+											'svg',
+											{
+												ctor: '::',
+												_0: _gdotdesign$elm_ui$Ui_Css_Properties$fill(_gdotdesign$elm_ui$Ui_Css_Properties$currentColor),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_gdotdesign$elm_ui$Ui_Css$selector,
+								'&[size=medium] ui-icon-button-icon',
+								{
+									ctor: '::',
+									_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+										_gdotdesign$elm_ui$Ui_Css_Properties$px(12)),
+									_1: {
+										ctor: '::',
+										_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
+											_gdotdesign$elm_ui$Ui_Css_Properties$px(12)),
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_gdotdesign$elm_ui$Ui_Css$selector,
+									'&[size=big] ui-icon-button-icon',
+									{
+										ctor: '::',
+										_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+											_gdotdesign$elm_ui$Ui_Css_Properties$px(18)),
+										_1: {
+											ctor: '::',
+											_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
+												_gdotdesign$elm_ui$Ui_Css_Properties$px(18)),
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_gdotdesign$elm_ui$Ui_Css$selector,
+										'&[size=small] ui-icon-button-icon',
+										{
+											ctor: '::',
+											_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+												_gdotdesign$elm_ui$Ui_Css_Properties$px(10)),
+											_1: {
+												ctor: '::',
+												_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
+													_gdotdesign$elm_ui$Ui_Css_Properties$px(10)),
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Styles_IconButton$defaultStyle = _gdotdesign$elm_ui$Ui_Styles$attributes(
+	_gdotdesign$elm_ui$Ui_Styles_IconButton$style(_gdotdesign$elm_ui$Ui_Styles_Theme$default));
+
+var _gdotdesign$elm_ui$Ui_IconButton$render = F2(
+	function (msg, model) {
+		var span = A3(
+			_elm_lang$html$Html$node,
+			'span',
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(model.text),
+				_1: {ctor: '[]'}
+			});
+		var icon = A3(
+			_elm_lang$html$Html$node,
+			'ui-icon-button-icon',
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: model.glyph,
+				_1: {ctor: '[]'}
+			});
+		var children = _elm_lang$core$Native_Utils.eq(model.side, 'left') ? {
+			ctor: '::',
+			_0: icon,
+			_1: {
+				ctor: '::',
+				_0: span,
+				_1: {ctor: '[]'}
+			}
+		} : {
+			ctor: '::',
+			_0: span,
+			_1: {
+				ctor: '::',
+				_0: icon,
+				_1: {ctor: '[]'}
+			}
+		};
+		return A3(
+			_elm_lang$html$Html$node,
+			'ui-icon-button',
+			A3(_gdotdesign$elm_ui$Ui_Button$attributes, _gdotdesign$elm_ui$Ui_Styles_IconButton$defaultStyle, msg, model),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
+					ctor: '::',
+					_0: _gdotdesign$elm_ui$Ui_Helpers_Ripple$view,
+					_1: {ctor: '[]'}
+				},
+				children));
+	});
+var _gdotdesign$elm_ui$Ui_IconButton$view = F2(
+	function (msg, model) {
+		return A3(_elm_lang$html$Html_Lazy$lazy2, _gdotdesign$elm_ui$Ui_IconButton$render, msg, model);
+	});
+var _gdotdesign$elm_ui$Ui_IconButton$model = F2(
+	function (text, glyph) {
+		return {disabled: false, readonly: false, kind: 'primary', size: 'medium', glyph: glyph, side: 'left', text: text};
+	});
+var _gdotdesign$elm_ui$Ui_IconButton$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {glyph: a, disabled: b, readonly: c, text: d, kind: e, side: f, size: g};
+	});
 
 var _gdotdesign$elm_ui$Ui_Styles_Modal$style = function (theme) {
 	return _gdotdesign$elm_ui$Ui_Css$mixin(
@@ -15292,6 +17056,97 @@ var _user$project$Football_Data$reverse = F2(
 				return _elm_lang$core$Basics$EQ;
 		}
 	});
+var _user$project$Football_Data$gamesHasInplay = function (_p1) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		false,
+		A2(
+			_elm_lang$core$Maybe$map,
+			function (_p2) {
+				return true;
+			},
+			_elm_lang$core$List$head(
+				A2(
+					_elm_lang$core$List$filter,
+					function (_) {
+						return _.inplay;
+					},
+					_p1))));
+};
+var _user$project$Football_Data$groupByCompetitions = function (xs) {
+	return _elm_lang$core$Dict$toList(
+		A6(
+			_elm_lang$core$Dict$merge,
+			F2(
+				function (k, game) {
+					return A2(
+						_elm_lang$core$Dict$insert,
+						k,
+						{
+							ctor: '::',
+							_0: game,
+							_1: {ctor: '[]'}
+						});
+				}),
+			F3(
+				function (k, game, games) {
+					return A2(
+						_elm_lang$core$Dict$insert,
+						k,
+						{ctor: '::', _0: game, _1: games});
+				}),
+			_elm_lang$core$Dict$insert,
+			_elm_lang$core$Dict$empty,
+			_elm_lang$core$Dict$fromList(
+				A2(
+					_elm_lang$core$List$map,
+					function (x) {
+						return {
+							ctor: '_Tuple2',
+							_0: x.competition,
+							_1: {
+								ctor: '::',
+								_0: x,
+								_1: {ctor: '[]'}
+							}
+						};
+					},
+					xs)),
+			_elm_lang$core$Dict$empty));
+};
+var _user$project$Football_Data$gamesCompetitions = function (games) {
+	return A2(
+		_elm_lang$core$List$map,
+		_elm_lang$core$Tuple$first,
+		A2(
+			_elm_lang$core$List$sortBy,
+			function (_p3) {
+				return A2(
+					F2(
+						function (x, y) {
+							return x * y;
+						}),
+					-1,
+					_elm_lang$core$Tuple$second(_p3));
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (_p4) {
+					var _p5 = _p4;
+					return {
+						ctor: '_Tuple2',
+						_0: _p5._0,
+						_1: _elm_lang$core$List$sum(
+							A2(
+								_elm_lang$core$List$map,
+								function (_) {
+									return _.totalAvailable;
+								},
+								_p5._1))
+					};
+				},
+				_user$project$Football_Data$groupByCompetitions(games))));
+};
 var _user$project$Football_Data$decoderMaybe = F2(
 	function (fieldStr, d) {
 		return A3(
@@ -15304,10 +17159,10 @@ var _user$project$Football_Data$updateGame = F2(
 	function (x, y) {
 		var comp = F2(
 			function (fy, fx) {
-				var _p1 = fy(y);
-				if (_p1.ctor === 'Just') {
+				var _p6 = fy(y);
+				if (_p6.ctor === 'Just') {
 					return !_elm_lang$core$Native_Utils.eq(
-						_p1._0,
+						_p6._0,
 						fx(x));
 				} else {
 					return false;
@@ -15334,22 +17189,22 @@ var _user$project$Football_Data$updateGame = F2(
 			});
 	});
 var _user$project$Football_Data$updateGames = F2(
-	function (_p2, games) {
-		var _p3 = _p2;
-		var _p9 = _p3.$new;
-		if (_p3.reset) {
-			return _p9;
+	function (_p7, games) {
+		var _p8 = _p7;
+		var _p14 = _p8.$new;
+		if (_p8.reset) {
+			return _p14;
 		} else {
-			var isJust = function (_p4) {
+			var isJust = function (_p9) {
 				return A2(
 					_elm_lang$core$Maybe$withDefault,
 					false,
 					A2(
 						_elm_lang$core$Maybe$map,
-						function (_p5) {
+						function (_p10) {
 							return true;
 						},
-						_p4));
+						_p9));
 			};
 			var updM = _elm_lang$core$Dict$fromList(
 				A2(
@@ -15357,15 +17212,15 @@ var _user$project$Football_Data$updateGames = F2(
 					function (x) {
 						return {ctor: '_Tuple2', _0: x.id, _1: x};
 					},
-					_p3.upd));
+					_p8.upd));
 			var newSet = _elm_lang$core$Set$fromList(
 				A2(
 					_elm_lang$core$List$map,
 					function (_) {
 						return _.id;
 					},
-					_p9));
-			var outSet = _elm_lang$core$Set$fromList(_p3.out);
+					_p14));
+			var outSet = _elm_lang$core$Set$fromList(_p8.out);
 			var play = A2(
 				_elm_lang$core$List$map,
 				function (x) {
@@ -15379,10 +17234,10 @@ var _user$project$Football_Data$updateGames = F2(
 				},
 				A2(
 					_elm_lang$core$List$filter,
-					function (_p6) {
-						var _p7 = _p6;
-						var _p8 = _p7.id;
-						return (!A2(_elm_lang$core$Set$member, _p8, outSet)) && (!A2(_elm_lang$core$Set$member, _p8, newSet));
+					function (_p11) {
+						var _p12 = _p11;
+						var _p13 = _p12.id;
+						return (!A2(_elm_lang$core$Set$member, _p13, outSet)) && (!A2(_elm_lang$core$Set$member, _p13, newSet));
 					},
 					games));
 			return A2(
@@ -15390,7 +17245,7 @@ var _user$project$Football_Data$updateGames = F2(
 				function (_) {
 					return _.order;
 				},
-				A2(_elm_lang$core$Basics_ops['++'], _p9, play));
+				A2(_elm_lang$core$Basics_ops['++'], _p14, play));
 		}
 	});
 var _user$project$Football_Data$Game = function (a) {
@@ -15670,50 +17525,171 @@ var _user$project$Football_Football$hasNotEmpty = function (f) {
 						_p0))));
 	};
 };
+var _user$project$Football_Football$listZip = F2(
+	function (xs, ys) {
+		var _p3 = {ctor: '_Tuple2', _0: xs, _1: ys};
+		if ((_p3._0.ctor === '::') && (_p3._1.ctor === '::')) {
+			return {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: _p3._0._0, _1: _p3._1._0},
+				_1: A2(_user$project$Football_Football$listZip, _p3._0._1, _p3._1._1)
+			};
+		} else {
+			return {ctor: '[]'};
+		}
+	});
 var _user$project$Football_Football$numToStr = function (x) {
 	return _elm_lang$core$Native_Utils.eq(x, 0) ? '' : _elm_lang$core$Basics$toString(x);
 };
 var _user$project$Football_Football$priceColumn = F2(
 	function (name, toValue) {
-		return _evancz$elm_sortable_table$Table$customColumn(
+		return _evancz$elm_sortable_table$Table$veryCustomColumn(
 			{
 				name: name,
 				viewData: function (x) {
-					return (_elm_lang$core$Native_Utils.cmp(
-						toValue(x),
-						0) > 0) ? _elm_lang$core$Basics$toString(
-						toValue(x)) : '';
+					return A2(
+						_evancz$elm_sortable_table$Table$HtmlDetails,
+						{ctor: '[]'},
+						(_elm_lang$core$Native_Utils.cmp(
+							toValue(x),
+							0) > 0) ? {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								_elm_lang$core$Basics$toString(
+									toValue(x))),
+							_1: {ctor: '[]'}
+						} : {ctor: '[]'});
 				},
 				sorter: _evancz$elm_sortable_table$Table$unsortable
 			});
 	});
 var _user$project$Football_Football$dollarColumn = F2(
 	function (name, toValue) {
-		return _evancz$elm_sortable_table$Table$customColumn(
+		return _evancz$elm_sortable_table$Table$veryCustomColumn(
 			{
 				name: name,
 				viewData: function (x) {
-					return (_elm_lang$core$Native_Utils.cmp(
-						toValue(x),
-						0) > 0) ? A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(
-							toValue(x)),
-						'$') : '';
+					return A2(
+						_evancz$elm_sortable_table$Table$HtmlDetails,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('dollar'),
+							_1: {ctor: '[]'}
+						},
+						(_elm_lang$core$Native_Utils.cmp(
+							toValue(x),
+							0) > 0) ? {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(
+										toValue(x)),
+									' $')),
+							_1: {ctor: '[]'}
+						} : {ctor: '[]'});
 				},
 				sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(toValue)
 			});
 	});
+var _user$project$Football_Football$columnScore = A2(
+	_evancz$elm_sortable_table$Table$stringColumn,
+	'Счёт',
+	function (_p4) {
+		var _p5 = _p4;
+		return _p5.inplay ? A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(_p5.scoreHome),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				' - ',
+				_elm_lang$core$Basics$toString(_p5.scoreAway))) : '';
+	});
+var _user$project$Football_Football$buttonSettingsModel = {
+	disabled: false,
+	readonly: false,
+	kind: 'secondary',
+	size: 'small',
+	glyph: _gdotdesign$elm_ui$Ui_Icons$plus(
+		{ctor: '[]'}),
+	side: 'left',
+	text: 'Настройки'
+};
+var _user$project$Football_Football$init = F2(
+	function (protocol, host) {
+		return {
+			ctor: '_Tuple2',
+			_0: {
+				games: {ctor: '[]'},
+				protocol: protocol,
+				host: host,
+				uiModal: {closable: true, backdrop: true, open: false},
+				tableState: _evancz$elm_sortable_table$Table$initialSort('№'),
+				comps: _elm_lang$core$Dict$empty
+			},
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _user$project$Football_Football$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {protocol: a, host: b, games: c, uiModal: d, tableState: e, comps: f};
+	});
+var _user$project$Football_Football$CompModel = F3(
+	function (a, b, c) {
+		return {checkbox: a, comp: b, value: c};
+	});
+var _user$project$Football_Football$CheckboxChanged = F2(
+	function (a, b) {
+		return {ctor: 'CheckboxChanged', _0: a, _1: b};
+	});
+var _user$project$Football_Football$UiCheckbox = F2(
+	function (a, b) {
+		return {ctor: 'UiCheckbox', _0: a, _1: b};
+	});
 var _user$project$Football_Football$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p6 = msg;
+		switch (_p6.ctor) {
+			case 'UiCheckbox':
+				var _p10 = _p6._0;
+				var _p7 = A2(_elm_lang$core$Dict$get, _p10, model.comps);
+				if (_p7.ctor === 'Nothing') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p9 = _p7._0;
+					var _p8 = A2(_gdotdesign$elm_ui$Ui_Checkbox$update, _p6._1, _p9.checkbox);
+					var newCheckbox = _p8._0;
+					var cmd_ = _p8._1;
+					var newComps = A3(
+						_elm_lang$core$Dict$insert,
+						_p10,
+						_elm_lang$core$Native_Utils.update(
+							_p9,
+							{checkbox: newCheckbox}),
+						model.comps);
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{comps: newComps}),
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$core$Platform_Cmd$map,
+								_user$project$Football_Football$UiCheckbox(_p10),
+								cmd_),
+							_1: {ctor: '[]'}
+						});
+				}
 			case 'SetTableState':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{tableState: _p3._0}),
+						{tableState: _p6._0}),
 					{ctor: '[]'});
 			case 'UiModal':
 				return A2(
@@ -15721,18 +17697,65 @@ var _user$project$Football_Football$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							uiModal: A2(_gdotdesign$elm_ui$Ui_Modal$update, _p3._0, model.uiModal)
+							uiModal: A2(_gdotdesign$elm_ui$Ui_Modal$update, _p6._0, model.uiModal)
 						}),
 					{ctor: '[]'});
 			case 'NewGamesChanges':
-				var newGames = A2(_user$project$Football_Data$updateGames, _p3._0, model.games);
+				var newGames = A2(_user$project$Football_Data$updateGames, _p6._0, model.games);
+				var newComps = _elm_lang$core$Dict$fromList(
+					A2(
+						_elm_lang$core$List$map,
+						function (comp) {
+							var v = A2(
+								_elm_lang$core$Maybe$withDefault,
+								true,
+								_elm_lang$core$List$head(
+									A2(
+										_elm_lang$core$List$map,
+										function (_p11) {
+											return function (_) {
+												return _.value;
+											}(
+												function (_) {
+													return _.checkbox;
+												}(_p11));
+										},
+										A2(
+											_elm_lang$core$List$filter,
+											function (_p12) {
+												return A2(
+													F2(
+														function (x, y) {
+															return _elm_lang$core$Native_Utils.eq(x, y);
+														}),
+													comp,
+													function (_) {
+														return _.comp;
+													}(_p12));
+											},
+											A2(
+												_elm_lang$core$List$map,
+												_elm_lang$core$Tuple$second,
+												_elm_lang$core$Dict$toList(model.comps))))));
+							var cb = A2(
+								_gdotdesign$elm_ui$Ui_Checkbox$setValue,
+								v,
+								_gdotdesign$elm_ui$Ui_Checkbox$init(
+									{ctor: '_Tuple0'}));
+							return {
+								ctor: '_Tuple2',
+								_0: cb.uid,
+								_1: {checkbox: cb, comp: comp, value: true}
+							};
+						},
+						_user$project$Football_Data$gamesCompetitions(newGames)));
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{games: newGames}),
+						{games: newGames, comps: newComps}),
 					{ctor: '[]'});
-			default:
+			case 'SettingsDialog':
 				var uiModal = model.uiModal;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -15744,71 +17767,104 @@ var _user$project$Football_Football$update = F2(
 								{open: true})
 						}),
 					{ctor: '[]'});
+			default:
+				var newComps = A2(
+					_elm_lang$core$Dict$map,
+					F2(
+						function (k, x) {
+							return _elm_lang$core$Native_Utils.eq(k, _p6._0) ? _elm_lang$core$Native_Utils.update(
+								x,
+								{
+									checkbox: A2(_gdotdesign$elm_ui$Ui_Checkbox$setValue, _p6._1, x.checkbox)
+								}) : x;
+						}),
+					model.comps);
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{comps: newComps}),
+					{ctor: '[]'});
 		}
 	});
-var _user$project$Football_Football$init = F2(
-	function (protocol, host) {
-		return {
-			ctor: '_Tuple2',
-			_0: {
-				games: {ctor: '[]'},
-				protocol: protocol,
-				host: host,
-				uiModal: {closable: true, backdrop: true, open: false},
-				buttonSettings: A3(_gdotdesign$elm_ui$Ui_Button$model, 'Настройка', 'primary', 'medium'),
-				tableState: _evancz$elm_sortable_table$Table$initialSort('№')
+var _user$project$Football_Football$renderCompsCheckboxes = function (model) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		{ctor: '[]'},
+		A2(
+			_elm_lang$core$List$map,
+			function (_p13) {
+				var _p14 = _p13;
+				var _p15 = _p14._1;
+				return A2(
+					_elm_lang$html$Html$li,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$map,
+							_user$project$Football_Football$UiCheckbox(_p14._0),
+							_gdotdesign$elm_ui$Ui_Checkbox$view(_p15.checkbox)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(_p15.comp),
+							_1: {ctor: '[]'}
+						}
+					});
 			},
-			_1: _elm_lang$core$Platform_Cmd$none
-		};
-	});
-var _user$project$Football_Football$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {protocol: a, host: b, games: c, uiModal: d, buttonSettings: e, tableState: f};
-	});
+			A2(
+				_elm_lang$core$List$sortBy,
+				function (_p16) {
+					return function (_) {
+						return _.comp;
+					}(
+						_elm_lang$core$Tuple$second(_p16));
+				},
+				_elm_lang$core$Dict$toList(model.comps))));
+};
 var _user$project$Football_Football$SetTableState = function (a) {
 	return {ctor: 'SetTableState', _0: a};
 };
-var _user$project$Football_Football$configTable = _evancz$elm_sortable_table$Table$config(
-	{
-		toId: function (_p4) {
-			return _elm_lang$core$Basics$toString(
-				function (_) {
-					return _.id;
-				}(_p4));
-		},
-		toMsg: _user$project$Football_Football$SetTableState,
-		columns: {
-			ctor: '::',
-			_0: A2(
-				_evancz$elm_sortable_table$Table$intColumn,
-				'№',
-				function (_) {
-					return _.order;
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_evancz$elm_sortable_table$Table$stringColumn,
-					'Дома',
+var _user$project$Football_Football$configTable = function (hasInplay) {
+	var dc = _evancz$elm_sortable_table$Table$defaultCustomizations;
+	return _evancz$elm_sortable_table$Table$customConfig(
+		{
+			toId: function (_p17) {
+				return _elm_lang$core$Basics$toString(
 					function (_) {
-						return _.home;
-					}),
-				_1: {
+						return _.id;
+					}(_p17));
+			},
+			toMsg: _user$project$Football_Football$SetTableState,
+			columns: A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
 					ctor: '::',
 					_0: A2(
-						_evancz$elm_sortable_table$Table$stringColumn,
-						'Счёт',
-						function (_p5) {
-							var _p6 = _p5;
-							return _p6.inplay ? A2(
-								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p6.scoreHome),
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									' - ',
-									_elm_lang$core$Basics$toString(_p6.scoreAway))) : '';
+						_evancz$elm_sortable_table$Table$intColumn,
+						'№',
+						function (_) {
+							return _.order;
 						}),
 					_1: {
+						ctor: '::',
+						_0: A2(
+							_evancz$elm_sortable_table$Table$stringColumn,
+							'Дома',
+							function (_) {
+								return _.home;
+							}),
+						_1: {ctor: '[]'}
+					}
+				},
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					hasInplay ? {
+						ctor: '::',
+						_0: _user$project$Football_Football$columnScore,
+						_1: {ctor: '[]'}
+					} : {ctor: '[]'},
+					{
 						ctor: '::',
 						_0: A2(
 							_evancz$elm_sortable_table$Table$stringColumn,
@@ -15828,84 +17884,75 @@ var _user$project$Football_Football$configTable = _evancz$elm_sortable_table$Tab
 								ctor: '::',
 								_0: A2(
 									_evancz$elm_sortable_table$Table$stringColumn,
-									'Страна',
+									'Чемпионат',
 									function (_) {
-										return _.country;
+										return _.competition;
 									}),
 								_1: {
 									ctor: '::',
 									_0: A2(
-										_evancz$elm_sortable_table$Table$stringColumn,
-										'Чемпионат',
+										_user$project$Football_Football$dollarColumn,
+										'В паре',
 										function (_) {
-											return _.competition;
+											return _.totalMatched;
 										}),
 									_1: {
 										ctor: '::',
 										_0: A2(
 											_user$project$Football_Football$dollarColumn,
-											'В паре',
+											'Не в паре',
 											function (_) {
-												return _.totalMatched;
+												return _.totalAvailable;
 											}),
 										_1: {
 											ctor: '::',
 											_0: A2(
-												_user$project$Football_Football$dollarColumn,
-												'Не в паре',
+												_user$project$Football_Football$priceColumn,
+												'П1+',
 												function (_) {
-													return _.totalAvailable;
+													return _.winBack;
 												}),
 											_1: {
 												ctor: '::',
 												_0: A2(
 													_user$project$Football_Football$priceColumn,
-													'П1+',
+													'П1-',
 													function (_) {
-														return _.winBack;
+														return _.winLay;
 													}),
 												_1: {
 													ctor: '::',
 													_0: A2(
 														_user$project$Football_Football$priceColumn,
-														'П1-',
+														'Н+',
 														function (_) {
-															return _.winLay;
+															return _.drawBack;
 														}),
 													_1: {
 														ctor: '::',
 														_0: A2(
 															_user$project$Football_Football$priceColumn,
-															'Н+',
+															'Н-',
 															function (_) {
-																return _.drawBack;
+																return _.drawLay;
 															}),
 														_1: {
 															ctor: '::',
 															_0: A2(
 																_user$project$Football_Football$priceColumn,
-																'Н-',
+																'П2+',
 																function (_) {
-																	return _.drawLay;
+																	return _.loseBack;
 																}),
 															_1: {
 																ctor: '::',
 																_0: A2(
 																	_user$project$Football_Football$priceColumn,
-																	'П2+',
+																	'П2-',
 																	function (_) {
-																		return _.loseBack;
+																		return _.loseLay;
 																	}),
-																_1: {
-																	ctor: '::',
-																	_0: A2(
-																		_user$project$Football_Football$priceColumn,
-																		'П2-',
-																		function (_) {
-																			return _.loseLay;
-																		}),
-																	_1: {ctor: '[]'}
-																}
+																_1: {ctor: '[]'}
 															}
 														}
 													}
@@ -15916,48 +17963,85 @@ var _user$project$Football_Football$configTable = _evancz$elm_sortable_table$Tab
 								}
 							}
 						}
+					})),
+			customizations: _elm_lang$core$Native_Utils.update(
+				dc,
+				{
+					tableAttrs: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('footbal-table'),
+						_1: {ctor: '[]'}
 					}
-				}
-			}
-		}
-	});
+				})
+		});
+};
+var _user$project$Football_Football$rederGamesTable = function (_p18) {
+	var _p19 = _p18;
+	var _p20 = _p19.games;
+	return A3(
+		_evancz$elm_sortable_table$Table$view,
+		_user$project$Football_Football$configTable(
+			_user$project$Football_Data$gamesHasInplay(_p20)),
+		_p19.tableState,
+		_p20);
+};
 var _user$project$Football_Football$SettingsDialog = {ctor: 'SettingsDialog'};
 var _user$project$Football_Football$UiModal = function (a) {
 	return {ctor: 'UiModal', _0: a};
 };
-var _user$project$Football_Football$view = function (_p7) {
-	var _p8 = _p7;
-	return A3(
-		_gdotdesign$elm_ui$Ui_Container$view,
-		{direction: 'row', align: 'center', compact: false},
+var _user$project$Football_Football$renderSettingsDialog = function (_p21) {
+	var _p22 = _p21;
+	return A2(
+		_gdotdesign$elm_ui$Ui_Modal$view,
+		A4(
+			_gdotdesign$elm_ui$Ui_Modal$ViewModel,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Привет!'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Пока!'),
+				_1: {ctor: '[]'}
+			},
+			_user$project$Football_Football$UiModal,
+			'Настройки'),
+		_p22.uiModal);
+};
+var _user$project$Football_Football$view = function (model) {
+	return A2(
+		_gdotdesign$elm_ui$Ui_Container$rowEnd,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: A3(_evancz$elm_sortable_table$Table$view, _user$project$Football_Football$configTable, _p8.tableState, _p8.games),
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _user$project$Football_Football$rederGamesTable(model),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Football_Football$renderSettingsDialog(model),
+						_1: {ctor: '[]'}
+					}
+				}),
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_gdotdesign$elm_ui$Ui_Modal$view,
-					A4(
-						_gdotdesign$elm_ui$Ui_Modal$ViewModel,
-						{
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(_gdotdesign$elm_ui$Ui_IconButton$view, _user$project$Football_Football$SettingsDialog, _user$project$Football_Football$buttonSettingsModel),
+						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Привет!'),
+							_0: _user$project$Football_Football$renderCompsCheckboxes(model),
 							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Пока!'),
-							_1: {ctor: '[]'}
-						},
-						_user$project$Football_Football$UiModal,
-						'Настройки'),
-					_p8.uiModal),
-				_1: {
-					ctor: '::',
-					_0: A2(_gdotdesign$elm_ui$Ui_Button$view, _user$project$Football_Football$SettingsDialog, _p8.buttonSettings),
-					_1: {ctor: '[]'}
-				}
+						}
+					}),
+				_1: {ctor: '[]'}
 			}
 		});
 };
@@ -15965,26 +18049,45 @@ var _user$project$Football_Football$NewGamesChanges = function (a) {
 	return {ctor: 'NewGamesChanges', _0: a};
 };
 var _user$project$Football_Football$subscriptions = function (model) {
-	return A2(
+	var cbs = A2(
+		_elm_lang$core$List$map,
+		function (_p23) {
+			var _p24 = _p23;
+			return A2(
+				_gdotdesign$elm_ui$Ui_Checkbox$onChange,
+				_user$project$Football_Football$CheckboxChanged(_p24._0),
+				_p24._1.checkbox);
+		},
+		_elm_lang$core$Dict$toList(model.comps));
+	var listenGamesChanges = A2(
 		_elm_lang$websocket$WebSocket$listen,
 		A2(
 			_elm_lang$core$Basics_ops['++'],
 			A2(_user$project$Utils$websocketURL, model.protocol, model.host),
 			'/football'),
 		function (str) {
-			var _p9 = _user$project$Football_Data$parseGames(str);
-			if (_p9.ctor === 'Ok') {
-				return _user$project$Football_Football$NewGamesChanges(_p9._0);
+			var _p25 = _user$project$Football_Data$parseGames(str);
+			if (_p25.ctor === 'Ok') {
+				return _user$project$Football_Football$NewGamesChanges(_p25._0);
 			} else {
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Football.Football',
 					{
-						start: {line: 92, column: 13},
-						end: {line: 97, column: 36}
+						start: {line: 164, column: 21},
+						end: {line: 169, column: 44}
 					},
-					_p9)(_p9._0);
+					_p25)(_p25._0);
 			}
 		});
+	return _elm_lang$core$Platform_Sub$batch(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: listenGamesChanges,
+				_1: {ctor: '[]'}
+			},
+			cbs));
 };
 var _user$project$Football_Football$subs = F2(
 	function (toMsg, model) {
