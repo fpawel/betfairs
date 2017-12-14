@@ -204,35 +204,20 @@ decoderGameCahnges =
 --competitions : List Game -> List (string, List Game)
 
 
-groupByCompetitions : List Game -> List ( String, List Game )
-groupByCompetitions xs =
-    Dict.merge
-        (\k game -> Dict.insert k [ game ])
-        (\k game games -> Dict.insert k (game :: games))
-        Dict.insert
-        Dict.empty
-        (xs
-            |> List.map (\x -> ( x.competition, [ x ] ))
-            |> Dict.fromList
+gamesCompetitions : List Game -> List ( String, List Game )
+gamesCompetitions =
+    List.foldl
+        (\x m ->
+            let
+                games =
+                    Dict.get x.competition m
+                        |> Maybe.withDefault []
+                        |> (::) x
+            in
+                Dict.insert x.competition games m
         )
         Dict.empty
-        |> Dict.toList
-
-
-gamesCompetitions : List Game -> List String
-gamesCompetitions games =
-    games
-        |> groupByCompetitions
-        |> List.map
-            (\( k, xs ) ->
-                ( k
-                , xs
-                    |> List.map .totalAvailable
-                    |> List.sum
-                )
-            )
-        |> List.sortBy (Tuple.second >> (*) -1)
-        |> List.map Tuple.first
+        >> Dict.toList
 
 
 gamesHasInplay : List { a | inplay : Bool } -> Bool

@@ -11,6 +11,7 @@ import (
 	"heroku.com/betfairs/aping"
 	"math"
 	"log"
+	"strings"
 )
 
 type Game struct {
@@ -104,6 +105,10 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 		return
 	}
 	x.Competition = mc[0].Competition.Name
+	if strings.ToLower(x.Competition) == "чемпионшип" {
+		x.Competition = "Чемпионат Футбольной лиги Англии"
+	}
+
 	c := countries.ByAlpha2(mc[0].Event.CountryCode)
 	if c != nil {
 		x.Country = c.Name

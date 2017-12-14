@@ -15110,6 +15110,125 @@ var _gdotdesign$elm_ui$Ui_Button$Model = F5(
 		return {disabled: a, readonly: b, kind: c, size: d, text: e};
 	});
 
+var _gdotdesign$elm_ui$Ui_Styles_ButtonGroup$style = function (theme) {
+	return _gdotdesign$elm_ui$Ui_Css$mixin(
+		{
+			ctor: '::',
+			_0: _gdotdesign$elm_ui$Ui_Styles_Mixins$defaults,
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_gdotdesign$elm_ui$Ui_Css$selector,
+					'ui-button',
+					{
+						ctor: '::',
+						_0: A2(
+							_gdotdesign$elm_ui$Ui_Css$selector,
+							'+ ui-button',
+							{
+								ctor: '::',
+								_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderLeft(
+									A2(
+										_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+										A2(
+											_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+											_gdotdesign$elm_ui$Ui_Css_Properties$px(1),
+											_gdotdesign$elm_ui$Ui_Css_Properties$solid),
+										'rgba(0, 0, 0, 0.15)')),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_gdotdesign$elm_ui$Ui_Css$selector,
+								'&:not(:first-child):not(:last-child)',
+								{
+									ctor: '::',
+									_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderRadius(
+										_gdotdesign$elm_ui$Ui_Css_Properties$px(0)),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_gdotdesign$elm_ui$Ui_Css$selector,
+									'&:first-child',
+									{
+										ctor: '::',
+										_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderRadius(
+											A2(
+												_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+												A2(
+													_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+													A2(
+														_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+														theme.borderRadius,
+														_gdotdesign$elm_ui$Ui_Css_Properties$px(0)),
+													_gdotdesign$elm_ui$Ui_Css_Properties$px(0)),
+												theme.borderRadius)),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_gdotdesign$elm_ui$Ui_Css$selector,
+										'&:last-child',
+										{
+											ctor: '::',
+											_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderRadius(
+												A2(
+													_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+													A2(
+														_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+														A2(
+															_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+															_gdotdesign$elm_ui$Ui_Css_Properties$px(0),
+															theme.borderRadius),
+														theme.borderRadius),
+													_gdotdesign$elm_ui$Ui_Css_Properties$px(0))),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Styles_ButtonGroup$defaultStyle = _gdotdesign$elm_ui$Ui_Styles$attributes(
+	_gdotdesign$elm_ui$Ui_Styles_ButtonGroup$style(_gdotdesign$elm_ui$Ui_Styles_Theme$default));
+
+var _gdotdesign$elm_ui$Ui_ButtonGroup$renderButton = F2(
+	function (model, _p0) {
+		var _p1 = _p0;
+		return A2(
+			_gdotdesign$elm_ui$Ui_Button$view,
+			_p1._1,
+			{disabled: model.disabled, readonly: model.readonly, kind: model.kind, size: model.size, text: _p1._0});
+	});
+var _gdotdesign$elm_ui$Ui_ButtonGroup$render = function (model) {
+	return A3(
+		_elm_lang$html$Html$node,
+		'ui-button-group',
+		_gdotdesign$elm_ui$Ui_Styles$apply(_gdotdesign$elm_ui$Ui_Styles_ButtonGroup$defaultStyle),
+		A2(
+			_elm_lang$core$List$map,
+			_gdotdesign$elm_ui$Ui_ButtonGroup$renderButton(model),
+			model.items));
+};
+var _gdotdesign$elm_ui$Ui_ButtonGroup$view = function (model) {
+	return A2(_elm_lang$html$Html_Lazy$lazy, _gdotdesign$elm_ui$Ui_ButtonGroup$render, model);
+};
+var _gdotdesign$elm_ui$Ui_ButtonGroup$model = function (items) {
+	return {disabled: false, readonly: false, kind: 'primary', size: 'medium', items: items};
+};
+var _gdotdesign$elm_ui$Ui_ButtonGroup$Model = F5(
+	function (a, b, c, d, e) {
+		return {items: a, disabled: b, readonly: c, kind: d, size: e};
+	});
+
 var _gdotdesign$elm_ui$Ui_Native_FileManager$download = F3(
 	function (filename, mimeType, data) {
 		return A3(_gdotdesign$elm_ui$Native_FileManager.download, filename, mimeType, data);
@@ -15340,221 +15459,6 @@ var _gdotdesign$elm_ui$Ui_Helpers_Emitter$Msg = {ctor: 'Msg'};
 _elm_lang$core$Native_Platform.effectManagers['Ui.Helpers.Emitter'] = {pkg: 'gdotdesign/elm-ui', init: _gdotdesign$elm_ui$Ui_Helpers_Emitter$init, onEffects: _gdotdesign$elm_ui$Ui_Helpers_Emitter$onEffects, onSelfMsg: _gdotdesign$elm_ui$Ui_Helpers_Emitter$onSelfMsg, tag: 'fx', cmdMap: _gdotdesign$elm_ui$Ui_Helpers_Emitter$cmdMap, subMap: _gdotdesign$elm_ui$Ui_Helpers_Emitter$subMap};
 
 var _gdotdesign$elm_ui$Ui_Native_Uid$uid = _gdotdesign$elm_ui$Native_Uid.uid;
-
-var _gdotdesign$elm_ui$Ui_Styles_Container$style = function (theme) {
-	return _gdotdesign$elm_ui$Ui_Css$mixin(
-		{
-			ctor: '::',
-			_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$flex),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_gdotdesign$elm_ui$Ui_Css$selector,
-					'&[direction=row]',
-					{
-						ctor: '::',
-						_0: _gdotdesign$elm_ui$Ui_Css_Properties$flexDirection(_gdotdesign$elm_ui$Ui_Css_Properties$row),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_gdotdesign$elm_ui$Ui_Css$selector,
-								'&:not([compact]) > * + *',
-								{
-									ctor: '::',
-									_0: _gdotdesign$elm_ui$Ui_Css_Properties$marginLeft(
-										_gdotdesign$elm_ui$Ui_Css_Properties$px(10)),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_gdotdesign$elm_ui$Ui_Css$selector,
-						'&[direction=column]',
-						{
-							ctor: '::',
-							_0: _gdotdesign$elm_ui$Ui_Css_Properties$flexDirection(_gdotdesign$elm_ui$Ui_Css_Properties$column),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_gdotdesign$elm_ui$Ui_Css$selector,
-									'&:not([compact]) > * + *',
-									{
-										ctor: '::',
-										_0: _gdotdesign$elm_ui$Ui_Css_Properties$marginTop(
-											_gdotdesign$elm_ui$Ui_Css_Properties$px(10)),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_gdotdesign$elm_ui$Ui_Css$selector,
-							'&[align=start]',
-							{
-								ctor: '::',
-								_0: _gdotdesign$elm_ui$Ui_Css_Properties$justifyContent(_gdotdesign$elm_ui$Ui_Css_Properties$flexStart),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_gdotdesign$elm_ui$Ui_Css$selector,
-								'&[align=center]',
-								{
-									ctor: '::',
-									_0: _gdotdesign$elm_ui$Ui_Css_Properties$justifyContent(_gdotdesign$elm_ui$Ui_Css_Properties$center),
-									_1: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_gdotdesign$elm_ui$Ui_Css$selector,
-									'&[align=space-between]',
-									{
-										ctor: '::',
-										_0: _gdotdesign$elm_ui$Ui_Css_Properties$justifyContent(_gdotdesign$elm_ui$Ui_Css_Properties$spaceBetween),
-										_1: {ctor: '[]'}
-									}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_gdotdesign$elm_ui$Ui_Css$selector,
-										'&[align=space-around]',
-										{
-											ctor: '::',
-											_0: _gdotdesign$elm_ui$Ui_Css_Properties$justifyContent(_gdotdesign$elm_ui$Ui_Css_Properties$spaceAround),
-											_1: {ctor: '[]'}
-										}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_gdotdesign$elm_ui$Ui_Css$selector,
-											'&[align=end]',
-											{
-												ctor: '::',
-												_0: _gdotdesign$elm_ui$Ui_Css_Properties$justifyContent(_gdotdesign$elm_ui$Ui_Css_Properties$flexEnd),
-												_1: {ctor: '[]'}
-											}),
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		});
-};
-var _gdotdesign$elm_ui$Ui_Styles_Container$defaultStyle = _gdotdesign$elm_ui$Ui_Styles$attributes(
-	_gdotdesign$elm_ui$Ui_Styles_Container$style(_gdotdesign$elm_ui$Ui_Styles_Theme$default));
-
-var _gdotdesign$elm_ui$Ui_Container$basAttributes = function (model) {
-	return _elm_lang$core$List$concat(
-		{
-			ctor: '::',
-			_0: _gdotdesign$elm_ui$Ui$attributeList(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'compact', _1: model.compact},
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: _gdotdesign$elm_ui$Ui_Styles$apply(_gdotdesign$elm_ui$Ui_Styles_Container$defaultStyle),
-				_1: {
-					ctor: '::',
-					_0: {
-						ctor: '::',
-						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'direction', model.direction),
-						_1: {
-							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'align', model.align),
-							_1: {ctor: '[]'}
-						}
-					},
-					_1: {ctor: '[]'}
-				}
-			}
-		});
-};
-var _gdotdesign$elm_ui$Ui_Container$columnOptions = {direction: 'column', compact: false, align: 'start'};
-var _gdotdesign$elm_ui$Ui_Container$rowOptions = {direction: 'row', compact: false, align: 'start'};
-var _gdotdesign$elm_ui$Ui_Container$render = F3(
-	function (model, attributes, children) {
-		return A3(
-			_elm_lang$html$Html$node,
-			'ui-container',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_gdotdesign$elm_ui$Ui_Container$basAttributes(model),
-				attributes),
-			children);
-	});
-var _gdotdesign$elm_ui$Ui_Container$row = F2(
-	function (attributes, children) {
-		return A4(_elm_lang$html$Html_Lazy$lazy3, _gdotdesign$elm_ui$Ui_Container$render, _gdotdesign$elm_ui$Ui_Container$rowOptions, attributes, children);
-	});
-var _gdotdesign$elm_ui$Ui_Container$rowCenter = F2(
-	function (attributes, children) {
-		return A4(
-			_elm_lang$html$Html_Lazy$lazy3,
-			_gdotdesign$elm_ui$Ui_Container$render,
-			_elm_lang$core$Native_Utils.update(
-				_gdotdesign$elm_ui$Ui_Container$rowOptions,
-				{align: 'center'}),
-			attributes,
-			children);
-	});
-var _gdotdesign$elm_ui$Ui_Container$rowEnd = F2(
-	function (attributes, children) {
-		return A4(
-			_elm_lang$html$Html_Lazy$lazy3,
-			_gdotdesign$elm_ui$Ui_Container$render,
-			_elm_lang$core$Native_Utils.update(
-				_gdotdesign$elm_ui$Ui_Container$rowOptions,
-				{align: 'end'}),
-			attributes,
-			children);
-	});
-var _gdotdesign$elm_ui$Ui_Container$column = F2(
-	function (attributes, children) {
-		return A4(_elm_lang$html$Html_Lazy$lazy3, _gdotdesign$elm_ui$Ui_Container$render, _gdotdesign$elm_ui$Ui_Container$columnOptions, attributes, children);
-	});
-var _gdotdesign$elm_ui$Ui_Container$columnCenter = F2(
-	function (attributes, children) {
-		return A4(
-			_elm_lang$html$Html_Lazy$lazy3,
-			_gdotdesign$elm_ui$Ui_Container$render,
-			_elm_lang$core$Native_Utils.update(
-				_gdotdesign$elm_ui$Ui_Container$columnOptions,
-				{align: 'center'}),
-			attributes,
-			children);
-	});
-var _gdotdesign$elm_ui$Ui_Container$columnEnd = F2(
-	function (attributes, children) {
-		return A4(
-			_elm_lang$html$Html_Lazy$lazy3,
-			_gdotdesign$elm_ui$Ui_Container$render,
-			_elm_lang$core$Native_Utils.update(
-				_gdotdesign$elm_ui$Ui_Container$columnOptions,
-				{align: 'end'}),
-			attributes,
-			children);
-	});
-var _gdotdesign$elm_ui$Ui_Container$view = F3(
-	function (model, attributes, children) {
-		return A4(_elm_lang$html$Html_Lazy$lazy3, _gdotdesign$elm_ui$Ui_Container$render, model, attributes, children);
-	});
-var _gdotdesign$elm_ui$Ui_Container$Model = F3(
-	function (a, b, c) {
-		return {direction: a, align: b, compact: c};
-	});
 
 var _gdotdesign$elm_ui$Ui_Icons$icon = F2(
 	function (iconPath, attributes) {
@@ -17073,79 +16977,26 @@ var _user$project$Football_Data$gamesHasInplay = function (_p1) {
 					},
 					_p1))));
 };
-var _user$project$Football_Data$groupByCompetitions = function (xs) {
+var _user$project$Football_Data$gamesCompetitions = function (_p3) {
 	return _elm_lang$core$Dict$toList(
-		A6(
-			_elm_lang$core$Dict$merge,
+		A3(
+			_elm_lang$core$List$foldl,
 			F2(
-				function (k, game) {
-					return A2(
-						_elm_lang$core$Dict$insert,
-						k,
-						{
-							ctor: '::',
-							_0: game,
-							_1: {ctor: '[]'}
-						});
+				function (x, m) {
+					var games = A2(
+						F2(
+							function (x, y) {
+								return {ctor: '::', _0: x, _1: y};
+							}),
+						x,
+						A2(
+							_elm_lang$core$Maybe$withDefault,
+							{ctor: '[]'},
+							A2(_elm_lang$core$Dict$get, x.competition, m)));
+					return A3(_elm_lang$core$Dict$insert, x.competition, games, m);
 				}),
-			F3(
-				function (k, game, games) {
-					return A2(
-						_elm_lang$core$Dict$insert,
-						k,
-						{ctor: '::', _0: game, _1: games});
-				}),
-			_elm_lang$core$Dict$insert,
 			_elm_lang$core$Dict$empty,
-			_elm_lang$core$Dict$fromList(
-				A2(
-					_elm_lang$core$List$map,
-					function (x) {
-						return {
-							ctor: '_Tuple2',
-							_0: x.competition,
-							_1: {
-								ctor: '::',
-								_0: x,
-								_1: {ctor: '[]'}
-							}
-						};
-					},
-					xs)),
-			_elm_lang$core$Dict$empty));
-};
-var _user$project$Football_Data$gamesCompetitions = function (games) {
-	return A2(
-		_elm_lang$core$List$map,
-		_elm_lang$core$Tuple$first,
-		A2(
-			_elm_lang$core$List$sortBy,
-			function (_p3) {
-				return A2(
-					F2(
-						function (x, y) {
-							return x * y;
-						}),
-					-1,
-					_elm_lang$core$Tuple$second(_p3));
-			},
-			A2(
-				_elm_lang$core$List$map,
-				function (_p4) {
-					var _p5 = _p4;
-					return {
-						ctor: '_Tuple2',
-						_0: _p5._0,
-						_1: _elm_lang$core$List$sum(
-							A2(
-								_elm_lang$core$List$map,
-								function (_) {
-									return _.totalAvailable;
-								},
-								_p5._1))
-					};
-				},
-				_user$project$Football_Data$groupByCompetitions(games))));
+			_p3));
 };
 var _user$project$Football_Data$decoderMaybe = F2(
 	function (fieldStr, d) {
@@ -17159,10 +17010,10 @@ var _user$project$Football_Data$updateGame = F2(
 	function (x, y) {
 		var comp = F2(
 			function (fy, fx) {
-				var _p6 = fy(y);
-				if (_p6.ctor === 'Just') {
+				var _p4 = fy(y);
+				if (_p4.ctor === 'Just') {
 					return !_elm_lang$core$Native_Utils.eq(
-						_p6._0,
+						_p4._0,
 						fx(x));
 				} else {
 					return false;
@@ -17189,22 +17040,22 @@ var _user$project$Football_Data$updateGame = F2(
 			});
 	});
 var _user$project$Football_Data$updateGames = F2(
-	function (_p7, games) {
-		var _p8 = _p7;
-		var _p14 = _p8.$new;
-		if (_p8.reset) {
-			return _p14;
+	function (_p5, games) {
+		var _p6 = _p5;
+		var _p12 = _p6.$new;
+		if (_p6.reset) {
+			return _p12;
 		} else {
-			var isJust = function (_p9) {
+			var isJust = function (_p7) {
 				return A2(
 					_elm_lang$core$Maybe$withDefault,
 					false,
 					A2(
 						_elm_lang$core$Maybe$map,
-						function (_p10) {
+						function (_p8) {
 							return true;
 						},
-						_p9));
+						_p7));
 			};
 			var updM = _elm_lang$core$Dict$fromList(
 				A2(
@@ -17212,15 +17063,15 @@ var _user$project$Football_Data$updateGames = F2(
 					function (x) {
 						return {ctor: '_Tuple2', _0: x.id, _1: x};
 					},
-					_p8.upd));
+					_p6.upd));
 			var newSet = _elm_lang$core$Set$fromList(
 				A2(
 					_elm_lang$core$List$map,
 					function (_) {
 						return _.id;
 					},
-					_p14));
-			var outSet = _elm_lang$core$Set$fromList(_p8.out);
+					_p12));
+			var outSet = _elm_lang$core$Set$fromList(_p6.out);
 			var play = A2(
 				_elm_lang$core$List$map,
 				function (x) {
@@ -17234,10 +17085,10 @@ var _user$project$Football_Data$updateGames = F2(
 				},
 				A2(
 					_elm_lang$core$List$filter,
-					function (_p11) {
-						var _p12 = _p11;
-						var _p13 = _p12.id;
-						return (!A2(_elm_lang$core$Set$member, _p13, outSet)) && (!A2(_elm_lang$core$Set$member, _p13, newSet));
+					function (_p9) {
+						var _p10 = _p9;
+						var _p11 = _p10.id;
+						return (!A2(_elm_lang$core$Set$member, _p11, outSet)) && (!A2(_elm_lang$core$Set$member, _p11, newSet));
 					},
 					games));
 			return A2(
@@ -17245,7 +17096,7 @@ var _user$project$Football_Data$updateGames = F2(
 				function (_) {
 					return _.order;
 				},
-				A2(_elm_lang$core$Basics_ops['++'], _p14, play));
+				A2(_elm_lang$core$Basics_ops['++'], _p12, play));
 		}
 	});
 var _user$project$Football_Data$Game = function (a) {
@@ -17485,6 +17336,483 @@ var _user$project$Football_Data$parseGames = function (str) {
 	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Football_Data$decoderGamesChanges, str);
 };
 
+var _user$project$Football_CheckCompetition$setGames = F2(
+	function (model, games) {
+		var m = _elm_lang$core$Dict$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				function (x) {
+					return {ctor: '_Tuple2', _0: x.name, _1: x};
+				},
+				model.items));
+		var items = A2(
+			_elm_lang$core$List$map,
+			function (_p0) {
+				var _p1 = _p0;
+				var _p6 = _p1._1;
+				var _p5 = _p1._0;
+				var country = function () {
+					var _p2 = A2(
+						_elm_lang$core$Maybe$map,
+						function (_) {
+							return _.country;
+						},
+						_elm_lang$core$List$head(_p6));
+					if (_p2.ctor === 'Just') {
+						return _p2._0;
+					} else {
+						return _elm_lang$core$Native_Utils.crashCase(
+							'Football.CheckCompetition',
+							{
+								start: {line: 152, column: 33},
+								end: {line: 157, column: 65}
+							},
+							_p2)('empty list');
+					}
+				}();
+				var cb = _gdotdesign$elm_ui$Ui_Checkbox$init(
+					{ctor: '_Tuple0'});
+				var value = A2(
+					_elm_lang$core$Maybe$withDefault,
+					true,
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (_p4) {
+							return function (_) {
+								return _.value;
+							}(
+								function (_) {
+									return _.checkbox;
+								}(_p4));
+						},
+						A2(_elm_lang$core$Dict$get, _p5, m)));
+				var size = _elm_lang$core$List$sum(
+					A2(
+						_elm_lang$core$List$map,
+						function (x) {
+							return x.totalMatched + x.totalAvailable;
+						},
+						_p6));
+				return {
+					checkbox: A2(_gdotdesign$elm_ui$Ui_Checkbox$setValue, value, cb),
+					name: _p5,
+					size: size,
+					count: _elm_lang$core$List$length(_p6),
+					country: country
+				};
+			},
+			_user$project$Football_Data$gamesCompetitions(games));
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{items: items, tableState: model.tableState});
+	});
+var _user$project$Football_CheckCompetition$setVisible = F2(
+	function (model, open) {
+		var uiModal = model.uiModal;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				uiModal: _elm_lang$core$Native_Utils.update(
+					uiModal,
+					{open: open})
+			});
+	});
+var _user$project$Football_CheckCompetition$model = {
+	items: {ctor: '[]'},
+	tableState: _evancz$elm_sortable_table$Table$initialSort('Ставки'),
+	uiModal: {closable: true, backdrop: true, open: false}
+};
+var _user$project$Football_CheckCompetition$filter = function (model) {
+	var st = _elm_lang$core$Set$fromList(
+		A2(
+			_elm_lang$core$List$map,
+			function (_) {
+				return _.name;
+			},
+			A2(
+				_elm_lang$core$List$filter,
+				function (_p7) {
+					return function (_) {
+						return _.value;
+					}(
+						function (_) {
+							return _.checkbox;
+						}(_p7));
+				},
+				model.items)));
+	return _elm_lang$core$List$filter(
+		function (_p8) {
+			return function (x) {
+				return A2(_elm_lang$core$Set$member, x, st);
+			}(
+				function (_) {
+					return _.competition;
+				}(_p8));
+		});
+};
+var _user$project$Football_CheckCompetition$Model = F3(
+	function (a, b, c) {
+		return {tableState: a, items: b, uiModal: c};
+	});
+var _user$project$Football_CheckCompetition$Item = F5(
+	function (a, b, c, d, e) {
+		return {checkbox: a, name: b, size: c, count: d, country: e};
+	});
+var _user$project$Football_CheckCompetition$UiModal = function (a) {
+	return {ctor: 'UiModal', _0: a};
+};
+var _user$project$Football_CheckCompetition$Check = function (a) {
+	return {ctor: 'Check', _0: a};
+};
+var _user$project$Football_CheckCompetition$renderTollButtons = _gdotdesign$elm_ui$Ui_ButtonGroup$view(
+	_gdotdesign$elm_ui$Ui_ButtonGroup$model(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'Выбрать все',
+				_1: _user$project$Football_CheckCompetition$Check(true)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'Снять выбор',
+					_1: _user$project$Football_CheckCompetition$Check(false)
+				},
+				_1: {ctor: '[]'}
+			}
+		}));
+var _user$project$Football_CheckCompetition$SetTableState = function (a) {
+	return {ctor: 'SetTableState', _0: a};
+};
+var _user$project$Football_CheckCompetition$CheckboxChanged = F2(
+	function (a, b) {
+		return {ctor: 'CheckboxChanged', _0: a, _1: b};
+	});
+var _user$project$Football_CheckCompetition$subs = function (toMsg) {
+	return function (_p9) {
+		return A2(
+			_elm_lang$core$Platform_Sub$map,
+			toMsg,
+			_elm_lang$core$Platform_Sub$batch(
+				A2(
+					_elm_lang$core$List$map,
+					function (x) {
+						return A2(
+							_gdotdesign$elm_ui$Ui_Checkbox$onChange,
+							_user$project$Football_CheckCompetition$CheckboxChanged(x.checkbox.uid),
+							x.checkbox);
+					},
+					function (_) {
+						return _.items;
+					}(_p9))));
+	};
+};
+var _user$project$Football_CheckCompetition$UiCheckbox = F2(
+	function (a, b) {
+		return {ctor: 'UiCheckbox', _0: a, _1: b};
+	});
+var _user$project$Football_CheckCompetition$update = F3(
+	function (msg, model, toMsg) {
+		var _p10 = msg;
+		switch (_p10.ctor) {
+			case 'UiModal':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							uiModal: A2(_gdotdesign$elm_ui$Ui_Modal$update, _p10._0, model.uiModal)
+						}),
+					{ctor: '[]'});
+			case 'Check':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							items: A2(
+								_elm_lang$core$List$map,
+								function (x) {
+									return _elm_lang$core$Native_Utils.update(
+										x,
+										{
+											checkbox: A2(_gdotdesign$elm_ui$Ui_Checkbox$setValue, _p10._0, x.checkbox)
+										});
+								},
+								model.items)
+						}),
+					{ctor: '[]'});
+			case 'SetTableState':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{tableState: _p10._0}),
+					{ctor: '[]'});
+			case 'UiCheckbox':
+				var _p15 = _p10._0;
+				var m = _elm_lang$core$Dict$fromList(
+					A2(
+						_elm_lang$core$List$map,
+						function (x) {
+							return {ctor: '_Tuple2', _0: x.checkbox.uid, _1: x};
+						},
+						model.items));
+				var _p11 = A2(_elm_lang$core$Dict$get, _p15, m);
+				if (_p11.ctor === 'Nothing') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p14 = _p11._0;
+					var _p12 = A2(_gdotdesign$elm_ui$Ui_Checkbox$update, _p10._1, _p14.checkbox);
+					var checkbox_ = _p12._0;
+					var cmd_ = _p12._1;
+					var items = A2(
+						_elm_lang$core$List$map,
+						_elm_lang$core$Tuple$second,
+						_elm_lang$core$Dict$toList(
+							A3(
+								_elm_lang$core$Dict$insert,
+								_p15,
+								_elm_lang$core$Native_Utils.update(
+									_p14,
+									{checkbox: checkbox_}),
+								m)));
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{items: items}),
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$core$Platform_Cmd$map,
+								function (_p13) {
+									return toMsg(
+										A2(_user$project$Football_CheckCompetition$UiCheckbox, _p15, _p13));
+								},
+								cmd_),
+							_1: {ctor: '[]'}
+						});
+				}
+			default:
+				var items = A2(
+					_elm_lang$core$List$map,
+					function (x) {
+						return _elm_lang$core$Native_Utils.eq(x.checkbox.uid, _p10._0) ? _elm_lang$core$Native_Utils.update(
+							x,
+							{
+								checkbox: A2(_gdotdesign$elm_ui$Ui_Checkbox$setValue, _p10._1, x.checkbox)
+							}) : x;
+					},
+					model.items);
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{items: items}),
+					{ctor: '[]'});
+		}
+	});
+var _user$project$Football_CheckCompetition$configTable = _evancz$elm_sortable_table$Table$customConfig(
+	{
+		toId: function (_p16) {
+			return function (_) {
+				return _.uid;
+			}(
+				function (_) {
+					return _.checkbox;
+				}(_p16));
+		},
+		toMsg: _user$project$Football_CheckCompetition$SetTableState,
+		columns: {
+			ctor: '::',
+			_0: _evancz$elm_sortable_table$Table$veryCustomColumn(
+				{
+					name: 'Чемпионат',
+					sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(
+						function (_) {
+							return _.name;
+						}),
+					viewData: function (x) {
+						return A2(
+							_evancz$elm_sortable_table$Table$HtmlDetails,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$table,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$tr,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$td,
+													{ctor: '[]'},
+													{
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$map,
+															_user$project$Football_CheckCompetition$UiCheckbox(x.checkbox.uid),
+															_gdotdesign$elm_ui$Ui_Checkbox$view(x.checkbox)),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$td,
+														{
+															ctor: '::',
+															_0: A2(_elm_lang$html$Html_Attributes$attribute, 'valign', 'middle'),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$style(
+																	{
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'left'},
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {ctor: '[]'}
+															}
+														},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(
+																_elm_lang$core$Native_Utils.eq(x.name, '') ? '(без названия)' : x.name),
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							});
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_evancz$elm_sortable_table$Table$stringColumn,
+					'Страна',
+					function (_) {
+						return _.country;
+					}),
+				_1: {
+					ctor: '::',
+					_0: _evancz$elm_sortable_table$Table$veryCustomColumn(
+						{
+							name: 'Ставки',
+							sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(
+								function (_) {
+									return _.size;
+								}),
+							viewData: function (x) {
+								return A2(
+									_evancz$elm_sortable_table$Table$HtmlDetails,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('dollar'),
+										_1: {ctor: '[]'}
+									},
+									(_elm_lang$core$Native_Utils.cmp(x.size, 0) > 0) ? {
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												_elm_lang$core$Basics$toString(x.size),
+												' $')),
+										_1: {ctor: '[]'}
+									} : {ctor: '[]'});
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _evancz$elm_sortable_table$Table$veryCustomColumn(
+							{
+								name: 'Кол-во матчей',
+								sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(
+									function (_) {
+										return _.count;
+									}),
+								viewData: function (x) {
+									return A2(
+										_evancz$elm_sortable_table$Table$HtmlDetails,
+										{
+											ctor: '::',
+											_0: A2(_elm_lang$html$Html_Attributes$attribute, 'align', 'right'),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												_elm_lang$core$Basics$toString(x.count)),
+											_1: {ctor: '[]'}
+										});
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		},
+		customizations: _evancz$elm_sortable_table$Table$defaultCustomizations
+	});
+var _user$project$Football_CheckCompetition$renderCompetitions = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'height', _1: '500px'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'auto'},
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A3(_evancz$elm_sortable_table$Table$view, _user$project$Football_CheckCompetition$configTable, model.tableState, model.items),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Football_CheckCompetition$view = F2(
+	function (toMsg, model) {
+		return A2(
+			_elm_lang$html$Html$map,
+			toMsg,
+			A2(
+				_gdotdesign$elm_ui$Ui_Modal$view,
+				A4(
+					_gdotdesign$elm_ui$Ui_Modal$ViewModel,
+					{
+						ctor: '::',
+						_0: _user$project$Football_CheckCompetition$renderCompetitions(model),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _user$project$Football_CheckCompetition$renderTollButtons,
+						_1: {ctor: '[]'}
+					},
+					_user$project$Football_CheckCompetition$UiModal,
+					'Чемпионаты'),
+				model.uiModal));
+	});
+
 var _user$project$Utils$websocketURL = F2(
 	function (protocol, host) {
 		return (!A2(_elm_lang$core$String$startsWith, 'http', protocol)) ? _elm_lang$core$Native_Utils.crash(
@@ -17623,67 +17951,37 @@ var _user$project$Football_Football$init = F2(
 				games: {ctor: '[]'},
 				protocol: protocol,
 				host: host,
-				uiModal: {closable: true, backdrop: true, open: false},
 				tableState: _evancz$elm_sortable_table$Table$initialSort('№'),
-				comps: _elm_lang$core$Dict$empty
+				checkCompetition: _user$project$Football_CheckCompetition$model
 			},
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
-var _user$project$Football_Football$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {protocol: a, host: b, games: c, uiModal: d, tableState: e, comps: f};
+var _user$project$Football_Football$Model = F5(
+	function (a, b, c, d, e) {
+		return {protocol: a, host: b, games: c, tableState: d, checkCompetition: e};
 	});
-var _user$project$Football_Football$CompModel = F3(
-	function (a, b, c) {
-		return {checkbox: a, comp: b, value: c};
-	});
-var _user$project$Football_Football$CheckboxChanged = F2(
-	function (a, b) {
-		return {ctor: 'CheckboxChanged', _0: a, _1: b};
-	});
-var _user$project$Football_Football$UiCheckbox = F2(
-	function (a, b) {
-		return {ctor: 'UiCheckbox', _0: a, _1: b};
-	});
+var _user$project$Football_Football$CheckCompetition = function (a) {
+	return {ctor: 'CheckCompetition', _0: a};
+};
 var _user$project$Football_Football$update = F2(
 	function (msg, model) {
 		var _p6 = msg;
 		switch (_p6.ctor) {
-			case 'UiCheckbox':
-				var _p10 = _p6._0;
-				var _p7 = A2(_elm_lang$core$Dict$get, _p10, model.comps);
-				if (_p7.ctor === 'Nothing') {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
+			case 'CheckCompetition':
+				var _p7 = A3(_user$project$Football_CheckCompetition$update, _p6._0, model.checkCompetition, _user$project$Football_Football$CheckCompetition);
+				var checkCompetition_ = _p7._0;
+				var cmd_ = _p7._1;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
 						model,
-						{ctor: '[]'});
-				} else {
-					var _p9 = _p7._0;
-					var _p8 = A2(_gdotdesign$elm_ui$Ui_Checkbox$update, _p6._1, _p9.checkbox);
-					var newCheckbox = _p8._0;
-					var cmd_ = _p8._1;
-					var newComps = A3(
-						_elm_lang$core$Dict$insert,
-						_p10,
-						_elm_lang$core$Native_Utils.update(
-							_p9,
-							{checkbox: newCheckbox}),
-						model.comps);
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{comps: newComps}),
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$core$Platform_Cmd$map,
-								_user$project$Football_Football$UiCheckbox(_p10),
-								cmd_),
-							_1: {ctor: '[]'}
-						});
-				}
+						{checkCompetition: checkCompetition_}),
+					{
+						ctor: '::',
+						_0: cmd_,
+						_1: {ctor: '[]'}
+					});
 			case 'SetTableState':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -17691,137 +17989,26 @@ var _user$project$Football_Football$update = F2(
 						model,
 						{tableState: _p6._0}),
 					{ctor: '[]'});
-			case 'UiModal':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							uiModal: A2(_gdotdesign$elm_ui$Ui_Modal$update, _p6._0, model.uiModal)
-						}),
-					{ctor: '[]'});
 			case 'NewGamesChanges':
 				var newGames = A2(_user$project$Football_Data$updateGames, _p6._0, model.games);
-				var newComps = _elm_lang$core$Dict$fromList(
-					A2(
-						_elm_lang$core$List$map,
-						function (comp) {
-							var v = A2(
-								_elm_lang$core$Maybe$withDefault,
-								true,
-								_elm_lang$core$List$head(
-									A2(
-										_elm_lang$core$List$map,
-										function (_p11) {
-											return function (_) {
-												return _.value;
-											}(
-												function (_) {
-													return _.checkbox;
-												}(_p11));
-										},
-										A2(
-											_elm_lang$core$List$filter,
-											function (_p12) {
-												return A2(
-													F2(
-														function (x, y) {
-															return _elm_lang$core$Native_Utils.eq(x, y);
-														}),
-													comp,
-													function (_) {
-														return _.comp;
-													}(_p12));
-											},
-											A2(
-												_elm_lang$core$List$map,
-												_elm_lang$core$Tuple$second,
-												_elm_lang$core$Dict$toList(model.comps))))));
-							var cb = A2(
-								_gdotdesign$elm_ui$Ui_Checkbox$setValue,
-								v,
-								_gdotdesign$elm_ui$Ui_Checkbox$init(
-									{ctor: '_Tuple0'}));
-							return {
-								ctor: '_Tuple2',
-								_0: cb.uid,
-								_1: {checkbox: cb, comp: comp, value: true}
-							};
-						},
-						_user$project$Football_Data$gamesCompetitions(newGames)));
+				var checkCompetition_ = A2(_user$project$Football_CheckCompetition$setGames, model.checkCompetition, newGames);
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{games: newGames, comps: newComps}),
+						{games: newGames, checkCompetition: checkCompetition_}),
 					{ctor: '[]'});
-			case 'SettingsDialog':
-				var uiModal = model.uiModal;
+			default:
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{
-							uiModal: _elm_lang$core$Native_Utils.update(
-								uiModal,
-								{open: true})
+							checkCompetition: A2(_user$project$Football_CheckCompetition$setVisible, model.checkCompetition, true)
 						}),
-					{ctor: '[]'});
-			default:
-				var newComps = A2(
-					_elm_lang$core$Dict$map,
-					F2(
-						function (k, x) {
-							return _elm_lang$core$Native_Utils.eq(k, _p6._0) ? _elm_lang$core$Native_Utils.update(
-								x,
-								{
-									checkbox: A2(_gdotdesign$elm_ui$Ui_Checkbox$setValue, _p6._1, x.checkbox)
-								}) : x;
-						}),
-					model.comps);
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{comps: newComps}),
 					{ctor: '[]'});
 		}
 	});
-var _user$project$Football_Football$renderCompsCheckboxes = function (model) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		{ctor: '[]'},
-		A2(
-			_elm_lang$core$List$map,
-			function (_p13) {
-				var _p14 = _p13;
-				var _p15 = _p14._1;
-				return A2(
-					_elm_lang$html$Html$li,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$map,
-							_user$project$Football_Football$UiCheckbox(_p14._0),
-							_gdotdesign$elm_ui$Ui_Checkbox$view(_p15.checkbox)),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(_p15.comp),
-							_1: {ctor: '[]'}
-						}
-					});
-			},
-			A2(
-				_elm_lang$core$List$sortBy,
-				function (_p16) {
-					return function (_) {
-						return _.comp;
-					}(
-						_elm_lang$core$Tuple$second(_p16));
-				},
-				_elm_lang$core$Dict$toList(model.comps))));
-};
 var _user$project$Football_Football$SetTableState = function (a) {
 	return {ctor: 'SetTableState', _0: a};
 };
@@ -17829,11 +18016,11 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 	var dc = _evancz$elm_sortable_table$Table$defaultCustomizations;
 	return _evancz$elm_sortable_table$Table$customConfig(
 		{
-			toId: function (_p17) {
+			toId: function (_p8) {
 				return _elm_lang$core$Basics$toString(
 					function (_) {
 						return _.id;
-					}(_p17));
+					}(_p8));
 			},
 			toMsg: _user$project$Football_Football$SetTableState,
 			columns: A2(
@@ -17975,90 +18162,76 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 				})
 		});
 };
-var _user$project$Football_Football$rederGamesTable = function (_p18) {
-	var _p19 = _p18;
-	var _p20 = _p19.games;
+var _user$project$Football_Football$rederGamesTable = function (_p9) {
+	var _p10 = _p9;
+	var games_ = A2(_user$project$Football_CheckCompetition$filter, _p10.checkCompetition, _p10.games);
 	return A3(
 		_evancz$elm_sortable_table$Table$view,
 		_user$project$Football_Football$configTable(
-			_user$project$Football_Data$gamesHasInplay(_p20)),
-		_p19.tableState,
-		_p20);
+			_user$project$Football_Data$gamesHasInplay(games_)),
+		_p10.tableState,
+		games_);
 };
-var _user$project$Football_Football$SettingsDialog = {ctor: 'SettingsDialog'};
-var _user$project$Football_Football$UiModal = function (a) {
-	return {ctor: 'UiModal', _0: a};
-};
-var _user$project$Football_Football$renderSettingsDialog = function (_p21) {
-	var _p22 = _p21;
-	return A2(
-		_gdotdesign$elm_ui$Ui_Modal$view,
-		A4(
-			_gdotdesign$elm_ui$Ui_Modal$ViewModel,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text('Привет!'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text('Пока!'),
-				_1: {ctor: '[]'}
-			},
-			_user$project$Football_Football$UiModal,
-			'Настройки'),
-		_p22.uiModal);
-};
+var _user$project$Football_Football$ShowCheckCompetition = {ctor: 'ShowCheckCompetition'};
 var _user$project$Football_Football$view = function (model) {
 	return A2(
-		_gdotdesign$elm_ui$Ui_Container$rowEnd,
-		{ctor: '[]'},
+		_elm_lang$html$Html$table,
+		{
+			ctor: '::',
+			_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '100%'),
+			_1: {ctor: '[]'}
+		},
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$div,
+				_elm_lang$html$Html$tr,
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _user$project$Football_Football$rederGamesTable(model),
+					_0: A2(
+						_elm_lang$html$Html$td,
+						{
+							ctor: '::',
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '90%'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _user$project$Football_Football$rederGamesTable(model),
+							_1: {
+								ctor: '::',
+								_0: A2(_user$project$Football_CheckCompetition$view, _user$project$Football_Football$CheckCompetition, model.checkCompetition),
+								_1: {ctor: '[]'}
+							}
+						}),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Football_Football$renderSettingsDialog(model),
+						_0: A2(
+							_elm_lang$html$Html$td,
+							{
+								ctor: '::',
+								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '10%'),
+								_1: {
+									ctor: '::',
+									_0: A2(_elm_lang$html$Html_Attributes$attribute, 'valign', 'top'),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: A2(_gdotdesign$elm_ui$Ui_IconButton$view, _user$project$Football_Football$ShowCheckCompetition, _user$project$Football_Football$buttonSettingsModel),
+								_1: {ctor: '[]'}
+							}),
 						_1: {ctor: '[]'}
 					}
 				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: A2(_gdotdesign$elm_ui$Ui_IconButton$view, _user$project$Football_Football$SettingsDialog, _user$project$Football_Football$buttonSettingsModel),
-						_1: {
-							ctor: '::',
-							_0: _user$project$Football_Football$renderCompsCheckboxes(model),
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
+			_1: {ctor: '[]'}
 		});
 };
 var _user$project$Football_Football$NewGamesChanges = function (a) {
 	return {ctor: 'NewGamesChanges', _0: a};
 };
 var _user$project$Football_Football$subscriptions = function (model) {
-	var cbs = A2(
-		_elm_lang$core$List$map,
-		function (_p23) {
-			var _p24 = _p23;
-			return A2(
-				_gdotdesign$elm_ui$Ui_Checkbox$onChange,
-				_user$project$Football_Football$CheckboxChanged(_p24._0),
-				_p24._1.checkbox);
-		},
-		_elm_lang$core$Dict$toList(model.comps));
 	var listenGamesChanges = A2(
 		_elm_lang$websocket$WebSocket$listen,
 		A2(
@@ -18066,28 +18239,29 @@ var _user$project$Football_Football$subscriptions = function (model) {
 			A2(_user$project$Utils$websocketURL, model.protocol, model.host),
 			'/football'),
 		function (str) {
-			var _p25 = _user$project$Football_Data$parseGames(str);
-			if (_p25.ctor === 'Ok') {
-				return _user$project$Football_Football$NewGamesChanges(_p25._0);
+			var _p11 = _user$project$Football_Data$parseGames(str);
+			if (_p11.ctor === 'Ok') {
+				return _user$project$Football_Football$NewGamesChanges(_p11._0);
 			} else {
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Football.Football',
 					{
-						start: {line: 164, column: 21},
-						end: {line: 169, column: 44}
+						start: {line: 92, column: 21},
+						end: {line: 97, column: 44}
 					},
-					_p25)(_p25._0);
+					_p11)(_p11._0);
 			}
 		});
 	return _elm_lang$core$Platform_Sub$batch(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
+		{
+			ctor: '::',
+			_0: listenGamesChanges,
+			_1: {
 				ctor: '::',
-				_0: listenGamesChanges,
+				_0: A2(_user$project$Football_CheckCompetition$subs, _user$project$Football_Football$CheckCompetition, model.checkCompetition),
 				_1: {ctor: '[]'}
-			},
-			cbs));
+			}
+		});
 };
 var _user$project$Football_Football$subs = F2(
 	function (toMsg, model) {

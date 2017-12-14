@@ -2,17 +2,14 @@ module Football.Football exposing (Model, Msg, init, update, view, subs)
 
 import String
 import Html exposing (..)
-import Html.Attributes exposing (style, attribute, class)
+import Html.Attributes exposing (..)
 import Utils exposing (..)
 import WebSocket
 import Football.Data exposing (..)
-import Ui.Modal
+import Football.CheckCompetition as CheckCompetition
 import Ui.IconButton
 import Ui.Icons
-import Ui.Container
-import Ui.Checkbox
 import Table
-import Dict
 
 
 -- MODEL
@@ -22,26 +19,16 @@ type alias Model =
     { protocol : String
     , host : String
     , games : List Game
-    , uiModal : Ui.Modal.Model
     , tableState : Table.State
-    , comps : Dict.Dict String CompModel
-    }
-
-
-type alias CompModel =
-    { checkbox : Ui.Checkbox.Model
-    , comp : String
-    , value : Bool
+    , checkCompetition : CheckCompetition.Model
     }
 
 
 type Msg
     = NewGamesChanges GamesChanges
-    | UiModal Ui.Modal.Msg
-    | SettingsDialog
+    | ShowCheckCompetition
     | SetTableState Table.State
-    | UiCheckbox String Ui.Checkbox.Msg
-    | CheckboxChanged String Bool
+    | CheckCompetition CheckCompetition.Msg
 
 
 init : String -> String -> ( Model, Cmd Msg )
@@ -49,13 +36,8 @@ init protocol host =
     ( { games = []
       , protocol = protocol
       , host = host
-      , uiModal =
-            { closable = True
-            , backdrop = True
-            , open = False
-            }
       , tableState = Table.initialSort "№"
-      , comps = Dict.empty
+      , checkCompetition = CheckCompetition.model
       }
     , Cmd.none
     )
@@ -64,26 +46,15 @@ init protocol host =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        UiCheckbox uid msg_ ->
-            case Dict.get uid model.comps of
-                Nothing ->
-                    model ! []
-
-                Just comp ->
-                    let
-                        ( newCheckbox, cmd_ ) =
-                            Ui.Checkbox.update msg_ comp.checkbox
-
-                        newComps =
-                            Dict.insert uid { comp | checkbox = newCheckbox } model.comps
-                    in
-                        { model | comps = newComps } ! [ Cmd.map (UiCheckbox uid) cmd_ ]
+        CheckCompetition msg_ ->
+            let
+                ( checkCompetition_, cmd_ ) =
+                    CheckCompetition.update msg_ model.checkCompetition CheckCompetition
+            in
+                { model | checkCompetition = checkCompetition_ } ! [ cmd_ ]
 
         SetTableState newState ->
             { model | tableState = newState } ! []
-
-        UiModal msg_ ->
-            { model | uiModal = Ui.Modal.update msg_ model.uiModal } ! []
 
         NewGamesChanges gamesChanges ->
             let
@@ -91,58 +62,15 @@ update msg model =
                     model.games
                         |> updateGames gamesChanges
 
-                newComps =
-                    newGames
-                        |> gamesCompetitions
-                        |> List.map
-                            (\comp ->
-                                let
-                                    v =
-                                        Dict.toList model.comps
-                                            |> List.map (Tuple.second)
-                                            |> List.filter (.comp >> (==) comp)
-                                            |> List.map (.checkbox >> .value)
-                                            |> List.head
-                                            |> Maybe.withDefault True
-
-                                    cb =
-                                        Ui.Checkbox.init ()
-                                            |> Ui.Checkbox.setValue v
-                                in
-                                    ( cb.uid
-                                    , { checkbox = cb
-                                      , comp = comp
-                                      , value = True
-                                      }
-                                    )
-                            )
-                        |> Dict.fromList
+                checkCompetition_ =
+                    CheckCompetition.setGames model.checkCompetition newGames
 
                 --|> sortGames model.order model.sortCol
             in
-                { model | games = newGames, comps = newComps } ! []
+                { model | games = newGames, checkCompetition = checkCompetition_ } ! []
 
-        SettingsDialog ->
-            let
-                uiModal =
-                    model.uiModal
-            in
-                { model | uiModal = { uiModal | open = True } } ! []
-
-        CheckboxChanged uid value ->
-            let
-                newComps =
-                    Dict.map
-                        (\k x ->
-                            if k == uid then
-                                { x | checkbox = Ui.Checkbox.setValue value x.checkbox }
-                                --, checkbox = Ui.Checkbox.setValue value x.checkbox
-                            else
-                                x
-                        )
-                        model.comps
-            in
-                { model | comps = newComps } ! []
+        ShowCheckCompetition ->
+            { model | checkCompetition = CheckCompetition.setVisible model.checkCompetition True } ! []
 
 
 
@@ -168,15 +96,10 @@ subscriptions model =
                         Err err ->
                             Debug.crash err
                 )
-
-        cbs =
-            model.comps
-                |> Dict.toList
-                |> List.map
-                    (\( uid, x ) -> Ui.Checkbox.onChange (CheckboxChanged uid) x.checkbox)
     in
-        [ listenGamesChanges ]
-            ++ cbs
+        [ listenGamesChanges
+        , CheckCompetition.subs CheckCompetition model.checkCompetition
+        ]
             |> Sub.batch
 
 
@@ -186,48 +109,29 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    Ui.Container.rowEnd []
-        [ div []
-            [ rederGamesTable model
-            , renderSettingsDialog model
-            ]
-        , div []
-            [ Ui.IconButton.view SettingsDialog buttonSettingsModel
-            , renderCompsCheckboxes model
+    table [ attribute "width" "100%" ]
+        [ tr []
+            [ td [ attribute "width" "90%" ]
+                [ rederGamesTable model
+                , CheckCompetition.view CheckCompetition model.checkCompetition
+                ]
+            , td
+                [ attribute "width" "10%"
+                , attribute "valign" "top"
+                ]
+                [ Ui.IconButton.view ShowCheckCompetition buttonSettingsModel
+                ]
             ]
         ]
 
 
-renderCompsCheckboxes : Model -> Html Msg
-renderCompsCheckboxes model =
-    model.comps
-        |> Dict.toList
-        |> List.sortBy (Tuple.second >> .comp)
-        |> List.map
-            (\( uid, x ) ->
-                li []
-                    [ Ui.Checkbox.view x.checkbox |> Html.map (UiCheckbox uid)
-                    , text x.comp
-                    ]
-            )
-        |> ul []
-
-
-renderSettingsDialog : Model -> Html Msg
-renderSettingsDialog { uiModal } =
-    Ui.Modal.view
-        (Ui.Modal.ViewModel
-            [ text "Привет!" ]
-            [ text "Пока!" ]
-            UiModal
-            "Настройки"
-        )
-        uiModal
-
-
 rederGamesTable : Model -> Html Msg
-rederGamesTable { games, tableState } =
-    Table.view (configTable <| gamesHasInplay games) tableState games
+rederGamesTable { games, checkCompetition, tableState } =
+    let
+        games_ =
+            CheckCompetition.filter checkCompetition games
+    in
+        Table.view (configTable <| gamesHasInplay games_) tableState games_
 
 
 buttonSettingsModel : Ui.IconButton.Model Msg
