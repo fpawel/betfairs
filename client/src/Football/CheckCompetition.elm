@@ -1,4 +1,4 @@
-module Football.CheckCompetition exposing (Model, Msg, model, setGames, update, view, subs, filter, setVisible)
+module Football.CheckCompetition exposing (Model, Msg, model, setGames, update, view, subs, filterGames, setVisible)
 
 import Html exposing (..)
 import Html.Attributes exposing (style, attribute, class)
@@ -13,12 +13,12 @@ import Ui.Modal
 
 type alias Model =
     { tableState : Table.State
-    , items : List Item
+    , items : List CompetitionInfo
     , uiModal : Ui.Modal.Model
     }
 
 
-type alias Item =
+type alias CompetitionInfo =
     { checkbox : Ui.Checkbox.Model
     , name : String
     , size : Float
@@ -35,11 +35,11 @@ type Msg
     | UiModal Ui.Modal.Msg
 
 
-filter :
+filterGames :
     Model
     -> List Game
     -> List Game
-filter model =
+filterGames model =
     let
         st =
             model.items
@@ -127,44 +127,46 @@ setVisible model open =
 setGames : Model -> List Game -> Model
 setGames model games =
     let
+        m : Dict.Dict String CompetitionInfo
         m =
             model.items
                 |> List.map (\x -> ( x.name, x ))
                 |> Dict.fromList
-
-        items =
-            gamesCompetitions games
-                |> List.map
-                    (\( name, xs ) ->
-                        let
-                            size =
-                                List.sum <| List.map (\x -> x.totalMatched + x.totalAvailable) xs
-
-                            value =
-                                Dict.get name m
-                                    |> Maybe.map (.checkbox >> .value)
-                                    |> Maybe.withDefault True
-
-                            cb =
-                                Ui.Checkbox.init ()
-
-                            country =
-                                case xs |> List.head |> Maybe.map .country of
-                                    Just s ->
-                                        s
-
-                                    _ ->
-                                        Debug.crash "empty list"
-                        in
-                            { checkbox = Ui.Checkbox.setValue value cb
-                            , name = name
-                            , size = size
-                            , count = List.length xs
-                            , country = country
-                            }
-                    )
     in
-        { model | items = items, tableState = model.tableState }
+        { model
+            | items = List.map (setCompetitonGames m) (gamesToCompetitions games)
+            , tableState = model.tableState
+        }
+
+
+setCompetitonGames : Dict.Dict String CompetitionInfo -> ( String, List Game ) -> CompetitionInfo
+setCompetitonGames m ( name, xs ) =
+    let
+        size =
+            List.sum <| List.map (\x -> x.totalMatched + x.totalAvailable) xs
+
+        value =
+            Dict.get name m
+                |> Maybe.map (.checkbox >> .value)
+                |> Maybe.withDefault True
+
+        cb =
+            Ui.Checkbox.init ()
+
+        country =
+            case xs |> List.head |> Maybe.map .country of
+                Just s ->
+                    s
+
+                _ ->
+                    Debug.crash "empty list"
+    in
+        { checkbox = Ui.Checkbox.setValue value cb
+        , name = name
+        , size = size
+        , count = List.length xs
+        , country = country
+        }
 
 
 renderCompetitions : Model -> Html Msg
@@ -201,7 +203,7 @@ view toMsg model =
         |> Html.map toMsg
 
 
-configTable : Table.Config Item Msg
+configTable : Table.Config CompetitionInfo Msg
 configTable =
     Table.customConfig
         { toId = .checkbox >> .uid

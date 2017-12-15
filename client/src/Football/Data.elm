@@ -201,11 +201,10 @@ decoderGameCahnges =
 
 
 -- HELPERS
---competitions : List Game -> List (string, List Game)
 
 
-gamesCompetitions : List Game -> List ( String, List Game )
-gamesCompetitions =
+gamesToCompetitions : List Game -> List ( String, List Game )
+gamesToCompetitions =
     List.foldl
         (\x m ->
             let
@@ -226,16 +225,3 @@ gamesHasInplay =
         >> List.head
         >> Maybe.map (\_ -> True)
         >> Maybe.withDefault False
-
-
-reverse : comparable -> comparable -> Basics.Order
-reverse x y =
-    case compare x y of
-        LT ->
-            GT
-
-        GT ->
-            LT
-
-        EQ ->
-            EQ

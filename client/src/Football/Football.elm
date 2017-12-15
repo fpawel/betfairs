@@ -64,8 +64,6 @@ update msg model =
 
                 checkCompetition_ =
                     CheckCompetition.setGames model.checkCompetition newGames
-
-                --|> sortGames model.order model.sortCol
             in
                 { model | games = newGames, checkCompetition = checkCompetition_ } ! []
 
@@ -119,7 +117,15 @@ view model =
                 [ attribute "width" "10%"
                 , attribute "valign" "top"
                 ]
-                [ Ui.IconButton.view ShowCheckCompetition buttonSettingsModel
+                [ Ui.IconButton.view ShowCheckCompetition
+                    { disabled = False
+                    , readonly = False
+                    , kind = "secondary"
+                    , size = "small"
+                    , glyph = Ui.Icons.plus []
+                    , side = "left"
+                    , text = "Чемпионаты"
+                    }
                 ]
             ]
         ]
@@ -129,21 +135,9 @@ rederGamesTable : Model -> Html Msg
 rederGamesTable { games, checkCompetition, tableState } =
     let
         games_ =
-            CheckCompetition.filter checkCompetition games
+            CheckCompetition.filterGames checkCompetition games
     in
         Table.view (configTable <| gamesHasInplay games_) tableState games_
-
-
-buttonSettingsModel : Ui.IconButton.Model Msg
-buttonSettingsModel =
-    { disabled = False
-    , readonly = False
-    , kind = "secondary"
-    , size = "small"
-    , glyph = Ui.Icons.plus []
-    , side = "left"
-    , text = "Настройки"
-    }
 
 
 configTable : Bool -> Table.Config Game Msg

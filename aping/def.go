@@ -48,17 +48,3 @@ type Event struct {
 type MarketFilter struct {
 	EventIDs []int `json:"eventIds"`
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
