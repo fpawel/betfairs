@@ -7,8 +7,7 @@ import Utils exposing (..)
 import WebSocket
 import Football.Data exposing (..)
 import Football.CheckCompetition as CheckCompetition
-import Ui.IconButton
-import Ui.Icons
+import Ui.Header
 import Table
 
 
@@ -107,28 +106,84 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    table [ attribute "width" "100%" ]
-        [ tr []
-            [ td [ attribute "width" "90%" ]
-                [ rederGamesTable model
-                , CheckCompetition.view CheckCompetition model.checkCompetition
-                ]
-            , td
-                [ attribute "width" "10%"
-                , attribute "valign" "top"
-                ]
-                [ Ui.IconButton.view ShowCheckCompetition
-                    { disabled = False
-                    , readonly = False
-                    , kind = "secondary"
-                    , size = "small"
-                    , glyph = Ui.Icons.plus []
-                    , side = "left"
-                    , text = "Чемпионаты"
-                    }
-                ]
+    if List.isEmpty model.games then
+        renderLoadingHeader
+    else
+        div []
+            [ renderHeader
+            , rederGamesTable model
+            , CheckCompetition.view CheckCompetition model.checkCompetition
             ]
+
+
+renderLoadingPan : Html Msg
+renderLoadingPan =
+    let
+        linkCss =
+            Html.node "link"
+                [ rel "stylesheet"
+                , type_ "text/css"
+                , href "css/fountainG.css"
+                ]
+                []
+    in
+        List.range 1 8
+            |> List.map
+                (\n ->
+                    div
+                        [ class "fountainG"
+                        , id ("fountainG_" ++ toString n)
+                        ]
+                        []
+                )
+            |> (::) linkCss
+            |> div
+                [ style
+                    [ ( "width", "234px" )
+                    , ( "height", "28px" )
+                    , ( "margin", "auto" )
+                    , ( "position", "relative" )
+                    ]
+                ]
+
+
+renderLoadingHeader : Html Msg
+renderLoadingHeader =
+    Ui.Header.view
+        [ renderTitle
+        , Ui.Header.item
+            { link = Nothing
+            , target = "_blank"
+            , action = Nothing
+            , text = "Загрузка данных..."
+            }
+        , renderLoadingPan
         ]
+
+
+renderHeader : Html Msg
+renderHeader =
+    Ui.Header.view
+        [ renderTitle
+        , Ui.Header.spacer
+        , Ui.Header.separator
+        , Ui.Header.item
+            { link = Nothing
+            , target = "_blank"
+            , action = Just ShowCheckCompetition
+            , text = "Чемпионаты"
+            }
+        ]
+
+
+renderTitle : Html a
+renderTitle =
+    Ui.Header.title
+        { action = Nothing
+        , target = "_self"
+        , link = Nothing
+        , text = "Футбол"
+        }
 
 
 rederGamesTable : Model -> Html Msg

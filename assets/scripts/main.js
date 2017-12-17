@@ -7304,6 +7304,185 @@ var _elm_community$list_extra$List_Extra$init = function () {
 var _elm_community$list_extra$List_Extra$last = _elm_community$list_extra$List_Extra$foldl1(
 	_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always));
 
+var _elm_community$maybe_extra$Maybe_Extra$foldrValues = F2(
+	function (item, list) {
+		var _p0 = item;
+		if (_p0.ctor === 'Nothing') {
+			return list;
+		} else {
+			return {ctor: '::', _0: _p0._0, _1: list};
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$values = A2(
+	_elm_lang$core$List$foldr,
+	_elm_community$maybe_extra$Maybe_Extra$foldrValues,
+	{ctor: '[]'});
+var _elm_community$maybe_extra$Maybe_Extra$filter = F2(
+	function (f, m) {
+		var _p1 = A2(_elm_lang$core$Maybe$map, f, m);
+		if ((_p1.ctor === 'Just') && (_p1._0 === true)) {
+			return m;
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$traverseArray = function (f) {
+	var step = F2(
+		function (e, acc) {
+			var _p2 = f(e);
+			if (_p2.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return A2(
+					_elm_lang$core$Maybe$map,
+					_elm_lang$core$Array$push(_p2._0),
+					acc);
+			}
+		});
+	return A2(
+		_elm_lang$core$Array$foldl,
+		step,
+		_elm_lang$core$Maybe$Just(_elm_lang$core$Array$empty));
+};
+var _elm_community$maybe_extra$Maybe_Extra$combineArray = _elm_community$maybe_extra$Maybe_Extra$traverseArray(_elm_lang$core$Basics$identity);
+var _elm_community$maybe_extra$Maybe_Extra$traverse = function (f) {
+	var step = F2(
+		function (e, acc) {
+			var _p3 = f(e);
+			if (_p3.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return A2(
+					_elm_lang$core$Maybe$map,
+					F2(
+						function (x, y) {
+							return {ctor: '::', _0: x, _1: y};
+						})(_p3._0),
+					acc);
+			}
+		});
+	return A2(
+		_elm_lang$core$List$foldr,
+		step,
+		_elm_lang$core$Maybe$Just(
+			{ctor: '[]'}));
+};
+var _elm_community$maybe_extra$Maybe_Extra$combine = _elm_community$maybe_extra$Maybe_Extra$traverse(_elm_lang$core$Basics$identity);
+var _elm_community$maybe_extra$Maybe_Extra$maybeToArray = function (m) {
+	var _p4 = m;
+	if (_p4.ctor === 'Nothing') {
+		return _elm_lang$core$Array$empty;
+	} else {
+		return A2(_elm_lang$core$Array$repeat, 1, _p4._0);
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$maybeToList = function (m) {
+	var _p5 = m;
+	if (_p5.ctor === 'Nothing') {
+		return {ctor: '[]'};
+	} else {
+		return {
+			ctor: '::',
+			_0: _p5._0,
+			_1: {ctor: '[]'}
+		};
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$orElse = F2(
+	function (ma, mb) {
+		var _p6 = mb;
+		if (_p6.ctor === 'Nothing') {
+			return ma;
+		} else {
+			return mb;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$orElseLazy = F2(
+	function (fma, mb) {
+		var _p7 = mb;
+		if (_p7.ctor === 'Nothing') {
+			return fma(
+				{ctor: '_Tuple0'});
+		} else {
+			return mb;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$orLazy = F2(
+	function (ma, fmb) {
+		var _p8 = ma;
+		if (_p8.ctor === 'Nothing') {
+			return fmb(
+				{ctor: '_Tuple0'});
+		} else {
+			return ma;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$or = F2(
+	function (ma, mb) {
+		var _p9 = ma;
+		if (_p9.ctor === 'Nothing') {
+			return mb;
+		} else {
+			return ma;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$prev = _elm_lang$core$Maybe$map2(_elm_lang$core$Basics$always);
+var _elm_community$maybe_extra$Maybe_Extra$next = _elm_lang$core$Maybe$map2(
+	_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always));
+var _elm_community$maybe_extra$Maybe_Extra$andMap = _elm_lang$core$Maybe$map2(
+	F2(
+		function (x, y) {
+			return y(x);
+		}));
+var _elm_community$maybe_extra$Maybe_Extra$unpack = F3(
+	function (d, f, m) {
+		var _p10 = m;
+		if (_p10.ctor === 'Nothing') {
+			return d(
+				{ctor: '_Tuple0'});
+		} else {
+			return f(_p10._0);
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$unwrap = F3(
+	function (d, f, m) {
+		var _p11 = m;
+		if (_p11.ctor === 'Nothing') {
+			return d;
+		} else {
+			return f(_p11._0);
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$isJust = function (m) {
+	var _p12 = m;
+	if (_p12.ctor === 'Nothing') {
+		return false;
+	} else {
+		return true;
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$isNothing = function (m) {
+	var _p13 = m;
+	if (_p13.ctor === 'Nothing') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$join = function (mx) {
+	var _p14 = mx;
+	if (_p14.ctor === 'Just') {
+		return _p14._0;
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra_ops = _elm_community$maybe_extra$Maybe_Extra_ops || {};
+_elm_community$maybe_extra$Maybe_Extra_ops['?'] = F2(
+	function (mx, x) {
+		return A2(_elm_lang$core$Maybe$withDefault, x, mx);
+	});
+
 //import Maybe, Native.List //
 
 var _elm_lang$core$Native_Regex = function() {
@@ -14523,6 +14702,95 @@ var _gdotdesign$elm_ui$Ui_Styles$apply = function (style) {
 			style));
 };
 
+var _gdotdesign$elm_ui$Ui_Link$view = function (_p0) {
+	var _p1 = _p0;
+	var _p7 = _p1.url;
+	var _p6 = _p1.msg;
+	var hrefAttribute = function () {
+		var _p2 = _p7;
+		if (_p2.ctor === 'Just') {
+			return {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$href(_p2._0),
+				_1: {ctor: '[]'}
+			};
+		} else {
+			return {ctor: '[]'};
+		}
+	}();
+	var targetAttribute = function () {
+		var _p3 = {ctor: '_Tuple2', _0: _p7, _1: _p1.target};
+		if (((_p3.ctor === '_Tuple2') && (_p3._0.ctor === 'Just')) && (_p3._1.ctor === 'Just')) {
+			return {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$target(_p3._1._0),
+				_1: {ctor: '[]'}
+			};
+		} else {
+			return {ctor: '[]'};
+		}
+	}();
+	var attributes = function () {
+		var _p4 = _p6;
+		if (_p4.ctor === 'Just') {
+			var _p5 = _p4._0;
+			return {
+				ctor: '::',
+				_0: _gdotdesign$elm_ui$Html_Events_Extra$unobtrusiveClick(_p5),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_gdotdesign$elm_ui$Html_Events_Extra$onKeys,
+						true,
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 13, _1: _p5},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 32, _1: _p5},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			};
+		} else {
+			return {ctor: '[]'};
+		}
+	}();
+	var tabIndex = (_elm_community$maybe_extra$Maybe_Extra$isJust(_p6) || _elm_community$maybe_extra$Maybe_Extra$isJust(_p7)) ? {
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$tabindex(0),
+		_1: {ctor: '[]'}
+	} : {ctor: '[]'};
+	return A3(
+		_elm_lang$html$Html$node,
+		'a',
+		_elm_lang$core$List$concat(
+			{
+				ctor: '::',
+				_0: targetAttribute,
+				_1: {
+					ctor: '::',
+					_0: hrefAttribute,
+					_1: {
+						ctor: '::',
+						_0: attributes,
+						_1: {
+							ctor: '::',
+							_0: tabIndex,
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}),
+		_p1.contents);
+};
+var _gdotdesign$elm_ui$Ui_Link$Model = F4(
+	function (a, b, c, d) {
+		return {contents: a, target: b, url: c, msg: d};
+	});
+
 var _gdotdesign$elm_ui$Ui_Styles_Ripple$style = _gdotdesign$elm_ui$Ui_Css$mixin(
 	{
 		ctor: '::',
@@ -16204,118 +16472,213 @@ var _gdotdesign$elm_ui$Ui_Checkbox$viewToggle = function (model) {
 	return A2(_elm_lang$html$Html_Lazy$lazy, _gdotdesign$elm_ui$Ui_Checkbox$renderToggle, model);
 };
 
-var _gdotdesign$elm_ui$Ui_Styles_IconButton$style = function (theme) {
+var _gdotdesign$elm_ui$Ui_Styles_Header$item = function (theme) {
 	return _gdotdesign$elm_ui$Ui_Css$mixin(
 		{
 			ctor: '::',
-			_0: _gdotdesign$elm_ui$Ui_Styles_Button$style(theme),
+			_0: A2(_gdotdesign$elm_ui$Ui_Css$property, '-webkit-filter', 'drop-shadow(0px 1px 0px rgba(0,0,0,0.3))'),
 			_1: {
 				ctor: '::',
-				_0: A2(
-					_gdotdesign$elm_ui$Ui_Css$selector,
-					'ui-icon-button-icon + span:not(:empty)',
-					{
-						ctor: '::',
-						_0: _gdotdesign$elm_ui$Ui_Css_Properties$marginLeft(
-							_gdotdesign$elm_ui$Ui_Css_Properties$em(0.625)),
-						_1: {ctor: '[]'}
-					}),
+				_0: A2(_gdotdesign$elm_ui$Ui_Css$property, 'filter', 'drop-shadow(0px 1px 0px rgba(0,0,0,0.3))'),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_gdotdesign$elm_ui$Ui_Css$selector,
-						'span:not(:empty) + ui-icon-button-icon',
-						{
-							ctor: '::',
-							_0: _gdotdesign$elm_ui$Ui_Css_Properties$marginLeft(
-								_gdotdesign$elm_ui$Ui_Css_Properties$em(0.625)),
-							_1: {ctor: '[]'}
-						}),
+					_0: _gdotdesign$elm_ui$Ui_Css_Properties$color(theme.header.colors.text),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_gdotdesign$elm_ui$Ui_Css$selector,
-							'ui-icon-button-icon',
-							{
+						_0: _gdotdesign$elm_ui$Ui_Css_Properties$margin(
+							A2(
+								_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+								_gdotdesign$elm_ui$Ui_Css_Properties$zero,
+								_gdotdesign$elm_ui$Ui_Css_Properties$px(2))),
+						_1: {
+							ctor: '::',
+							_0: _gdotdesign$elm_ui$Ui_Css_Properties$fontSize(
+								_gdotdesign$elm_ui$Ui_Css_Properties$px(18)),
+							_1: {
 								ctor: '::',
-								_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$inlineFlex),
+								_0: _gdotdesign$elm_ui$Ui_Css_Properties$fontWeight(_gdotdesign$elm_ui$Ui_Css_Properties$bold),
 								_1: {
 									ctor: '::',
-									_0: A2(
-										_gdotdesign$elm_ui$Ui_Css$selector,
-										'> *',
-										{
-											ctor: '::',
-											_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(_gdotdesign$elm_ui$Ui_Css_Properties$inherit),
-											_1: {
-												ctor: '::',
-												_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(_gdotdesign$elm_ui$Ui_Css_Properties$inherit),
-												_1: {ctor: '[]'}
-											}
-										}),
+									_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(_gdotdesign$elm_ui$Ui_Css_Properties$inherit),
 									_1: {
 										ctor: '::',
 										_0: A2(
 											_gdotdesign$elm_ui$Ui_Css$selector,
-											'svg',
+											'&[interactive] a',
 											{
 												ctor: '::',
-												_0: _gdotdesign$elm_ui$Ui_Css_Properties$fill(_gdotdesign$elm_ui$Ui_Css_Properties$currentColor),
-												_1: {ctor: '[]'}
+												_0: _gdotdesign$elm_ui$Ui_Styles_Ripple$style,
+												_1: {
+													ctor: '::',
+													_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderRight(
+														A2(
+															_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+															A2(
+																_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+																_gdotdesign$elm_ui$Ui_Css_Properties$px(1),
+																_gdotdesign$elm_ui$Ui_Css_Properties$solid),
+															_gdotdesign$elm_ui$Ui_Css_Properties$transparent)),
+													_1: {
+														ctor: '::',
+														_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderLeft(
+															A2(
+																_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+																A2(
+																	_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+																	_gdotdesign$elm_ui$Ui_Css_Properties$px(1),
+																	_gdotdesign$elm_ui$Ui_Css_Properties$solid),
+																_gdotdesign$elm_ui$Ui_Css_Properties$transparent)),
+														_1: {
+															ctor: '::',
+															_0: _gdotdesign$elm_ui$Ui_Css_Properties$transform(
+																{
+																	ctor: '::',
+																	_0: A3(_gdotdesign$elm_ui$Ui_Css_Properties$translate3d, _gdotdesign$elm_ui$Ui_Css_Properties$zero, _gdotdesign$elm_ui$Ui_Css_Properties$zero, _gdotdesign$elm_ui$Ui_Css_Properties$zero),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: _gdotdesign$elm_ui$Ui_Css_Properties$textDecoration(_gdotdesign$elm_ui$Ui_Css_Properties$none),
+																_1: {
+																	ctor: '::',
+																	_0: _gdotdesign$elm_ui$Ui_Css_Properties$color(_gdotdesign$elm_ui$Ui_Css_Properties$currentColor),
+																	_1: {
+																		ctor: '::',
+																		_0: _gdotdesign$elm_ui$Ui_Css_Properties$position(_gdotdesign$elm_ui$Ui_Css_Properties$relative),
+																		_1: {
+																			ctor: '::',
+																			_0: _gdotdesign$elm_ui$Ui_Css_Properties$cursor(_gdotdesign$elm_ui$Ui_Css_Properties$pointer),
+																			_1: {
+																				ctor: '::',
+																				_0: _gdotdesign$elm_ui$Ui_Css_Properties$transition(
+																					{
+																						ctor: '::',
+																						_0: {
+																							duration: _gdotdesign$elm_ui$Ui_Css_Properties$ms(200),
+																							property: 'all',
+																							easing: 'ease',
+																							delay: _gdotdesign$elm_ui$Ui_Css_Properties$ms(0)
+																						},
+																						_1: {ctor: '[]'}
+																					}),
+																				_1: {
+																					ctor: '::',
+																					_0: A2(
+																						_gdotdesign$elm_ui$Ui_Css$selector,
+																						'&:focus',
+																						{
+																							ctor: '::',
+																							_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderColor('rgba(0,0,0,0.6)'),
+																							_1: {
+																								ctor: '::',
+																								_0: _gdotdesign$elm_ui$Ui_Css_Properties$outline(_gdotdesign$elm_ui$Ui_Css_Properties$none),
+																								_1: {
+																									ctor: '::',
+																									_0: _gdotdesign$elm_ui$Ui_Css_Properties$transition(
+																										{
+																											ctor: '::',
+																											_0: {
+																												duration: _gdotdesign$elm_ui$Ui_Css_Properties$ms(200),
+																												delay: _gdotdesign$elm_ui$Ui_Css_Properties$ms(100),
+																												property: 'all',
+																												easing: 'ease'
+																											},
+																											_1: {ctor: '[]'}
+																										}),
+																									_1: {ctor: '[]'}
+																								}
+																							}
+																						}),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(
+																							_gdotdesign$elm_ui$Ui_Css$selector,
+																							'&:active',
+																							{
+																								ctor: '::',
+																								_0: _gdotdesign$elm_ui$Ui_Css_Properties$borderColor('rgba(0,0,0,0.6)'),
+																								_1: {ctor: '[]'}
+																							}),
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
 											}),
-										_1: {ctor: '[]'}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_gdotdesign$elm_ui$Ui_Css$selector,
-								'&[size=medium] ui-icon-button-icon',
-								{
-									ctor: '::',
-									_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
-										_gdotdesign$elm_ui$Ui_Css_Properties$px(12)),
-									_1: {
-										ctor: '::',
-										_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
-											_gdotdesign$elm_ui$Ui_Css_Properties$px(12)),
-										_1: {ctor: '[]'}
-									}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_gdotdesign$elm_ui$Ui_Css$selector,
-									'&[size=big] ui-icon-button-icon',
-									{
-										ctor: '::',
-										_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
-											_gdotdesign$elm_ui$Ui_Css_Properties$px(18)),
 										_1: {
 											ctor: '::',
-											_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
-												_gdotdesign$elm_ui$Ui_Css_Properties$px(18)),
-											_1: {ctor: '[]'}
-										}
-									}),
-								_1: {
-									ctor: '::',
-									_0: A2(
-										_gdotdesign$elm_ui$Ui_Css$selector,
-										'&[size=small] ui-icon-button-icon',
-										{
-											ctor: '::',
-											_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
-												_gdotdesign$elm_ui$Ui_Css_Properties$px(10)),
+											_0: A2(
+												_gdotdesign$elm_ui$Ui_Css$selector,
+												'&:not([interactive]) svg[ripple]',
+												{
+													ctor: '::',
+													_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$none),
+													_1: {ctor: '[]'}
+												}),
 											_1: {
 												ctor: '::',
-												_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
-													_gdotdesign$elm_ui$Ui_Css_Properties$px(10)),
-												_1: {ctor: '[]'}
+												_0: A2(
+													_gdotdesign$elm_ui$Ui_Css$selector,
+													'span',
+													{
+														ctor: '::',
+														_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+															_gdotdesign$elm_ui$Ui_Css_Properties$px(18)),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_gdotdesign$elm_ui$Ui_Css$selector,
+														'a',
+														{
+															ctor: '::',
+															_0: _gdotdesign$elm_ui$Ui_Css_Properties$padding(
+																A2(
+																	_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+																	_gdotdesign$elm_ui$Ui_Css_Properties$zero,
+																	_gdotdesign$elm_ui$Ui_Css_Properties$px(12))),
+															_1: {
+																ctor: '::',
+																_0: _gdotdesign$elm_ui$Ui_Css_Properties$textOverflow(_gdotdesign$elm_ui$Ui_Css_Properties$ellipsis),
+																_1: {
+																	ctor: '::',
+																	_0: _gdotdesign$elm_ui$Ui_Css_Properties$alignItems(_gdotdesign$elm_ui$Ui_Css_Properties$center),
+																	_1: {
+																		ctor: '::',
+																		_0: _gdotdesign$elm_ui$Ui_Css_Properties$whiteSpace(_gdotdesign$elm_ui$Ui_Css_Properties$nowrap),
+																		_1: {
+																			ctor: '::',
+																			_0: _gdotdesign$elm_ui$Ui_Css_Properties$fontSize(_gdotdesign$elm_ui$Ui_Css_Properties$inherit),
+																			_1: {
+																				ctor: '::',
+																				_0: _gdotdesign$elm_ui$Ui_Css_Properties$userSelect(_gdotdesign$elm_ui$Ui_Css_Properties$none),
+																				_1: {
+																					ctor: '::',
+																					_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(_gdotdesign$elm_ui$Ui_Css_Properties$inherit),
+																					_1: {
+																						ctor: '::',
+																						_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$flex),
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}),
+													_1: {ctor: '[]'}
+												}
 											}
-										}),
-									_1: {ctor: '[]'}
+										}
+									}
 								}
 							}
 						}
@@ -16324,70 +16687,435 @@ var _gdotdesign$elm_ui$Ui_Styles_IconButton$style = function (theme) {
 			}
 		});
 };
-var _gdotdesign$elm_ui$Ui_Styles_IconButton$defaultStyle = _gdotdesign$elm_ui$Ui_Styles$attributes(
-	_gdotdesign$elm_ui$Ui_Styles_IconButton$style(_gdotdesign$elm_ui$Ui_Styles_Theme$default));
-
-var _gdotdesign$elm_ui$Ui_IconButton$render = F2(
-	function (msg, model) {
-		var span = A3(
-			_elm_lang$html$Html$node,
-			'span',
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(model.text),
-				_1: {ctor: '[]'}
-			});
-		var icon = A3(
-			_elm_lang$html$Html$node,
-			'ui-icon-button-icon',
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: model.glyph,
-				_1: {ctor: '[]'}
-			});
-		var children = _elm_lang$core$Native_Utils.eq(model.side, 'left') ? {
+var _gdotdesign$elm_ui$Ui_Styles_Header$style = function (theme) {
+	return _gdotdesign$elm_ui$Ui_Css$mixin(
+		{
 			ctor: '::',
-			_0: icon,
+			_0: _gdotdesign$elm_ui$Ui_Css_Properties$background(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'linear-gradient(',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						theme.header.colors.backgroundTop,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							', ',
+							A2(_elm_lang$core$Basics_ops['++'], theme.header.colors.backgroundBottom, ')'))))),
 			_1: {
 				ctor: '::',
-				_0: span,
-				_1: {ctor: '[]'}
+				_0: _gdotdesign$elm_ui$Ui_Css_Properties$zIndex(theme.zIndexes.header),
+				_1: {
+					ctor: '::',
+					_0: _gdotdesign$elm_ui$Ui_Css_Properties$fontFamily(theme.fontFamily),
+					_1: {
+						ctor: '::',
+						_0: _gdotdesign$elm_ui$Ui_Css_Properties$padding(
+							A2(
+								_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+								_gdotdesign$elm_ui$Ui_Css_Properties$zero,
+								_gdotdesign$elm_ui$Ui_Css_Properties$px(20))),
+						_1: {
+							ctor: '::',
+							_0: _gdotdesign$elm_ui$Ui_Css_Properties$position(_gdotdesign$elm_ui$Ui_Css_Properties$relative),
+							_1: {
+								ctor: '::',
+								_0: _gdotdesign$elm_ui$Ui_Css_Properties$flex_('0 0 auto'),
+								_1: {
+									ctor: '::',
+									_0: _gdotdesign$elm_ui$Ui_Css_Properties$flexDirection(_gdotdesign$elm_ui$Ui_Css_Properties$row),
+									_1: {
+										ctor: '::',
+										_0: _gdotdesign$elm_ui$Ui_Css_Properties$alignItems(_gdotdesign$elm_ui$Ui_Css_Properties$center),
+										_1: {
+											ctor: '::',
+											_0: _gdotdesign$elm_ui$Ui_Css_Properties$display(_gdotdesign$elm_ui$Ui_Css_Properties$flex),
+											_1: {
+												ctor: '::',
+												_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+													_gdotdesign$elm_ui$Ui_Css_Properties$px(60)),
+												_1: {
+													ctor: '::',
+													_0: _gdotdesign$elm_ui$Ui_Css_Properties$boxShadow(
+														{
+															ctor: '::',
+															_0: {
+																color: 'rgba(0,0,0,0.1)',
+																blur: _gdotdesign$elm_ui$Ui_Css_Properties$px(3),
+																inset: false,
+																spread: _gdotdesign$elm_ui$Ui_Css_Properties$zero,
+																y: _gdotdesign$elm_ui$Ui_Css_Properties$px(2),
+																x: _gdotdesign$elm_ui$Ui_Css_Properties$zero
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	color: 'rgba(0,0,0,0.1)',
+																	blur: _gdotdesign$elm_ui$Ui_Css_Properties$px(10),
+																	inset: false,
+																	spread: _gdotdesign$elm_ui$Ui_Css_Properties$zero,
+																	y: _gdotdesign$elm_ui$Ui_Css_Properties$zero,
+																	x: _gdotdesign$elm_ui$Ui_Css_Properties$zero
+																},
+																_1: {ctor: '[]'}
+															}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_gdotdesign$elm_ui$Ui_Css$selector,
+															'ui-header-separator',
+															{
+																ctor: '::',
+																_0: _gdotdesign$elm_ui$Ui_Css_Properties$background(theme.header.colors.border),
+																_1: {
+																	ctor: '::',
+																	_0: _gdotdesign$elm_ui$Ui_Css_Properties$margin(
+																		A2(
+																			_gdotdesign$elm_ui$Ui_Css_Properties_ops['.'],
+																			_gdotdesign$elm_ui$Ui_Css_Properties$zero,
+																			_gdotdesign$elm_ui$Ui_Css_Properties$px(8))),
+																	_1: {
+																		ctor: '::',
+																		_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+																			_gdotdesign$elm_ui$Ui_Css_Properties$px(40)),
+																		_1: {
+																			ctor: '::',
+																			_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
+																				_gdotdesign$elm_ui$Ui_Css_Properties$px(2)),
+																			_1: {ctor: '[]'}
+																		}
+																	}
+																}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_gdotdesign$elm_ui$Ui_Css$selector,
+																'ui-header-spacer',
+																{
+																	ctor: '::',
+																	_0: _gdotdesign$elm_ui$Ui_Css_Properties$flex_('1'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_gdotdesign$elm_ui$Ui_Css$selector,
+																	'ui-header-title',
+																	{
+																		ctor: '::',
+																		_0: _gdotdesign$elm_ui$Ui_Styles_Header$item(theme),
+																		_1: {
+																			ctor: '::',
+																			_0: _gdotdesign$elm_ui$Ui_Css_Properties$fontSize(
+																				_gdotdesign$elm_ui$Ui_Css_Properties$px(20)),
+																			_1: {ctor: '[]'}
+																		}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_gdotdesign$elm_ui$Ui_Css$selector,
+																		'ui-header-item',
+																		{
+																			ctor: '::',
+																			_0: _gdotdesign$elm_ui$Ui_Styles_Header$item(theme),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_gdotdesign$elm_ui$Ui_Css$selector,
+																			'ui-header-icon-item',
+																			{
+																				ctor: '::',
+																				_0: _gdotdesign$elm_ui$Ui_Styles_Header$item(theme),
+																				_1: {
+																					ctor: '::',
+																					_0: A2(
+																						_gdotdesign$elm_ui$Ui_Css$selector,
+																						'svg:not([ripple])',
+																						{
+																							ctor: '::',
+																							_0: _gdotdesign$elm_ui$Ui_Css_Properties$fill(_gdotdesign$elm_ui$Ui_Css_Properties$currentColor),
+																							_1: {
+																								ctor: '::',
+																								_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+																									_gdotdesign$elm_ui$Ui_Css_Properties$px(20)),
+																								_1: {
+																									ctor: '::',
+																									_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
+																										_gdotdesign$elm_ui$Ui_Css_Properties$px(20)),
+																									_1: {ctor: '[]'}
+																								}
+																							}
+																						}),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(
+																							_gdotdesign$elm_ui$Ui_Css$selectors,
+																							{
+																								ctor: '::',
+																								_0: 'svg + span',
+																								_1: {
+																									ctor: '::',
+																									_0: 'span + svg',
+																									_1: {ctor: '[]'}
+																								}
+																							},
+																							{
+																								ctor: '::',
+																								_0: _gdotdesign$elm_ui$Ui_Css_Properties$marginLeft(
+																									_gdotdesign$elm_ui$Ui_Css_Properties$px(12)),
+																								_1: {ctor: '[]'}
+																							}),
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_gdotdesign$elm_ui$Ui_Css$selector,
+																				'ui-header-icon',
+																				{
+																					ctor: '::',
+																					_0: _gdotdesign$elm_ui$Ui_Styles_Header$item(theme),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(
+																							_gdotdesign$elm_ui$Ui_Css$selector,
+																							'svg:not([ripple])',
+																							{
+																								ctor: '::',
+																								_0: _gdotdesign$elm_ui$Ui_Css_Properties$fill(_gdotdesign$elm_ui$Ui_Css_Properties$currentColor),
+																								_1: {
+																									ctor: '::',
+																									_0: _gdotdesign$elm_ui$Ui_Css_Properties$height(
+																										_gdotdesign$elm_ui$Ui_Css_Properties$px(20)),
+																									_1: {
+																										ctor: '::',
+																										_0: _gdotdesign$elm_ui$Ui_Css_Properties$width(
+																											_gdotdesign$elm_ui$Ui_Css_Properties$px(20)),
+																										_1: {ctor: '[]'}
+																									}
+																								}
+																							}),
+																						_1: {ctor: '[]'}
+																					}
+																				}),
+																			_1: {ctor: '[]'}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
-		} : {
+		});
+};
+var _gdotdesign$elm_ui$Ui_Styles_Header$defaultStyle = _gdotdesign$elm_ui$Ui_Styles$attributes(
+	_gdotdesign$elm_ui$Ui_Styles_Header$style(_gdotdesign$elm_ui$Ui_Styles_Theme$default));
+
+var _gdotdesign$elm_ui$Ui_Header$itemAttributes = function (_p0) {
+	var _p1 = _p0;
+	return (_elm_community$maybe_extra$Maybe_Extra$isJust(_p1.action) || _elm_community$maybe_extra$Maybe_Extra$isJust(_p1.link)) ? {
+		ctor: '::',
+		_0: A2(_elm_lang$html$Html_Attributes$attribute, 'interactive', ''),
+		_1: {ctor: '[]'}
+	} : {ctor: '[]'};
+};
+var _gdotdesign$elm_ui$Ui_Header$iconItem = function (model) {
+	var span = A3(
+		_elm_lang$html$Html$node,
+		'span',
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(model.text),
+			_1: {ctor: '[]'}
+		});
+	var children = _elm_lang$core$Native_Utils.eq(model.side, 'left') ? {
+		ctor: '::',
+		_0: model.glyph,
+		_1: {
 			ctor: '::',
 			_0: span,
-			_1: {
-				ctor: '::',
-				_0: icon,
-				_1: {ctor: '[]'}
-			}
-		};
-		return A3(
-			_elm_lang$html$Html$node,
-			'ui-icon-button',
-			A3(_gdotdesign$elm_ui$Ui_Button$attributes, _gdotdesign$elm_ui$Ui_Styles_IconButton$defaultStyle, msg, model),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
+			_1: {ctor: '[]'}
+		}
+	} : {
+		ctor: '::',
+		_0: span,
+		_1: {
+			ctor: '::',
+			_0: model.glyph,
+			_1: {ctor: '[]'}
+		}
+	};
+	return A3(
+		_elm_lang$html$Html$node,
+		'ui-header-icon-item',
+		_gdotdesign$elm_ui$Ui_Header$itemAttributes(model),
+		{
+			ctor: '::',
+			_0: _gdotdesign$elm_ui$Ui_Link$view(
 				{
-					ctor: '::',
-					_0: _gdotdesign$elm_ui$Ui_Helpers_Ripple$view,
-					_1: {ctor: '[]'}
-				},
-				children));
+					contents: {ctor: '::', _0: _gdotdesign$elm_ui$Ui_Helpers_Ripple$view, _1: children},
+					target: _elm_lang$core$Maybe$Just(model.target),
+					msg: model.action,
+					url: model.link
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Header$item = function (model) {
+	return A3(
+		_elm_lang$html$Html$node,
+		'ui-header-item',
+		_gdotdesign$elm_ui$Ui_Header$itemAttributes(model),
+		{
+			ctor: '::',
+			_0: _gdotdesign$elm_ui$Ui_Link$view(
+				{
+					target: _elm_lang$core$Maybe$Just(model.target),
+					msg: model.action,
+					url: model.link,
+					contents: {
+						ctor: '::',
+						_0: A3(
+							_elm_lang$html$Html$node,
+							'span',
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(model.text),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _gdotdesign$elm_ui$Ui_Helpers_Ripple$view,
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Header$spacer = A3(
+	_elm_lang$html$Html$node,
+	'ui-header-spacer',
+	{ctor: '[]'},
+	{ctor: '[]'});
+var _gdotdesign$elm_ui$Ui_Header$separator = A3(
+	_elm_lang$html$Html$node,
+	'ui-header-separator',
+	{ctor: '[]'},
+	{ctor: '[]'});
+var _gdotdesign$elm_ui$Ui_Header$title = function (model) {
+	return A3(
+		_elm_lang$html$Html$node,
+		'ui-header-title',
+		_gdotdesign$elm_ui$Ui_Header$itemAttributes(model),
+		{
+			ctor: '::',
+			_0: _gdotdesign$elm_ui$Ui_Link$view(
+				{
+					target: _elm_lang$core$Maybe$Just(model.target),
+					msg: model.action,
+					url: model.link,
+					contents: {
+						ctor: '::',
+						_0: A3(
+							_elm_lang$html$Html$node,
+							'span',
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(model.text),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _gdotdesign$elm_ui$Ui_Helpers_Ripple$view,
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Header$icon = function (model) {
+	return A3(
+		_elm_lang$html$Html$node,
+		'ui-header-icon',
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_gdotdesign$elm_ui$Ui_Header$itemAttributes(model),
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'font-size',
+							_1: A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(model.size),
+								'px')
+						},
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}),
+		{
+			ctor: '::',
+			_0: _gdotdesign$elm_ui$Ui_Link$view(
+				{
+					target: _elm_lang$core$Maybe$Just(model.target),
+					msg: model.action,
+					url: model.link,
+					contents: {
+						ctor: '::',
+						_0: _gdotdesign$elm_ui$Ui_Helpers_Ripple$view,
+						_1: {
+							ctor: '::',
+							_0: model.glyph,
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _gdotdesign$elm_ui$Ui_Header$view = function (children) {
+	return A3(
+		_elm_lang$html$Html$node,
+		'ui-header',
+		_gdotdesign$elm_ui$Ui_Styles$apply(_gdotdesign$elm_ui$Ui_Styles_Header$defaultStyle),
+		children);
+};
+var _gdotdesign$elm_ui$Ui_Header$Title = F4(
+	function (a, b, c, d) {
+		return {link: a, action: b, target: c, text: d};
 	});
-var _gdotdesign$elm_ui$Ui_IconButton$view = F2(
-	function (msg, model) {
-		return A3(_elm_lang$html$Html_Lazy$lazy2, _gdotdesign$elm_ui$Ui_IconButton$render, msg, model);
+var _gdotdesign$elm_ui$Ui_Header$Icon = F5(
+	function (a, b, c, d, e) {
+		return {glyph: a, link: b, action: c, target: d, size: e};
 	});
-var _gdotdesign$elm_ui$Ui_IconButton$model = F2(
-	function (text, glyph) {
-		return {disabled: false, readonly: false, kind: 'primary', size: 'medium', glyph: glyph, side: 'left', text: text};
-	});
-var _gdotdesign$elm_ui$Ui_IconButton$Model = F7(
-	function (a, b, c, d, e, f, g) {
-		return {glyph: a, disabled: b, readonly: c, text: d, kind: e, side: f, size: g};
+var _gdotdesign$elm_ui$Ui_Header$IconItem = F6(
+	function (a, b, c, d, e, f) {
+		return {glyph: a, link: b, action: c, target: d, text: e, side: f};
 	});
 
 var _gdotdesign$elm_ui$Ui_Styles_Modal$style = function (theme) {
@@ -16948,25 +17676,13 @@ var _gdotdesign$elm_ui$Ui_Modal$view = F2(
 		return A3(_elm_lang$html$Html_Lazy$lazy2, _gdotdesign$elm_ui$Ui_Modal$render, viewModel, model);
 	});
 
-var _user$project$Football_Data$reverse = F2(
-	function (x, y) {
-		var _p0 = A2(_elm_lang$core$Basics$compare, x, y);
-		switch (_p0.ctor) {
-			case 'LT':
-				return _elm_lang$core$Basics$GT;
-			case 'GT':
-				return _elm_lang$core$Basics$LT;
-			default:
-				return _elm_lang$core$Basics$EQ;
-		}
-	});
-var _user$project$Football_Data$gamesHasInplay = function (_p1) {
+var _user$project$Football_Data$gamesHasInplay = function (_p0) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		false,
 		A2(
 			_elm_lang$core$Maybe$map,
-			function (_p2) {
+			function (_p1) {
 				return true;
 			},
 			_elm_lang$core$List$head(
@@ -16975,9 +17691,9 @@ var _user$project$Football_Data$gamesHasInplay = function (_p1) {
 					function (_) {
 						return _.inplay;
 					},
-					_p1))));
+					_p0))));
 };
-var _user$project$Football_Data$gamesCompetitions = function (_p3) {
+var _user$project$Football_Data$gamesToCompetitions = function (_p2) {
 	return _elm_lang$core$Dict$toList(
 		A3(
 			_elm_lang$core$List$foldl,
@@ -16996,7 +17712,7 @@ var _user$project$Football_Data$gamesCompetitions = function (_p3) {
 					return A3(_elm_lang$core$Dict$insert, x.competition, games, m);
 				}),
 			_elm_lang$core$Dict$empty,
-			_p3));
+			_p2));
 };
 var _user$project$Football_Data$decoderMaybe = F2(
 	function (fieldStr, d) {
@@ -17010,10 +17726,10 @@ var _user$project$Football_Data$updateGame = F2(
 	function (x, y) {
 		var comp = F2(
 			function (fy, fx) {
-				var _p4 = fy(y);
-				if (_p4.ctor === 'Just') {
+				var _p3 = fy(y);
+				if (_p3.ctor === 'Just') {
 					return !_elm_lang$core$Native_Utils.eq(
-						_p4._0,
+						_p3._0,
 						fx(x));
 				} else {
 					return false;
@@ -17040,22 +17756,22 @@ var _user$project$Football_Data$updateGame = F2(
 			});
 	});
 var _user$project$Football_Data$updateGames = F2(
-	function (_p5, games) {
-		var _p6 = _p5;
-		var _p12 = _p6.$new;
-		if (_p6.reset) {
-			return _p12;
+	function (_p4, games) {
+		var _p5 = _p4;
+		var _p11 = _p5.$new;
+		if (_p5.reset) {
+			return _p11;
 		} else {
-			var isJust = function (_p7) {
+			var isJust = function (_p6) {
 				return A2(
 					_elm_lang$core$Maybe$withDefault,
 					false,
 					A2(
 						_elm_lang$core$Maybe$map,
-						function (_p8) {
+						function (_p7) {
 							return true;
 						},
-						_p7));
+						_p6));
 			};
 			var updM = _elm_lang$core$Dict$fromList(
 				A2(
@@ -17063,15 +17779,15 @@ var _user$project$Football_Data$updateGames = F2(
 					function (x) {
 						return {ctor: '_Tuple2', _0: x.id, _1: x};
 					},
-					_p6.upd));
+					_p5.upd));
 			var newSet = _elm_lang$core$Set$fromList(
 				A2(
 					_elm_lang$core$List$map,
 					function (_) {
 						return _.id;
 					},
-					_p12));
-			var outSet = _elm_lang$core$Set$fromList(_p6.out);
+					_p11));
+			var outSet = _elm_lang$core$Set$fromList(_p5.out);
 			var play = A2(
 				_elm_lang$core$List$map,
 				function (x) {
@@ -17085,10 +17801,10 @@ var _user$project$Football_Data$updateGames = F2(
 				},
 				A2(
 					_elm_lang$core$List$filter,
-					function (_p9) {
-						var _p10 = _p9;
-						var _p11 = _p10.id;
-						return (!A2(_elm_lang$core$Set$member, _p11, outSet)) && (!A2(_elm_lang$core$Set$member, _p11, newSet));
+					function (_p8) {
+						var _p9 = _p8;
+						var _p10 = _p9.id;
+						return (!A2(_elm_lang$core$Set$member, _p10, outSet)) && (!A2(_elm_lang$core$Set$member, _p10, newSet));
 					},
 					games));
 			return A2(
@@ -17096,7 +17812,7 @@ var _user$project$Football_Data$updateGames = F2(
 				function (_) {
 					return _.order;
 				},
-				A2(_elm_lang$core$Basics_ops['++'], _p12, play));
+				A2(_elm_lang$core$Basics_ops['++'], _p11, play));
 		}
 	});
 var _user$project$Football_Data$Game = function (a) {
@@ -17336,6 +18052,61 @@ var _user$project$Football_Data$parseGames = function (str) {
 	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Football_Data$decoderGamesChanges, str);
 };
 
+var _user$project$Football_CheckCompetition$setCompetitonGames = F2(
+	function (m, _p0) {
+		var _p1 = _p0;
+		var _p6 = _p1._1;
+		var _p5 = _p1._0;
+		var country = function () {
+			var _p2 = A2(
+				_elm_lang$core$Maybe$map,
+				function (_) {
+					return _.country;
+				},
+				_elm_lang$core$List$head(_p6));
+			if (_p2.ctor === 'Just') {
+				return _p2._0;
+			} else {
+				return _elm_lang$core$Native_Utils.crashCase(
+					'Football.CheckCompetition',
+					{
+						start: {line: 157, column: 13},
+						end: {line: 162, column: 45}
+					},
+					_p2)('empty list');
+			}
+		}();
+		var cb = _gdotdesign$elm_ui$Ui_Checkbox$init(
+			{ctor: '_Tuple0'});
+		var value = A2(
+			_elm_lang$core$Maybe$withDefault,
+			true,
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (_p4) {
+					return function (_) {
+						return _.value;
+					}(
+						function (_) {
+							return _.checkbox;
+						}(_p4));
+				},
+				A2(_elm_lang$core$Dict$get, _p5, m)));
+		var size = _elm_lang$core$List$sum(
+			A2(
+				_elm_lang$core$List$map,
+				function (x) {
+					return x.totalMatched + x.totalAvailable;
+				},
+				_p6));
+		return {
+			checkbox: A2(_gdotdesign$elm_ui$Ui_Checkbox$setValue, value, cb),
+			name: _p5,
+			size: size,
+			count: _elm_lang$core$List$length(_p6),
+			country: country
+		};
+	});
 var _user$project$Football_CheckCompetition$setGames = F2(
 	function (model, games) {
 		var m = _elm_lang$core$Dict$fromList(
@@ -17345,66 +18116,15 @@ var _user$project$Football_CheckCompetition$setGames = F2(
 					return {ctor: '_Tuple2', _0: x.name, _1: x};
 				},
 				model.items));
-		var items = A2(
-			_elm_lang$core$List$map,
-			function (_p0) {
-				var _p1 = _p0;
-				var _p6 = _p1._1;
-				var _p5 = _p1._0;
-				var country = function () {
-					var _p2 = A2(
-						_elm_lang$core$Maybe$map,
-						function (_) {
-							return _.country;
-						},
-						_elm_lang$core$List$head(_p6));
-					if (_p2.ctor === 'Just') {
-						return _p2._0;
-					} else {
-						return _elm_lang$core$Native_Utils.crashCase(
-							'Football.CheckCompetition',
-							{
-								start: {line: 152, column: 33},
-								end: {line: 157, column: 65}
-							},
-							_p2)('empty list');
-					}
-				}();
-				var cb = _gdotdesign$elm_ui$Ui_Checkbox$init(
-					{ctor: '_Tuple0'});
-				var value = A2(
-					_elm_lang$core$Maybe$withDefault,
-					true,
-					A2(
-						_elm_lang$core$Maybe$map,
-						function (_p4) {
-							return function (_) {
-								return _.value;
-							}(
-								function (_) {
-									return _.checkbox;
-								}(_p4));
-						},
-						A2(_elm_lang$core$Dict$get, _p5, m)));
-				var size = _elm_lang$core$List$sum(
-					A2(
-						_elm_lang$core$List$map,
-						function (x) {
-							return x.totalMatched + x.totalAvailable;
-						},
-						_p6));
-				return {
-					checkbox: A2(_gdotdesign$elm_ui$Ui_Checkbox$setValue, value, cb),
-					name: _p5,
-					size: size,
-					count: _elm_lang$core$List$length(_p6),
-					country: country
-				};
-			},
-			_user$project$Football_Data$gamesCompetitions(games));
 		return _elm_lang$core$Native_Utils.update(
 			model,
-			{items: items, tableState: model.tableState});
+			{
+				items: A2(
+					_elm_lang$core$List$map,
+					_user$project$Football_CheckCompetition$setCompetitonGames(m),
+					_user$project$Football_Data$gamesToCompetitions(games)),
+				tableState: model.tableState
+			});
 	});
 var _user$project$Football_CheckCompetition$setVisible = F2(
 	function (model, open) {
@@ -17422,7 +18142,7 @@ var _user$project$Football_CheckCompetition$model = {
 	tableState: _evancz$elm_sortable_table$Table$initialSort('Ставки'),
 	uiModal: {closable: true, backdrop: true, open: false}
 };
-var _user$project$Football_CheckCompetition$filter = function (model) {
+var _user$project$Football_CheckCompetition$filterGames = function (model) {
 	var st = _elm_lang$core$Set$fromList(
 		A2(
 			_elm_lang$core$List$map,
@@ -17454,7 +18174,7 @@ var _user$project$Football_CheckCompetition$Model = F3(
 	function (a, b, c) {
 		return {tableState: a, items: b, uiModal: c};
 	});
-var _user$project$Football_CheckCompetition$Item = F5(
+var _user$project$Football_CheckCompetition$CompetitionInfo = F5(
 	function (a, b, c, d, e) {
 		return {checkbox: a, name: b, size: c, count: d, country: e};
 	});
@@ -17933,16 +18653,93 @@ var _user$project$Football_Football$columnScore = A2(
 				' - ',
 				_elm_lang$core$Basics$toString(_p5.scoreAway))) : '';
 	});
-var _user$project$Football_Football$buttonSettingsModel = {
-	disabled: false,
-	readonly: false,
-	kind: 'secondary',
-	size: 'small',
-	glyph: _gdotdesign$elm_ui$Ui_Icons$plus(
-		{ctor: '[]'}),
-	side: 'left',
-	text: 'Настройки'
-};
+var _user$project$Football_Football$renderTitle = _gdotdesign$elm_ui$Ui_Header$title(
+	{action: _elm_lang$core$Maybe$Nothing, target: '_self', link: _elm_lang$core$Maybe$Nothing, text: 'Футбол'});
+var _user$project$Football_Football$renderLoadingPan = function () {
+	var linkCss = A3(
+		_elm_lang$html$Html$node,
+		'link',
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$rel('stylesheet'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$type_('text/css'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$href('css/fountainG.css'),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		{ctor: '[]'});
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'width', _1: '234px'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'height', _1: '28px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			linkCss,
+			A2(
+				_elm_lang$core$List$map,
+				function (n) {
+					return A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('fountainG'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$id(
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'fountainG_',
+										_elm_lang$core$Basics$toString(n))),
+								_1: {ctor: '[]'}
+							}
+						},
+						{ctor: '[]'});
+				},
+				A2(_elm_lang$core$List$range, 1, 8))));
+}();
+var _user$project$Football_Football$renderLoadingHeader = _gdotdesign$elm_ui$Ui_Header$view(
+	{
+		ctor: '::',
+		_0: _user$project$Football_Football$renderTitle,
+		_1: {
+			ctor: '::',
+			_0: _gdotdesign$elm_ui$Ui_Header$item(
+				{link: _elm_lang$core$Maybe$Nothing, target: '_blank', action: _elm_lang$core$Maybe$Nothing, text: 'Загрузка данных...'}),
+			_1: {
+				ctor: '::',
+				_0: _user$project$Football_Football$renderLoadingPan,
+				_1: {ctor: '[]'}
+			}
+		}
+	});
 var _user$project$Football_Football$init = F2(
 	function (protocol, host) {
 		return {
@@ -18164,7 +18961,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 };
 var _user$project$Football_Football$rederGamesTable = function (_p9) {
 	var _p10 = _p9;
-	var games_ = A2(_user$project$Football_CheckCompetition$filter, _p10.checkCompetition, _p10.games);
+	var games_ = A2(_user$project$Football_CheckCompetition$filterGames, _p10.checkCompetition, _p10.games);
 	return A3(
 		_evancz$elm_sortable_table$Table$view,
 		_user$project$Football_Football$configTable(
@@ -18173,59 +18970,46 @@ var _user$project$Football_Football$rederGamesTable = function (_p9) {
 		games_);
 };
 var _user$project$Football_Football$ShowCheckCompetition = {ctor: 'ShowCheckCompetition'};
-var _user$project$Football_Football$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$table,
-		{
+var _user$project$Football_Football$renderHeader = _gdotdesign$elm_ui$Ui_Header$view(
+	{
+		ctor: '::',
+		_0: _user$project$Football_Football$renderTitle,
+		_1: {
 			ctor: '::',
-			_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '100%'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$tr,
-				{ctor: '[]'},
-				{
+			_0: _gdotdesign$elm_ui$Ui_Header$spacer,
+			_1: {
+				ctor: '::',
+				_0: _gdotdesign$elm_ui$Ui_Header$separator,
+				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$td,
+					_0: _gdotdesign$elm_ui$Ui_Header$item(
 						{
-							ctor: '::',
-							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '90%'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _user$project$Football_Football$rederGamesTable(model),
-							_1: {
-								ctor: '::',
-								_0: A2(_user$project$Football_CheckCompetition$view, _user$project$Football_Football$CheckCompetition, model.checkCompetition),
-								_1: {ctor: '[]'}
-							}
+							link: _elm_lang$core$Maybe$Nothing,
+							target: '_blank',
+							action: _elm_lang$core$Maybe$Just(_user$project$Football_Football$ShowCheckCompetition),
+							text: 'Чемпионаты'
 						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$td,
-							{
-								ctor: '::',
-								_0: A2(_elm_lang$html$Html_Attributes$attribute, 'width', '10%'),
-								_1: {
-									ctor: '::',
-									_0: A2(_elm_lang$html$Html_Attributes$attribute, 'valign', 'top'),
-									_1: {ctor: '[]'}
-								}
-							},
-							{
-								ctor: '::',
-								_0: A2(_gdotdesign$elm_ui$Ui_IconButton$view, _user$project$Football_Football$ShowCheckCompetition, _user$project$Football_Football$buttonSettingsModel),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {ctor: '[]'}
+					_1: {ctor: '[]'}
+				}
+			}
+		}
+	});
+var _user$project$Football_Football$view = function (model) {
+	return _elm_lang$core$List$isEmpty(model.games) ? _user$project$Football_Football$renderLoadingHeader : A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Football_Football$renderHeader,
+			_1: {
+				ctor: '::',
+				_0: _user$project$Football_Football$rederGamesTable(model),
+				_1: {
+					ctor: '::',
+					_0: A2(_user$project$Football_CheckCompetition$view, _user$project$Football_Football$CheckCompetition, model.checkCompetition),
+					_1: {ctor: '[]'}
+				}
+			}
 		});
 };
 var _user$project$Football_Football$NewGamesChanges = function (a) {
@@ -18246,8 +19030,8 @@ var _user$project$Football_Football$subscriptions = function (model) {
 				return _elm_lang$core$Native_Utils.crashCase(
 					'Football.Football',
 					{
-						start: {line: 92, column: 21},
-						end: {line: 97, column: 44}
+						start: {line: 89, column: 21},
+						end: {line: 94, column: 44}
 					},
 					_p11)(_p11._0);
 			}
