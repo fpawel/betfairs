@@ -18052,7 +18052,7 @@ var _user$project$Football_Data$parseGames = function (str) {
 	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Football_Data$decoderGamesChanges, str);
 };
 
-var _user$project$Football_CheckCompetition$setCompetitonGames = F2(
+var _user$project$Football_CheckCompetition$setCompetitionGames = F2(
 	function (m, _p0) {
 		var _p1 = _p0;
 		var _p6 = _p1._1;
@@ -18121,7 +18121,7 @@ var _user$project$Football_CheckCompetition$setGames = F2(
 			{
 				items: A2(
 					_elm_lang$core$List$map,
-					_user$project$Football_CheckCompetition$setCompetitonGames(m),
+					_user$project$Football_CheckCompetition$setCompetitionGames(m),
 					_user$project$Football_Data$gamesToCompetitions(games)),
 				tableState: model.tableState
 			});

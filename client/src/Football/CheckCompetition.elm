@@ -3,8 +3,8 @@ module Football.CheckCompetition exposing (Model, Msg, model, setGames, update, 
 import Html exposing (..)
 import Html.Attributes exposing (style, attribute, class)
 import Ui.Checkbox
-import Dict
-import Set
+import Dict exposing (Dict)
+import Set exposing (Set)
 import Football.Data exposing (..)
 import Table
 import Ui.ButtonGroup
@@ -127,20 +127,20 @@ setVisible model open =
 setGames : Model -> List Game -> Model
 setGames model games =
     let
-        m : Dict.Dict String CompetitionInfo
+        m : Dict String CompetitionInfo
         m =
             model.items
                 |> List.map (\x -> ( x.name, x ))
                 |> Dict.fromList
     in
         { model
-            | items = List.map (setCompetitonGames m) (gamesToCompetitions games)
+            | items = List.map (setCompetitionGames m) (gamesToCompetitions games)
             , tableState = model.tableState
         }
 
 
-setCompetitonGames : Dict.Dict String CompetitionInfo -> ( String, List Game ) -> CompetitionInfo
-setCompetitonGames m ( name, xs ) =
+setCompetitionGames : Dict String CompetitionInfo -> ( String, List Game ) -> CompetitionInfo
+setCompetitionGames m ( name, xs ) =
     let
         size =
             List.sum <| List.map (\x -> x.totalMatched + x.totalAvailable) xs
