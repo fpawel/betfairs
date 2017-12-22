@@ -9,7 +9,7 @@ import (
 type Runner struct {
 
 	// The unique id of the runner (selection)
-	ID int `json:"selectionId"`
+	ID RunnerID `json:"selectionId"`
 
 	// The status of the selection (i.e., ACTIVE, REMOVED, WINNER, LOSER, HIDDEN)
 	// Runner status information is available for 90 days following market settlement.

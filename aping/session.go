@@ -128,11 +128,11 @@ func (x *Session) ListMarketCatalogue(eventID int) (MarketCatalogues, error) {
 
 
 
-func (x *Session) ListMarketBook(marketIDs []string) (MarketBooks, error) {
+func (x *Session) ListMarketBook(marketIDs []MarketID) (MarketBooks, error) {
 
 	type readMarketBookRequest struct {
 		Locale          string   `json:"locale"`
-		MarketIDs         []string `json:"marketIds"`
+		MarketIDs         []MarketID `json:"marketIds"`
 		PriceProjection PriceProjection `json:"priceProjection"`
 	}
 

@@ -4,7 +4,7 @@ package aping
 type RunnerCatalogue struct {
 
 	// The unique id of the runner (selection)
-	ID int `json:"selectionId"`
+	ID RunnerID `json:"selectionId"`
 
 	// The name of the runner
 	Name string `json:"runnerName,omitempty"`

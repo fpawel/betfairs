@@ -5,7 +5,7 @@ import "time"
 type MarketBook struct {
 
 	//The unique identifier for the market. MarketId's are prefixed with '1.' or '2.' 1. = UK Exchange 2. = AUS Exchange.
-	ID string `json:"marketId"`
+	ID MarketID `json:"marketId"`
 
 	//True if the data returned by listMarketBook will be delayed.
 	// The data may be delayed because you are not logged in with a funded account or you are using an Application Key

@@ -14,6 +14,8 @@ import (
 	"strings"
 )
 
+type Games []Game
+
 type Game struct {
 	football.Game
 	Competition string `json:"competition"`
@@ -132,7 +134,7 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 	}
 
 	var mb aping.MarketBooks
-	mb, err = marketBookReader.Read([]string{mainMarket.ID}, t)
+	mb, err = marketBookReader.Read([]aping.MarketID{mainMarket.ID}, t)
 	if err != nil {
 		return
 	}

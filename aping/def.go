@@ -16,6 +16,9 @@ const (
 	Lay
 )
 
+type MarketID string
+type RunnerID int
+
 // The competition the market is contained within. Usually only applies to Football competitions
 type Competition struct {
 	ID   string `json:"id"`

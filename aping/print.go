@@ -26,7 +26,7 @@ func PrintMarketCatalogues(markets MarketCatalogues) {
 		if strings.Contains( x.Name, "Азиатск") || len(x.Runners) == 0 {
 			continue
 		}
-		table.Append([]string{ strconv.Itoa(i), x.ID, x.Name, x.Runners[0].Name  })
+		table.Append([]string{ strconv.Itoa(i), string(x.ID), x.Name, x.Runners[0].Name  })
 		for _,r := range x.Runners[1:] {
 			table.Append([]string{"","", "", r.Name, })
 		}

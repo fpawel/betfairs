@@ -12,10 +12,10 @@ func (x MarketCatalogues) Dub() (dub MarketCatalogues){
 }
 
 
-func (x MarketCatalogues) Take40MarketIDs() (r [][] string){
+func (x MarketCatalogues) Take40MarketIDs() (r [][] MarketID){
 	for i,y := range x {
 		if i % 40 == 0 {
-			r = append(r, []string{})
+			r = append(r, []MarketID{})
 		}
 		n := len(r)-1
 		r[n] = append(r[n], y.ID)
@@ -34,7 +34,7 @@ func (x MarketCatalogues) MainMarket() (m MarketCatalogue, ok bool){
 	return
 }
 
-func (x MarketCatalogues) Market(id string) (m MarketCatalogue, ok bool){
+func (x MarketCatalogues) Market(id MarketID) (m MarketCatalogue, ok bool){
 	for n := range x {
 		if x[n].ID == id {
 			ok = true
@@ -45,7 +45,7 @@ func (x MarketCatalogues) Market(id string) (m MarketCatalogue, ok bool){
 	return
 }
 
-func (x MarketCatalogues) Runner(marketID string, runnerID int) (r RunnerCatalogue, ok bool){
+func (x MarketCatalogues) Runner(marketID MarketID, runnerID RunnerID) (r RunnerCatalogue, ok bool){
 	var m MarketCatalogue
 	m,ok = x.Market(marketID)
 	if ok {

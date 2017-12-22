@@ -1,11 +1,13 @@
 package aping
 
-import "time"
+import (
+	"time"
+)
 
 type MarketCatalogue struct {
 
 	//The unique identifier for the market. MarketId's are prefixed with '1.' or '2.' 1. = UK Exchange 2. = AUS Exchange.
-	ID string `json:"marketId"`
+	ID MarketID `json:"marketId"`
 
 	//  The name of the market
 	Name string `json:"marketName,omitempty"`
@@ -32,7 +34,7 @@ type MarketCatalogue struct {
 	Event Event `json:"event,omitempty"`
 }
 
-func (x MarketCatalogue) Runner(id int) (r RunnerCatalogue, ok bool)  {
+func (x MarketCatalogue) Runner(id RunnerID) (r RunnerCatalogue, ok bool)  {
 	for i := range  x.Runners{
 		if x.Runners[i].ID == id {
 			r = x.Runners[i]

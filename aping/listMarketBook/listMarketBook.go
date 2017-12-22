@@ -10,9 +10,9 @@ import (
 
 type Reader struct {
 	muConsumers   sync.RWMutex
-	consumers     map[string][] chan<- resultRead
+	consumers     map[aping.MarketID][] chan<- resultRead
 	muCache      sync.RWMutex
-	cache        map[string]cachedItem
+	cache        map[aping.MarketID]cachedItem
 	apingSession *aping.Session
 }
 
@@ -21,8 +21,8 @@ type Reader struct {
 func New(apingSession *aping.Session) (x *Reader) {
 	return &Reader{
 		apingSession:apingSession,
-		consumers : make(map[string][] chan<- resultRead),
-		cache : make(map[string]cachedItem),
+		consumers : make(map[aping.MarketID][] chan<- resultRead),
+		cache : make(map[aping.MarketID]cachedItem),
 	}
 }
 
@@ -36,7 +36,7 @@ type resultRead struct {
 	Error error
 }
 
-func (x *Reader) read(marketIDs []string) {
+func (x *Reader) read(marketIDs []aping.MarketID) {
 
 	if len(marketIDs) == 0{
 		log.Fatal("marketIDs must be not nil")
@@ -68,14 +68,14 @@ func (x *Reader) read(marketIDs []string) {
 	x.muConsumers.Unlock()
 }
 
-func (x *Reader) doRead( marketIDs []string) (result aping.MarketBooks, err error) {
+func (x *Reader) doRead( marketIDs []aping.MarketID) (result aping.MarketBooks, err error) {
 	if len(marketIDs) == 0{
 		log.Fatal("marketIDs must be not nil")
 	}
 	var newConsumers []chan resultRead
 	x.muConsumers.Lock()
 
-	var readMarketIDs []string
+	var readMarketIDs []aping.MarketID
 
 	for _,marketID := range marketIDs {
 		ch := make(chan resultRead)
@@ -100,10 +100,10 @@ func (x *Reader) doRead( marketIDs []string) (result aping.MarketBooks, err erro
 	return
 }
 
-func (x *Reader) Read(marketIDs []string, t time.Duration)  (result aping.MarketBooks, err error){
+func (x *Reader) Read(marketIDs []aping.MarketID, t time.Duration)  (result aping.MarketBooks, err error){
 
 	result = make( aping.MarketBooks, len(marketIDs) )
-	posInResult := make(map[string]int)
+	posInResult := make(map[aping.MarketID]int)
 
 	x.muCache.Lock()
 
@@ -114,7 +114,7 @@ func (x *Reader) Read(marketIDs []string, t time.Duration)  (result aping.Market
 		}
 	}
 
-	var readMarketIDs []string
+	var readMarketIDs []aping.MarketID
 
 	for i,marketID := range marketIDs {
 		posInResult[marketID] = i
@@ -160,7 +160,7 @@ func (x *Reader) Read(marketIDs []string, t time.Duration)  (result aping.Market
 }
 
 
-func (x *Reader) Get(marketID string)  (result aping.MarketBook, ok bool){
+func (x *Reader) Get(marketID aping.MarketID)  (result aping.MarketBook, ok bool){
 
 	x.muCache.Lock()
 	// вычистить из кеша тухляк
@@ -176,7 +176,7 @@ func (x *Reader) Get(marketID string)  (result aping.MarketBook, ok bool){
 		ok = true
 	} else {
 		go func() {
-			x.Read([]string{marketID}, time.Second)
+			x.Read([]aping.MarketID{marketID}, time.Second)
 		}()
 	}
 	x.muCache.Unlock()
