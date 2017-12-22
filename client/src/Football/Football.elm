@@ -111,40 +111,9 @@ view model =
     else
         div []
             [ renderHeader
-            , rederGamesTable model
+            , renderGamesTable model
             , CheckCompetition.view CheckCompetition model.checkCompetition
             ]
-
-
-renderLoadingPan : Html Msg
-renderLoadingPan =
-    let
-        linkCss =
-            Html.node "link"
-                [ rel "stylesheet"
-                , type_ "text/css"
-                , href "css/fountainG.css"
-                ]
-                []
-    in
-        List.range 1 8
-            |> List.map
-                (\n ->
-                    div
-                        [ class "fountainG"
-                        , id ("fountainG_" ++ toString n)
-                        ]
-                        []
-                )
-            |> (::) linkCss
-            |> div
-                [ style
-                    [ ( "width", "234px" )
-                    , ( "height", "28px" )
-                    , ( "margin", "auto" )
-                    , ( "position", "relative" )
-                    ]
-                ]
 
 
 renderLoadingHeader : Html Msg
@@ -157,7 +126,6 @@ renderLoadingHeader =
             , action = Nothing
             , text = "Загрузка данных..."
             }
-        , renderLoadingPan
         ]
 
 
@@ -186,8 +154,8 @@ renderTitle =
         }
 
 
-rederGamesTable : Model -> Html Msg
-rederGamesTable { games, checkCompetition, tableState } =
+renderGamesTable : Model -> Html Msg
+renderGamesTable { games, checkCompetition, tableState } =
     let
         games_ =
             CheckCompetition.filterGames checkCompetition games
@@ -214,16 +182,16 @@ configTable hasInplay =
                             []
                        )
                     ++ [ Table.stringColumn "В гостях" .away
-                       , Table.stringColumn "Время" .time
+                       , columnTime
                        , Table.stringColumn "Чемпионат" .competition
-                       , dollarColumn "В паре" .totalMatched
-                       , dollarColumn "Не в паре" .totalAvailable
-                       , priceColumn "П1+" .winBack
-                       , priceColumn "П1-" .winLay
-                       , priceColumn "Н+" .drawBack
-                       , priceColumn "Н-" .drawLay
-                       , priceColumn "П2+" .loseBack
-                       , priceColumn "П2-" .loseLay
+                       , columnDollar "В паре" .totalMatched
+                       , columnDollar "Не в паре" .totalAvailable
+                       , columnPrice "П1+" .winBack
+                       , columnPrice "П1-" .winLay
+                       , columnPrice "Н+" .drawBack
+                       , columnPrice "Н-" .drawLay
+                       , columnPrice "П2+" .loseBack
+                       , columnPrice "П2-" .loseLay
                        ]
             , customizations =
                 { dc
@@ -232,6 +200,23 @@ configTable hasInplay =
                         ]
                 }
             }
+
+
+columnTime : Table.Column Game Msg
+columnTime =
+    Table.veryCustomColumn
+        { name = "Время"
+        , viewData =
+            \x ->
+                Table.HtmlDetails
+                    [ style
+                        [ ( "font-style", "italic" )
+                        , ( "text-align", "center" )
+                        ]
+                    ]
+                    [ text x.time ]
+        , sorter = Table.increasingOrDecreasingBy .time
+        }
 
 
 columnScore : Table.Column Game Msg
@@ -245,14 +230,18 @@ columnScore =
         )
 
 
-dollarColumn : String -> (a -> Float) -> Table.Column a msg
-dollarColumn name toValue =
+columnDollar : String -> (a -> Float) -> Table.Column a msg
+columnDollar name toValue =
     Table.veryCustomColumn
         { name = name
         , viewData =
             \x ->
                 Table.HtmlDetails
-                    [ class "dollar" ]
+                    [ style
+                        [ ( "font-style", "italic" )
+                        , ( "text-align", "right" )
+                        ]
+                    ]
                     (if toValue x > 0 then
                         [ text <| toString (toValue x) ++ " $" ]
                      else
@@ -262,14 +251,14 @@ dollarColumn name toValue =
         }
 
 
-priceColumn : String -> (a -> Float) -> Table.Column a msg
-priceColumn name toValue =
+columnPrice : String -> (a -> Float) -> Table.Column a msg
+columnPrice name toValue =
     Table.veryCustomColumn
         { name = name
         , viewData =
             \x ->
                 Table.HtmlDetails
-                    []
+                    [ style [ ( "text-align", "right" ) ] ]
                     (if toValue x > 0 then
                         [ text <| toString (toValue x) ]
                      else

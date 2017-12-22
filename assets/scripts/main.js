@@ -18589,7 +18589,7 @@ var _user$project$Football_Football$listZip = F2(
 var _user$project$Football_Football$numToStr = function (x) {
 	return _elm_lang$core$Native_Utils.eq(x, 0) ? '' : _elm_lang$core$Basics$toString(x);
 };
-var _user$project$Football_Football$priceColumn = F2(
+var _user$project$Football_Football$columnPrice = F2(
 	function (name, toValue) {
 		return _evancz$elm_sortable_table$Table$veryCustomColumn(
 			{
@@ -18597,7 +18597,16 @@ var _user$project$Football_Football$priceColumn = F2(
 				viewData: function (x) {
 					return A2(
 						_evancz$elm_sortable_table$Table$HtmlDetails,
-						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'right'},
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
 						(_elm_lang$core$Native_Utils.cmp(
 							toValue(x),
 							0) > 0) ? {
@@ -18611,7 +18620,7 @@ var _user$project$Football_Football$priceColumn = F2(
 				sorter: _evancz$elm_sortable_table$Table$unsortable
 			});
 	});
-var _user$project$Football_Football$dollarColumn = F2(
+var _user$project$Football_Football$columnDollar = F2(
 	function (name, toValue) {
 		return _evancz$elm_sortable_table$Table$veryCustomColumn(
 			{
@@ -18621,7 +18630,16 @@ var _user$project$Football_Football$dollarColumn = F2(
 						_evancz$elm_sortable_table$Table$HtmlDetails,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('dollar'),
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'font-style', _1: 'italic'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'right'},
+										_1: {ctor: '[]'}
+									}
+								}),
 							_1: {ctor: '[]'}
 						},
 						(_elm_lang$core$Native_Utils.cmp(
@@ -18653,78 +18671,39 @@ var _user$project$Football_Football$columnScore = A2(
 				' - ',
 				_elm_lang$core$Basics$toString(_p5.scoreAway))) : '';
 	});
-var _user$project$Football_Football$renderTitle = _gdotdesign$elm_ui$Ui_Header$title(
-	{action: _elm_lang$core$Maybe$Nothing, target: '_self', link: _elm_lang$core$Maybe$Nothing, text: 'Футбол'});
-var _user$project$Football_Football$renderLoadingPan = function () {
-	var linkCss = A3(
-		_elm_lang$html$Html$node,
-		'link',
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$rel('stylesheet'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$type_('text/css'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$href('css/fountainG.css'),
-					_1: {ctor: '[]'}
-				}
-			}
-		},
-		{ctor: '[]'});
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
+var _user$project$Football_Football$columnTime = _evancz$elm_sortable_table$Table$veryCustomColumn(
+	{
+		name: 'Время',
+		viewData: function (x) {
+			return A2(
+				_evancz$elm_sortable_table$Table$HtmlDetails,
 				{
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'width', _1: '234px'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'height', _1: '28px'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			F2(
-				function (x, y) {
-					return {ctor: '::', _0: x, _1: y};
-				}),
-			linkCss,
-			A2(
-				_elm_lang$core$List$map,
-				function (n) {
-					return A2(
-						_elm_lang$html$Html$div,
+					_0: _elm_lang$html$Html_Attributes$style(
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('fountainG'),
+							_0: {ctor: '_Tuple2', _0: 'font-style', _1: 'italic'},
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$id(
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										'fountainG_',
-										_elm_lang$core$Basics$toString(n))),
+								_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
 								_1: {ctor: '[]'}
 							}
-						},
-						{ctor: '[]'});
+						}),
+					_1: {ctor: '[]'}
 				},
-				A2(_elm_lang$core$List$range, 1, 8))));
-}();
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(x.time),
+					_1: {ctor: '[]'}
+				});
+		},
+		sorter: _evancz$elm_sortable_table$Table$increasingOrDecreasingBy(
+			function (_) {
+				return _.time;
+			})
+	});
+var _user$project$Football_Football$renderTitle = _gdotdesign$elm_ui$Ui_Header$title(
+	{action: _elm_lang$core$Maybe$Nothing, target: '_self', link: _elm_lang$core$Maybe$Nothing, text: 'Футбол'});
 var _user$project$Football_Football$renderLoadingHeader = _gdotdesign$elm_ui$Ui_Header$view(
 	{
 		ctor: '::',
@@ -18733,11 +18712,7 @@ var _user$project$Football_Football$renderLoadingHeader = _gdotdesign$elm_ui$Ui_
 			ctor: '::',
 			_0: _gdotdesign$elm_ui$Ui_Header$item(
 				{link: _elm_lang$core$Maybe$Nothing, target: '_blank', action: _elm_lang$core$Maybe$Nothing, text: 'Загрузка данных...'}),
-			_1: {
-				ctor: '::',
-				_0: _user$project$Football_Football$renderLoadingPan,
-				_1: {ctor: '[]'}
-			}
+			_1: {ctor: '[]'}
 		}
 	});
 var _user$project$Football_Football$init = F2(
@@ -18858,12 +18833,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 							}),
 						_1: {
 							ctor: '::',
-							_0: A2(
-								_evancz$elm_sortable_table$Table$stringColumn,
-								'Время',
-								function (_) {
-									return _.time;
-								}),
+							_0: _user$project$Football_Football$columnTime,
 							_1: {
 								ctor: '::',
 								_0: A2(
@@ -18875,7 +18845,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 								_1: {
 									ctor: '::',
 									_0: A2(
-										_user$project$Football_Football$dollarColumn,
+										_user$project$Football_Football$columnDollar,
 										'В паре',
 										function (_) {
 											return _.totalMatched;
@@ -18883,7 +18853,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 									_1: {
 										ctor: '::',
 										_0: A2(
-											_user$project$Football_Football$dollarColumn,
+											_user$project$Football_Football$columnDollar,
 											'Не в паре',
 											function (_) {
 												return _.totalAvailable;
@@ -18891,7 +18861,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 										_1: {
 											ctor: '::',
 											_0: A2(
-												_user$project$Football_Football$priceColumn,
+												_user$project$Football_Football$columnPrice,
 												'П1+',
 												function (_) {
 													return _.winBack;
@@ -18899,7 +18869,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 											_1: {
 												ctor: '::',
 												_0: A2(
-													_user$project$Football_Football$priceColumn,
+													_user$project$Football_Football$columnPrice,
 													'П1-',
 													function (_) {
 														return _.winLay;
@@ -18907,7 +18877,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 												_1: {
 													ctor: '::',
 													_0: A2(
-														_user$project$Football_Football$priceColumn,
+														_user$project$Football_Football$columnPrice,
 														'Н+',
 														function (_) {
 															return _.drawBack;
@@ -18915,7 +18885,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 													_1: {
 														ctor: '::',
 														_0: A2(
-															_user$project$Football_Football$priceColumn,
+															_user$project$Football_Football$columnPrice,
 															'Н-',
 															function (_) {
 																return _.drawLay;
@@ -18923,7 +18893,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 														_1: {
 															ctor: '::',
 															_0: A2(
-																_user$project$Football_Football$priceColumn,
+																_user$project$Football_Football$columnPrice,
 																'П2+',
 																function (_) {
 																	return _.loseBack;
@@ -18931,7 +18901,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 															_1: {
 																ctor: '::',
 																_0: A2(
-																	_user$project$Football_Football$priceColumn,
+																	_user$project$Football_Football$columnPrice,
 																	'П2-',
 																	function (_) {
 																		return _.loseLay;
@@ -18959,7 +18929,7 @@ var _user$project$Football_Football$configTable = function (hasInplay) {
 				})
 		});
 };
-var _user$project$Football_Football$rederGamesTable = function (_p9) {
+var _user$project$Football_Football$renderGamesTable = function (_p9) {
 	var _p10 = _p9;
 	var games_ = A2(_user$project$Football_CheckCompetition$filterGames, _p10.checkCompetition, _p10.games);
 	return A3(
@@ -19003,7 +18973,7 @@ var _user$project$Football_Football$view = function (model) {
 			_0: _user$project$Football_Football$renderHeader,
 			_1: {
 				ctor: '::',
-				_0: _user$project$Football_Football$rederGamesTable(model),
+				_0: _user$project$Football_Football$renderGamesTable(model),
 				_1: {
 					ctor: '::',
 					_0: A2(_user$project$Football_CheckCompetition$view, _user$project$Football_Football$CheckCompetition, model.checkCompetition),
