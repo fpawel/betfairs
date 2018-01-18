@@ -7,6 +7,8 @@ import (
 	"heroku.com/betfairs/football"
 	"sync/atomic"
 	"heroku.com/betfairs/football2"
+	"time"
+	"heroku.com/betfairs/aping"
 )
 
 var ErrorInterrupted = fmt.Errorf("INTERRUPTED")
@@ -37,4 +39,36 @@ func (x *BetfairClient) ReadFootballGames(interrupt *int32) (games2 football2.Ga
 		games2 = append(games2, game)
 	}
 	return
+}
+
+
+func (x *BetfairClient) ReadFootballPrices() error {
+	games, err := x.Football.Read()
+	if err != nil {
+		return err
+	}
+	for _,game := range games {
+		if !game.InPlay {
+			continue
+		}
+		marketCatalogues, err := x.ListMarketCatalogue.Read(game.ID)
+		if err != nil {
+			return err
+		}
+		var marketBooks aping.MarketBooks
+		for _,xs := range marketCatalogues.Take40MarketIDs(){
+			ms,err := x.ListMarketBook.Read(xs, time.Hour)
+			if err != nil {
+				return err
+			}
+			marketBooks = append(marketBooks, ms ...)
+		}
+	}
+
+
+
+
+
+
+
 }

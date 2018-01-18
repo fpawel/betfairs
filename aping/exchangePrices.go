@@ -4,7 +4,7 @@ package aping
 type ExchangePrices struct {
 	AvailableToBack PriceSizes `json:"availableToBack"`
 	AvailableToLay  PriceSizes `json:"availableToLay"`
-	TradedVolume    PriceSizes `json:"tradedVolume"`
+	TradedVolume    PriceSizes `json:"tradedVolume,omitempty"`
 }
 
 func (x ExchangePrices) Back() (b float64){

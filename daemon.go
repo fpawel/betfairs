@@ -18,6 +18,7 @@ import (
 	"heroku.com/betfairs/webclient"
 	"io/ioutil"
 	"strconv"
+	"time"
 )
 
 func daemon() {
@@ -42,15 +43,39 @@ func daemon() {
 		setJsonResult(w, games, err)
 	})
 
-	router.Get("/market-catalogue/{eventID}", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/markets/{eventID}", func(w http.ResponseWriter, r *http.Request) {
 		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		markets, error := betfairReader.ListMarketCatalogue.Read(eventID)
+		markets, err := betfairReader.ListMarketCatalogue.Read(eventID)
 
-		setJsonResult(w, markets, error)
+		setJsonResult(w, markets, err)
+	})
+
+	router.Get("/prices/{eventID}", func(w http.ResponseWriter, r *http.Request) {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		marketCatalogues, err := betfairReader.ListMarketCatalogue.Read(eventID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var marketBooks aping.MarketBooks
+		for _,xs := range marketCatalogues.Take40MarketIDs(){
+			ms,err := betfairReader.ListMarketBook.Read(xs, time.Hour)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			marketBooks = append(marketBooks, ms ...)
+		}
+		setJsonResult(w, marketBooks, nil)
 	})
 
 

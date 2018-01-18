@@ -31,7 +31,7 @@ type Runner struct {
 	ExchangePrices ExchangePrices `json:"ex,omitempty"`
 
 	// The BSP related prices for this runner
-	SP  StartingPrices `json:"sp,omitempty"`
+	SP  *StartingPrices `json:"sp,omitempty"`
 
 	//The sort priority of this runner
 	//SortPriority int `json:"sortPriority,omitempty"`
