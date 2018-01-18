@@ -64,11 +64,5 @@ func (x *BetfairClient) ReadFootballPrices() error {
 			marketBooks = append(marketBooks, ms ...)
 		}
 	}
-
-
-
-
-
-
-
+	return nil
 }
