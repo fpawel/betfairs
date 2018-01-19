@@ -1,7 +1,6 @@
 package aping
 
 import (
-	"time"
 	"log"
 )
 
@@ -25,7 +24,7 @@ type Runner struct {
 	TotalMatched float64 `json:"totalMatched,omitempty"`
 
 	// If date and time the runner was removed
-	RemovalDate time.Time `json:"removalDate,omitempty"`
+	//RemovalDate time.Time `json:"removalDate,omitempty"`
 
 	// The Exchange prices available for this runner
 	ExchangePrices ExchangePrices `json:"ex,omitempty"`

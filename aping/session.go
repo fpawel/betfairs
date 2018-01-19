@@ -100,7 +100,7 @@ func (x *Session) ListMarketCatalogue(eventID int) (MarketCatalogues, error) {
 		MarketFilter:MarketFilter{
 			EventIDs: []int{eventID},
 		},
-		MarketProjection: []string{"EVENT", "EVENT_TYPE", "COMPETITION", "RUNNER_DESCRIPTION"},
+		MarketProjection: []string{"EVENT", "EVENT_TYPE", "COMPETITION", "RUNNER_DESCRIPTION" /*, "MARKET_START_TIME"*/},
 		MaxResults: 1000,
 	}
 

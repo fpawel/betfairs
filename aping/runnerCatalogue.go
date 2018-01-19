@@ -10,9 +10,9 @@ type RunnerCatalogue struct {
 	Name string `json:"runnerName,omitempty"`
 
 	//The sort priority of this runner
-	SortPriority int `json:"sortPriority,omitempty"`
+	//SortPriority int `json:"sortPriority,omitempty"`
 
 	// The handicap.  Enter the specific handicap value (returned by RUNNER in listMaketBook)
 	// if the market is an Asian handicap market.
-	Handicap float64 `json:"handicap,omitempty"`
+	//Handicap float64 `json:"handicap,omitempty"`
 }

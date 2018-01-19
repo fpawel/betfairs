@@ -28,7 +28,7 @@ func runWebSocketEvent(conn *websocket.Conn, betfair BetfairClient) {
 	go func() {
 
 		for {
-			games, err := betfair.ReadFootballGames(&interruptReadGames)
+			games, err := betfair.ReadFootballGames2(&interruptReadGames)
 			if err == ErrorInterrupted {
 				return
 			}

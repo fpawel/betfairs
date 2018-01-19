@@ -37,9 +37,14 @@ func daemon() {
 
 	fileServer(router, "/", http.Dir("assets"))
 
-	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/football/games2", func(w http.ResponseWriter, r *http.Request) {
 		var tmp int32
-		games, err := betfairReader.ReadFootballGames(&tmp)
+		games, err := betfairReader.ReadFootballGames2(&tmp)
+		setJsonResult(w, games, err)
+	})
+
+	router.Get("/football/games3", func(w http.ResponseWriter, r *http.Request) {
+		games, err := betfairReader.ReadFootballGames3()
 		setJsonResult(w, games, err)
 	})
 
@@ -53,6 +58,8 @@ func daemon() {
 
 		setJsonResult(w, markets, err)
 	})
+
+
 
 	router.Get("/prices/{eventID}", func(w http.ResponseWriter, r *http.Request) {
 		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))

@@ -1,8 +1,5 @@
 package aping
 
-import (
-	"time"
-)
 
 type MarketCatalogue struct {
 
@@ -16,7 +13,7 @@ type MarketCatalogue struct {
 	TotalMatched float64 `json:"totalMatched,omitempty"`
 
 	// The time this market starts at, only returned when the MARKET_START_TIME enum is passed in the marketProjections
-	MarketStartTime time.Time `json:"marketStartTime,omitempty"`
+	//MarketStartTime time.Time `json:"marketStartTime,omitempty"`
 
 	// Details about the market
 	Description string `json:"description,omitempty"`

@@ -45,7 +45,7 @@ type Event struct {
 
 	// The scheduled start date and time of the event.
 	// This is Europe/London (GMT) by default
-	OpenDate time.Time `json:"openDate,omitempty"`
+	OpenDate time.Time `json:"openDate"`
 }
 
 type MarketFilter struct {

@@ -7,8 +7,7 @@ import (
 	"heroku.com/betfairs/football"
 	"sync/atomic"
 	"heroku.com/betfairs/football2"
-	"time"
-	"heroku.com/betfairs/aping"
+	"heroku.com/betfairs/football3"
 )
 
 var ErrorInterrupted = fmt.Errorf("INTERRUPTED")
@@ -19,7 +18,7 @@ type BetfairClient struct {
 	ListMarketBook      *listMarketBook.Reader
 }
 
-func (x *BetfairClient) ReadFootballGames(interrupt *int32) (games2 football2.Games, err error) {
+func (x *BetfairClient) ReadFootballGames2(interrupt *int32) (games2 football2.Games, err error) {
 	var games []football.Game
 	games, err = x.Football.Read()
 	if err != nil {
@@ -42,27 +41,26 @@ func (x *BetfairClient) ReadFootballGames(interrupt *int32) (games2 football2.Ga
 }
 
 
-func (x *BetfairClient) ReadFootballPrices() error {
-	games, err := x.Football.Read()
+func (x *BetfairClient) ReadFootballGames3() (games3 []football3.Game, err error) {
+	var games []football.Game
+	games, err = x.Football.Read()
 	if err != nil {
-		return err
+		return
 	}
-	for _,game := range games {
+	for _, game := range games {
 		if !game.InPlay {
 			continue
 		}
-		marketCatalogues, err := x.ListMarketCatalogue.Read(game.ID)
-		if err != nil {
-			return err
+		game := football3.Game{
+			ID:game.ID,
+			ScoreHome:game.ScoreHome,
+			ScoreAway:game.ScoreAway,
+			Time:game.Time,
 		}
-		var marketBooks aping.MarketBooks
-		for _,xs := range marketCatalogues.Take40MarketIDs(){
-			ms,err := x.ListMarketBook.Read(xs, time.Hour)
-			if err != nil {
-				return err
-			}
-			marketBooks = append(marketBooks, ms ...)
+		if game.Read(x.ListMarketCatalogue, x.ListMarketBook) == nil {
+			games3 = append(games3, game)
 		}
 	}
-	return nil
+	return
 }
+

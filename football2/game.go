@@ -9,9 +9,9 @@ import (
 	"heroku.com/betfairs/countries"
 	"time"
 	"heroku.com/betfairs/aping"
-	"math"
 	"log"
 	"strings"
+	"heroku.com/betfairs/utils"
 )
 
 type Games []Game
@@ -20,6 +20,7 @@ type Game struct {
 	football.Game
 	Competition string `json:"competition"`
 	Country string `json:"country"`
+	OpenDate time.Time `json:"open_date"`
 	WinBack float64 `json:"win_back"`
 	WinLay float64 `json:"win_lay"`
 	LoseBack float64 `json:"lose_back"`
@@ -106,6 +107,7 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 	if err != nil {
 		return
 	}
+	x.OpenDate = mc[0].Event.OpenDate
 	x.Competition = mc[0].Competition.Name
 	if strings.ToLower(x.Competition) == "чемпионшип" {
 		x.Competition = "Чемпионат Футбольной лиги Англии"
@@ -138,18 +140,16 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 	if err != nil {
 		return
 	}
-	xs := mb[0].Prices6()
-	x.WinBack, x.WinLay, x.LoseBack, x.LoseLay, x.DrawBack, x.DrawLay = xs[0],xs[1],xs[2],xs[3],xs[4],xs[5]
-	x.TotalMatched = Float64ToFixed(mb[0].TotalMatched,0)
-	x.TotalAvailable = Float64ToFixed(mb[0].TotalAvailable,0)
+	for _,m := range mb{
+		if m.ID == mainMarket.ID {
+			prices6 := m.Prices6()
+			x.WinBack, x.WinLay, x.LoseBack, x.LoseLay, x.DrawBack, x.DrawLay = prices6[0],prices6[1],prices6[2],prices6[3],prices6[4],prices6[5]
+			x.TotalMatched = utils.Float64ToFixed(m.TotalMatched,0)
+			x.TotalAvailable = utils.Float64ToFixed(m.TotalAvailable,0)
+			break
+		}
+	}
 
-}
 
-func RoundFloat64(num float64) int {
-	return int(num + math.Copysign(0.5, num))
-}
 
-func Float64ToFixed(num float64, precision int) float64 {
-	output := math.Pow(10, float64(precision))
-	return float64(RoundFloat64(num * output)) / output
 }
