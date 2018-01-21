@@ -7,8 +7,6 @@ import (
 	"heroku.com/betfairs/aping"
 	"fmt"
 	"heroku.com/betfairs/football"
-	"strconv"
-	"log"
 )
 
 type Game3 struct {
@@ -38,54 +36,7 @@ type NamedRunner struct {
 	Name string `json:"runnerName,omitempty"`
 }
 
-func (x NamedRunner) Runner4() (r Runner4){
-	r.ID = x.ID
-	r.Name = x.Name
-	r.LastPriceTraded = x.LastPriceTraded
-	r.Status = x.Status
-	r.AvailableToLay = x.ExchangePrices.AvailableToLay.Dub()
-	r.AvailableToBack = x.ExchangePrices.AvailableToBack.Dub()
-	return
-}
 
-func (x NamedMarketBook) Market4() (r Market4){
-	var err error
-	r.ID, err =  strconv.Atoi( string(x.ID[2:len(x.ID)]) )
-	if err != nil {
-		log.Fatalf("%s: %v", x.ID, err)
-	}
-	r.Name = x.Name
-	r.TotalAvailable = x.TotalAvailable
-	r.TotalMatched = x.TotalMatched
-	for _,runner := range  x.Runners {
-		r.Runners = append(r.Runners, runner.Runner4())
-	}
-	return
-}
-
-func (x Game3) Game4() (Game4) {
-	r := Game4{
-		ID:  x.Game.ID,
-		Home: x.Game.Home,
-		Away: x.Game.Away,
-		ScoreHome: x.Game.ScoreHome,
-		ScoreAway: x.Game.ScoreAway,
-		CountryCode:x.Event.CountryCode,
-		CompetitionName:x.Competition.Name,
-		OpenDate:x.Event.OpenDate,
-	}
-
-	var err error
-	r.CompetitionID, err =  strconv.Atoi( x.Competition.ID )
-	if err != nil {
-		log.Fatalf("%s: %v", x.Competition.ID, err)
-	}
-
-	for _,m := range x.Markets{
-		r.Markets = append(r.Markets, m.Market4())
-	}
-	return r
-}
 
 
 func (x *Game3) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBookReader  *listMarketBook.Reader) error {

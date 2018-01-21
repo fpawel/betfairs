@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	tablewriter "github.com/olekukonko/tablewriter"
+	"regexp"
 )
 
 type Game struct {
@@ -24,6 +25,14 @@ func (x Game) String() string {
 		strScore = fmt.Sprintf(" %d - %d", x.ScoreHome, x.ScoreAway)
 	}
 	return fmt.Sprintf("%d %s - %s %s%s", x.ID, x.Home, x.Away, x.Time, strScore)
+}
+
+func (x Game) Minute() (int,error) {
+	m := regexp.MustCompile("(\\d+)′").FindStringSubmatch(x.Time)
+	if len(m) == 2 {
+		return strconv.Atoi(m[1])
+	}
+	return 0,fmt.Errorf("%s: time does not match", x.Time)
 }
 
 

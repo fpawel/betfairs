@@ -71,13 +71,10 @@ func (x *BetfairClient) ReadFootballGames4() (games4 []football2.Game4, err erro
 		if !game.InPlay {
 			continue
 		}
-		game := football2.Game3{
-			Game:game,
+		game4,err := football2.ReadGame4(game, x.ListMarketCatalogue, x.ListMarketBook)
+		if err == nil {
+			games4 = append(games4, game4)
 		}
-		if game.Read(x.ListMarketCatalogue, x.ListMarketBook) == nil {
-			games4 = append(games4, game.Game4())
-		}
-
 	}
 	return
 }
