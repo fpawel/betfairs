@@ -1,5 +1,6 @@
 package aping
 
+import "strings"
 
 type MarketCatalogues []MarketCatalogue
 
@@ -18,7 +19,9 @@ func (x MarketCatalogues) Take40MarketIDs() (r [][] MarketID){
 			r = append(r, []MarketID{})
 		}
 		n := len(r)-1
-		r[n] = append(r[n], y.ID)
+		if strings.ToLower(y.Name) != "азиатский гандикап" {
+			r[n] = append(r[n], y.ID)
+		}
 	}
 	return
 }

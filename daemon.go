@@ -48,6 +48,11 @@ func daemon() {
 		setJsonResult(w, games, err)
 	})
 
+	router.Get("/football/games4", func(w http.ResponseWriter, r *http.Request) {
+		games, err := betfairReader.ReadFootballGames4()
+		setJsonResult(w, games, err)
+	})
+
 	router.Get("/markets/{eventID}", func(w http.ResponseWriter, r *http.Request) {
 		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))
 		if err != nil {

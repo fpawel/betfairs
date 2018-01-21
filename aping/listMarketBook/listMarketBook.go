@@ -135,7 +135,8 @@ func (x *Reader) Read(marketIDs []aping.MarketID, t time.Duration)  (result apin
 			for _,marketBook := range xs {
 				n,ok := posInResult[marketBook.ID]
 				if !ok {
-					log.Fatalf("market %s not found", marketBook.ID)
+					log.Printf("market %s not found", marketBook.ID)
+					continue
 				}
 				if n<0 || n>= len(marketIDs) {
 					log.Fatal("out of range")

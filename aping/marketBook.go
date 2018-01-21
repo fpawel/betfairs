@@ -4,6 +4,14 @@ import "time"
 
 type MarketBook struct {
 
+	MarketBookInfo
+
+	//Information about the runners (selections) in the market.
+	Runners []Runner `json:"runners,omitempty"`
+
+}
+
+type MarketBookInfo struct {
 	//The unique identifier for the market. MarketId's are prefixed with '1.' or '2.' 1. = UK Exchange 2. = AUS Exchange.
 	ID MarketID `json:"marketId"`
 
@@ -55,11 +63,6 @@ type MarketBook struct {
 	//The version of the market. The version increments whenever the market status changes,
 	// for example, turning in-play, or suspended when a goal score.
 	Version int `json:"version,omitempty"`
-
-	//Information about the runners (selections) in the market.
-	Runners []Runner `json:"runners,omitempty"`
-
-
 }
 
 func (x MarketBook) Prices6() (r [6]float64){
