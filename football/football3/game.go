@@ -1,15 +1,15 @@
-package football2
+package football3
 
 import (
-	"time"
 	"heroku.com/betfairs/aping/listMarketCatalogue"
 	"heroku.com/betfairs/aping/listMarketBook"
-	"heroku.com/betfairs/aping"
+	"time"
 	"fmt"
 	"heroku.com/betfairs/football"
+	"heroku.com/betfairs/aping"
 )
 
-type Game3 struct {
+type Game struct {
 	Game football.Game
 	Event aping.Event
 	Competition aping.Competition
@@ -36,10 +36,7 @@ type NamedRunner struct {
 	Name string `json:"runnerName,omitempty"`
 }
 
-
-
-
-func (x *Game3) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBookReader  *listMarketBook.Reader) error {
+func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBookReader  *listMarketBook.Reader) error {
 	mc,err := marketCatalogueReader.Read(x.Game.ID)
 	if err != nil {
 		return err
@@ -90,3 +87,4 @@ func (x *Game3) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBo
 	}
 	return nil
 }
+

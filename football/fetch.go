@@ -14,7 +14,7 @@ import (
 var ErrorNoGames = errors.New("NO GAMES")
 var ErrorNotReady = errors.New("NOT READY")
 var ErrorHTMLSelectionNotFound = errors.New("NOT FOUND HTML SELECTION")
-var ErrorHTMLSelectionDublikat = errors.New("NOT FOUND HTML SELECTION")
+var ErrorHTMLSelectionDublikat = errors.New("NOT HTML SELECTION DUBLIKAT")
 
 
 func parseGame ( node *goquery.Selection) (Game, error) {

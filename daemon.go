@@ -44,12 +44,14 @@ func daemon() {
 	})
 
 	router.Get("/football/games3", func(w http.ResponseWriter, r *http.Request) {
-		games, err := betfairReader.ReadFootballGames3()
+		var tmp int32
+		games, err := betfairReader.ReadFootballGames3(&tmp)
 		setJsonResult(w, games, err)
 	})
 
 	router.Get("/football/games4", func(w http.ResponseWriter, r *http.Request) {
-		games, err := betfairReader.ReadFootballGames4()
+		var tmp int32
+		games, err := betfairReader.ReadFootballGames4(&tmp)
 		setJsonResult(w, games, err)
 	})
 
@@ -90,12 +92,17 @@ func daemon() {
 		setJsonResult(w, marketBooks, nil)
 	})
 
-
-
 	router.Get("/football", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := websocketUpgrader.Upgrade(w, r, nil)
 		check(err)
 		runWebSocketFootball( conn, betfairReader)
+		conn.Close()
+	})
+
+	router.Get("/football/prices", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := websocketUpgrader.Upgrade(w, r, nil)
+		check(err)
+		runWebSocketFootballPrices( conn, betfairReader)
 		conn.Close()
 	})
 
@@ -162,22 +169,13 @@ func redirect(urlStr string, w http.ResponseWriter, r *http.Request) {
 
 func setCompressedJSON(w http.ResponseWriter, data interface{}) {
 	gz, err := gzip.NewWriterLevel(w, gzip.DefaultCompression)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 	defer gz.Close()
-
 	w.Header().Set("Content-Encoding", "gzip")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-
 	encoder := json.NewEncoder(gz)
 	encoder.SetIndent("", "    ")
-
-	err = encoder.Encode(data)
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(encoder.Encode(data))
 }
 
 func setJsonResult(w http.ResponseWriter, data interface{}, err error) {

@@ -6,7 +6,9 @@ import (
 	"heroku.com/betfairs/aping/listMarketCatalogue"
 	"heroku.com/betfairs/football"
 	"sync/atomic"
-	"heroku.com/betfairs/football2"
+	"heroku.com/betfairs/football/football2"
+	"heroku.com/betfairs/football/football3"
+	"heroku.com/betfairs/football/football4"
 )
 
 var ErrorInterrupted = fmt.Errorf("INTERRUPTED")
@@ -40,40 +42,56 @@ func (x *BetfairClient) ReadFootballGames2(interrupt *int32) (games2 football2.G
 }
 
 
-func (x *BetfairClient) ReadFootballGames3() (games3 []football2.Game3, err error) {
+func (x *BetfairClient) ReadFootballGames3(interrupt *int32) (games3 []football3.Game, err error) {
 	var games []football.Game
 	games, err = x.Football.Read()
 	if err != nil {
+		return
+	}
+	if atomic.LoadInt32(interrupt) > 0 {
+		err = ErrorInterrupted
 		return
 	}
 	for _, game := range games {
 		if !game.InPlay {
 			continue
 		}
-		game := football2.Game3{
+		game := football3.Game{
 			Game:game,
 		}
 		if game.Read(x.ListMarketCatalogue, x.ListMarketBook) == nil {
 			games3 = append(games3, game)
 		}
-
+		if atomic.LoadInt32(interrupt) > 0 {
+			err = ErrorInterrupted
+			return
+		}
 	}
 	return
 }
 
-func (x *BetfairClient) ReadFootballGames4() (games4 []football2.Game4, err error) {
+func (x *BetfairClient) ReadFootballGames4(interrupt *int32) (games4 []football4.Game, err error) {
 	var games []football.Game
 	games, err = x.Football.Read()
 	if err != nil {
+		return
+	}
+	if atomic.LoadInt32(interrupt) > 0 {
+		err = ErrorInterrupted
 		return
 	}
 	for _, game := range games {
 		if !game.InPlay {
 			continue
 		}
-		game4,err := football2.ReadGame4(game, x.ListMarketCatalogue, x.ListMarketBook)
+		var game4 football4.Game
+		game4,err = football4.ReadGame(game, x.ListMarketCatalogue, x.ListMarketBook)
 		if err == nil {
 			games4 = append(games4, game4)
+		}
+		if atomic.LoadInt32(interrupt) > 0 {
+			err = ErrorInterrupted
+			return
 		}
 	}
 	return
