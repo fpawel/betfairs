@@ -99,13 +99,6 @@ func daemon() {
 		conn.Close()
 	})
 
-	router.Get("/football/prices", func(w http.ResponseWriter, r *http.Request) {
-		conn, err := websocketUpgrader.Upgrade(w, r, nil)
-		check(err)
-		runWebSocketFootballPrices( conn, betfairReader)
-		conn.Close()
-	})
-
 	router.Get("/redirect-betfair/*", func(w http.ResponseWriter, r *http.Request) {
 		redirect(webclient.NewURL(chi.URLParam(r, "*") ), w, r)
 	})
