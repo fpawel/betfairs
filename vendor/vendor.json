@@ -1,0 +1,61 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "4VHbQgg0Q/g2Qa/csnhn03OqgHM=",
+			"path": "github.com/PuerkitoBio/goquery",
+			"revision": "7f4291566cf7cac3be222a933e01a2bed97532b1",
+			"revisionTime": "2016-07-28T01:43:13Z"
+		},
+		{
+			"checksumSHA1": "X9r5gpnkfBN90eD4jOfGVrmCZ5o=",
+			"path": "github.com/andybalholm/cascadia",
+			"revision": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48",
+			"revisionTime": "2015-07-30T17:44:59Z"
+		},
+		{
+			"checksumSHA1": "FmfWgopbjrprs6gEyuuW/ezdJEU=",
+			"path": "github.com/go-chi/chi",
+			"revision": "9c239d53d23d41de9180d567bed7114ae30e3ca6",
+			"revisionTime": "2017-07-04T19:52:13Z"
+		},
+		{
+			"checksumSHA1": "Mq097dBRiImSVcNC3pBD6XW6MXI=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "2257eda00b2084c1351cd672aa5476daa9f5e463",
+			"revisionTime": "2017-01-19T19:27:08Z"
+		},
+		{
+			"checksumSHA1": "b64yVZEKG21+a/xvcKEvqfai1ik=",
+			"path": "github.com/mattn/go-runewidth",
+			"revision": "97311d9f7767e3d6f422ea06661bc2c7a19e8a5d",
+			"revisionTime": "2017-05-10T07:48:58Z"
+		},
+		{
+			"checksumSHA1": "jTwXALBikWAgWtFJtfN5IBQLK0E=",
+			"path": "github.com/nu7hatch/gouuid",
+			"revision": "179d4d0c4d8d407a32af483c2354df1d2c91e6c3",
+			"revisionTime": "2013-12-21T20:05:32Z"
+		},
+		{
+			"checksumSHA1": "944oIWNAjf3jUvaSpGUAASHQ288=",
+			"path": "github.com/olekukonko/tablewriter",
+			"revision": "65fec0d89a572b4367094e2058d3ebe667de3b60",
+			"revisionTime": "2017-12-03T15:10:07Z"
+		},
+		{
+			"checksumSHA1": "2t6c6F2y4b/PEV04TOHpQxh/xLc=",
+			"path": "golang.org/x/net/html",
+			"revision": "dc871a5d77e227f5bbf6545176ef3eeebf87e76e",
+			"revisionTime": "2017-12-07T22:17:04Z"
+		},
+		{
+			"checksumSHA1": "iWvOOLdDxvI4AVX6px6/HYBPeaQ=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "dc871a5d77e227f5bbf6545176ef3eeebf87e76e",
+			"revisionTime": "2017-12-07T22:17:04Z"
+		}
+	],
+	"rootPath": "github.com/fpawel/betfairs"
+}
