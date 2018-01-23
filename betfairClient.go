@@ -70,23 +70,22 @@ func (x *BetfairClient) ReadFootballGames3(interrupt *int32) (games3 []football3
 	return
 }
 
-func (x *BetfairClient) ReadFootballGames4(interrupt *int32) (games4 []football4.Game, err error) {
+func (x *BetfairClient) ReadFootballGames4(interrupt *int32) ( games4 []football4.Game, err error) {
 	var games []football.Game
 	games, err = x.Football.Read()
 	if err != nil {
-		return
+		return nil, err
 	}
 	if atomic.LoadInt32(interrupt) > 0 {
 		err = ErrorInterrupted
-		return
+		return nil, err
 	}
 	for _, game := range games {
 		if !game.InPlay {
 			continue
 		}
-		var game4 football4.Game
-		game4,err = football4.ReadGame(game, x.ListMarketCatalogue, x.ListMarketBook)
-		if err == nil {
+
+		if game4,err := football4.ReadGame(game, x.ListMarketCatalogue, x.ListMarketBook); err == nil {
 			games4 = append(games4, game4)
 		}
 		if atomic.LoadInt32(interrupt) > 0 {
