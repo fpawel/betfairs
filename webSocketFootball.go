@@ -87,6 +87,7 @@ func runWebSocketFootballPrices(conn *websocket.Conn, betfair BetfairClient) {
 				continue
 			}
 			sendGames <- games4
+
 		}
 	}()
 

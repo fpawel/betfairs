@@ -14,7 +14,12 @@
                 if (ws) {
                     return false;
                 }
-                ws = new WebSocket("wss://"+location.host+"/football/prices");
+
+                var proto = "ws:";
+                if (location.protocol === "https:"){
+                    proto = "wss:"
+                }
+                ws = new WebSocket(proto + "//"+location.host+"/football/prices");
                 ws.onopen = function() {
                     print("OPEN");
                 }
