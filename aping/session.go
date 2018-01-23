@@ -23,6 +23,8 @@ type SessionResult struct {
 	Error error
 }
 
+var ErrorNoMarkets = fmt.Errorf("NO MARKETS")
+
 func NewSession(user, pass	string) *Session {
 	return &Session{
 		user: user,
@@ -120,7 +122,7 @@ func (x *Session) ListMarketCatalogue(eventID int) (MarketCatalogues, error) {
 	}
 
 	if len(response.Result) == 0{
-		return nil, fmt.Errorf("no markets in catalogue: %s", string(responseBody))
+		return nil, ErrorNoMarkets
 	}
 
 	return response.Result, nil
@@ -156,7 +158,7 @@ func (x *Session) ListMarketBook(marketIDs []MarketID) (MarketBooks, error) {
 		return nil, fmt.Errorf("%q, %q", err, string(responseBody))
 	}
 	if len(r.Result) == 0{
-		return nil, fmt.Errorf("no markets in book: %s", string(responseBody))
+		return nil, ErrorNoMarkets
 	}
 	return r.Result,err
 }
