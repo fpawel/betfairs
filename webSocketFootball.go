@@ -7,11 +7,6 @@ import (
 
 	"github.com/fpawel/betfairs/football/football2"
 	"sync/atomic"
-	"github.com/fpawel/betfairs/football/football4"
-	"github.com/fpawel/betfairs/football"
-	"github.com/fpawel/betfairs/aping"
-	"os"
-	"strconv"
 )
 
 func runWebSocketFootball(conn *websocket.Conn, betfair BetfairClient) {
