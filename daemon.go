@@ -107,7 +107,7 @@ func daemon() {
 	})
 
 	router.Get("/redirect-betfair/*", func(w http.ResponseWriter, r *http.Request) {
-		redirect(webclient.NewURL(chi.URLParam(r, "*")), w, r)
+		redirect(webclient.NewURL(chi.URLParam(r, "*") ), w, r)
 	})
 
 	if os.Getenv("PORT") == "" {
