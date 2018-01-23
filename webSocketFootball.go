@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"heroku.com/betfairs/football/football2"
+	"github.com/fpawel/betfairs/football/football2"
 	"sync/atomic"
-	"heroku.com/betfairs/football/football4"
+	"github.com/fpawel/betfairs/football/football4"
 )
 
 func runWebSocketFootball(conn *websocket.Conn, betfair BetfairClient) {
@@ -68,6 +68,7 @@ func runWebSocketFootball(conn *websocket.Conn, betfair BetfairClient) {
 		}
 	}
 	atomic.AddInt32(&interruptReadGames, 1)
+	close(sendGames)
 	<- doneSendGames
 }
 
@@ -76,28 +77,14 @@ func runWebSocketFootballPrices(conn *websocket.Conn, betfair BetfairClient) {
 	sendGames := make(chan []football4.Game)
 	var interruptReadGames int32
 	go func() {
-
 		for {
-
-			games, err := betfair.Football.Read()
+			games4,err := betfair.ReadFootballGames4(&interruptReadGames)
+			if err == ErrorInterrupted {
+				return
+			}
 			if err != nil {
 				fmt.Println("ERROR football:", err )
 				continue
-			}
-			if atomic.LoadInt32(&interruptReadGames) > 0 {
-				return
-			}
-
-			var games4 []football4.Game
-
-			for _, game := range games {
-				if !game.InPlay {
-					continue
-				}
-				game4,err := football4.ReadGame(game, betfair.ListMarketCatalogue, betfair.ListMarketBook)
-				if err == nil {
-					games4 = append(games4, game4)
-				}
 			}
 			sendGames <- games4
 		}
@@ -117,7 +104,7 @@ func runWebSocketFootballPrices(conn *websocket.Conn, betfair BetfairClient) {
 			conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 			err := conn.WriteJSON(games4)
 			if err != nil {
-				fmt.Println("WebSocket: error 1:", err)
+				fmt.Println("WebSocket: error 3:", err)
 				return
 			}
 		}
@@ -126,7 +113,7 @@ func runWebSocketFootballPrices(conn *websocket.Conn, betfair BetfairClient) {
 		messageType, _, err := conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
-				fmt.Println("WebSocket error 2:", err)
+				fmt.Println("WebSocket error 4:", err)
 			}
 			break
 		}
@@ -136,5 +123,6 @@ func runWebSocketFootballPrices(conn *websocket.Conn, betfair BetfairClient) {
 		}
 	}
 	atomic.AddInt32(&interruptReadGames, 1)
+	close(sendGames)
 	<- doneSendGames
 }

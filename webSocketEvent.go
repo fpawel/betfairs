@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"heroku.com/betfairs/football/football2"
+	"github.com/fpawel/betfairs/football/football2"
 	"sync/atomic"
 )
 

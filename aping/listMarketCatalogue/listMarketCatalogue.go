@@ -4,7 +4,7 @@ import (
 	"log"
 	"sync"
 	"time"
-	"heroku.com/betfairs/aping"
+	"github.com/fpawel/betfairs/aping"
 )
 
 type Reader struct {

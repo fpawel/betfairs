@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sync"
 	"os"
-	"heroku.com/betfairs/aping"
+	"github.com/fpawel/betfairs/aping"
 	"strconv"
 )
 

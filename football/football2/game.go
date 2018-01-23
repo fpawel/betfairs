@@ -1,17 +1,17 @@
 package football2
 
 import (
-	"heroku.com/betfairs/football"
+	"github.com/fpawel/betfairs/football"
 
-	"heroku.com/betfairs/aping/listMarketCatalogue"
+	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
 	"fmt"
-	"heroku.com/betfairs/aping/listMarketBook"
-	"heroku.com/betfairs/countries"
+	"github.com/fpawel/betfairs/aping/listMarketBook"
+	"github.com/fpawel/betfairs/countries"
 	"time"
-	"heroku.com/betfairs/aping"
+	"github.com/fpawel/betfairs/aping"
 	"log"
 	"strings"
-	"heroku.com/betfairs/utils"
+	"github.com/fpawel/betfairs/utils"
 )
 
 type Games []Game

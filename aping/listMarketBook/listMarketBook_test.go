@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 	"sync"
-	"heroku.com/betfairs/aping"
+	"github.com/fpawel/betfairs/aping"
 )
 
 

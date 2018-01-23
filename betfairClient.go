@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"heroku.com/betfairs/aping/listMarketBook"
-	"heroku.com/betfairs/aping/listMarketCatalogue"
-	"heroku.com/betfairs/football"
+	"github.com/fpawel/betfairs/aping/listMarketBook"
+	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
+	"github.com/fpawel/betfairs/football"
 	"sync/atomic"
-	"heroku.com/betfairs/football/football2"
-	"heroku.com/betfairs/football/football3"
-	"heroku.com/betfairs/football/football4"
+	"github.com/fpawel/betfairs/football/football2"
+	"github.com/fpawel/betfairs/football/football3"
+	"github.com/fpawel/betfairs/football/football4"
 )
 
 var ErrorInterrupted = fmt.Errorf("INTERRUPTED")

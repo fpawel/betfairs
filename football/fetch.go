@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 	"fmt"
-	"heroku.com/betfairs/webclient"
+	"github.com/fpawel/betfairs/webclient"
 	"github.com/PuerkitoBio/goquery"
 
 	"errors"

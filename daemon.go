@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/go-chi/chi"
-	"heroku.com/betfairs/football"
+	"github.com/fpawel/betfairs/football"
 	"log"
 	"net/http"
 	"os"
@@ -12,10 +12,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"heroku.com/betfairs/aping"
-	"heroku.com/betfairs/aping/listMarketBook"
-	"heroku.com/betfairs/aping/listMarketCatalogue"
-	"heroku.com/betfairs/webclient"
+	"github.com/fpawel/betfairs/aping"
+	"github.com/fpawel/betfairs/aping/listMarketBook"
+	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
+	"github.com/fpawel/betfairs/webclient"
 	"io/ioutil"
 	"strconv"
 	"time"

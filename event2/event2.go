@@ -1,6 +1,6 @@
 package event2
 
-import "heroku.com/betfairs/aping"
+import "github.com/fpawel/betfairs/aping"
 
 type Event struct {
 	Score, Time string

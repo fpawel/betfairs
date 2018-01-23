@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 	"log"
-	"heroku.com/betfairs/aping"
+	"github.com/fpawel/betfairs/aping"
 
 )
 

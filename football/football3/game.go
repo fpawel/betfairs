@@ -1,12 +1,12 @@
 package football3
 
 import (
-	"heroku.com/betfairs/aping/listMarketCatalogue"
-	"heroku.com/betfairs/aping/listMarketBook"
+	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
+	"github.com/fpawel/betfairs/aping/listMarketBook"
 	"time"
 	"fmt"
-	"heroku.com/betfairs/football"
-	"heroku.com/betfairs/aping"
+	"github.com/fpawel/betfairs/football"
+	"github.com/fpawel/betfairs/aping"
 )
 
 type Game struct {
