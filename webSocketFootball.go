@@ -98,7 +98,7 @@ func runWebSocketFootballPrices(conn *websocket.Conn, betfair BetfairClient) {
 		for {
 			games4, ok := <-sendGames
 			if !ok { // если канал send закрыт, прервать цикл записи
-				conn.WriteMessage(websocket.CloseMessage, []byte{})
+				conn.WriteMessage(websocket.CloseMessage,[]byte{})
 				return
 			}
 			conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
