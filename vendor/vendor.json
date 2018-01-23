@@ -57,5 +57,10 @@
 			"revisionTime": "2017-12-07T22:17:04Z"
 		}
 	],
-	"rootPath": "github.com/fpawel/betfairs"
+	"rootPath": "github.com/fpawel/betfairs",
+	"heroku": {
+		"install" : [ "./..." ],
+		"goVersion": "go1.9.3"
+	},
+
 }
