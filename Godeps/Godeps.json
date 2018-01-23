@@ -3,7 +3,7 @@
 	"GoVersion": "go1.9",
 	"GodepVersion": "v74",
 	"Packages": [
-		"github.com/fpawel/betfairs"
+		"./..."
 	],
 	"Deps": [
 		{
@@ -24,26 +24,6 @@
 			"ImportPath": "github.com/gorilla/websocket",
 			"Comment": "v1.1.0-13-g2257eda",
 			"Rev": "2257eda00b2084c1351cd672aa5476daa9f5e463"
-		},
-		{
-			"ImportPath": "github.com/jmoiron/sqlx",
-			"Comment": "sqlx-v1.1-105-gf980a91",
-			"Rev": "f980a91bdc37abef88269b8f122d7de6352102f5"
-		},
-		{
-			"ImportPath": "github.com/jmoiron/sqlx/reflectx",
-			"Comment": "sqlx-v1.1-105-gf980a91",
-			"Rev": "f980a91bdc37abef88269b8f122d7de6352102f5"
-		},
-		{
-			"ImportPath": "github.com/lib/pq",
-			"Comment": "go1.0-cutoff-195-g83612a5",
-			"Rev": "83612a56d3dd153a94a629cd64925371c9adad78"
-		},
-		{
-			"ImportPath": "github.com/lib/pq/oid",
-			"Comment": "go1.0-cutoff-195-g83612a5",
-			"Rev": "83612a56d3dd153a94a629cd64925371c9adad78"
 		},
 		{
 			"ImportPath": "github.com/mattn/go-runewidth",
