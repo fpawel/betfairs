@@ -10,7 +10,8 @@ import (
 type Event struct {
 	ID          int       `json:"id"`
 	OpenDate    time.Time `json:"openDate"`
-	Competition aping.Competition
+	CompetitionID   int `json:"сompetition_id"`
+	CompetitionName string `json:"сompetition_name"`
 	Home        string   `json:"home"`
 	Away        string   `json:"away"`
 	Markets     []Market `json:"markets"`
@@ -37,13 +38,19 @@ func NewEvent(eventID int, xs aping.MarketCatalogues, home, away string) Event {
 		log.Fatalf("%d != %d", n, eventID)
 	}
 
+	competitionID,err := strconv.Atoi(xs[0].Competition.ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 
 	return Event{
 		ID: eventID,
 		Home:        home,
 		Away:        away,
 		OpenDate:    ev.OpenDate,
-		Competition: xs[0].Competition,
+		CompetitionID:competitionID,
+		CompetitionName:xs[0].Competition.Name,
 		Markets:     markets(xs),
 		CountryCode: ev.CountryCode,
 	}
