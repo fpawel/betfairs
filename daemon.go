@@ -55,13 +55,6 @@ func daemon() {
 		setJsonResult(w, games, err)
 	})
 
-	router.Get("/football/games4", func(w http.ResponseWriter, r *http.Request) {
-		var tmp int32
-		games, err := betfairReader.ReadFootballGames4(&tmp)
-		setJsonResult(w, games, err)
-	})
-
-
 	router.Get("/football/live", func(w http.ResponseWriter, r *http.Request) {
 
 		conn, err := websocketUpgrader.Upgrade(w, r, nil)

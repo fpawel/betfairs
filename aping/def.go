@@ -2,6 +2,7 @@ package aping
 
 import (
 	"time"
+	"strconv"
 )
 
 type EventType struct {
@@ -50,4 +51,9 @@ type Event struct {
 
 type MarketFilter struct {
 	EventIDs []int `json:"eventIds"`
+}
+
+func (x MarketID) Int() int {
+	n, _ :=  strconv.Atoi( string(x[2:]) )
+	return n
 }

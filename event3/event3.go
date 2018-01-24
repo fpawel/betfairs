@@ -1,4 +1,4 @@
-package football4
+package event3
 
 import (
 	"time"
@@ -6,17 +6,12 @@ import (
 	"github.com/fpawel/betfairs/aping"
 	"strconv"
 	"log"
-	"github.com/fpawel/betfairs/football"
 	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
 	"github.com/fpawel/betfairs/aping/listMarketBook"
 )
 
-type Game struct {
+type Event struct {
 	ID              int       `json:"id"`
-	OpenDate        time.Time `json:"openDate"`
-	ScoreHome       int       `json:"score_home"`
-	ScoreAway       int       `json:"score_away"`
-	Minute          int       `json:"minute"`
 	Markets []Market          `json:"markets"`
 }
 
@@ -46,8 +41,8 @@ func newRunner(x aping.Runner) (r Runner){
 
 func newMarket(x aping.MarketBook) (r Market){
 	var err error
-	r.ID, err =  strconv.Atoi( string(x.ID[2:len(x.ID)]) )
-	if err != nil {
+	r.ID = x.ID.Int()
+	if r.ID == 0 {
 		log.Fatalf("%s: %v", x.ID, err)
 	}
 	r.TotalAvailable = x.TotalAvailable
@@ -62,16 +57,9 @@ func newMarket(x aping.MarketBook) (r Market){
 	return
 }
 
-func newGame(x football.Game, openDate time.Time, markets aping.MarketBooks) Game {
-	r := Game{
-		ID:  x.ID,
-		ScoreHome: x.ScoreHome,
-		ScoreAway: x.ScoreAway,
-		OpenDate:openDate,
-		Minute:-1,
-	}
-	if minute,err := x.Minute(); err == nil {
-		r.Minute = minute
+func newGame(eventID int, markets aping.MarketBooks) Event {
+	r := Event{
+		ID:  eventID,
 	}
 	for _,m := range markets{
 		r.Markets = append(r.Markets, newMarket(m))
@@ -79,25 +67,23 @@ func newGame(x football.Game, openDate time.Time, markets aping.MarketBooks) Gam
 	return r
 }
 
-func ReadGame(game football.Game,
-	marketCatalogueReader *listMarketCatalogue.Reader,
-	marketBookReader  *listMarketBook.Reader) (Game, error) {
+func ReadEvent(eventID int,	mcr *listMarketCatalogue.Reader, mbr *listMarketBook.Reader) (Event, error) {
 	var marketCatalogues aping.MarketCatalogues
-	marketCatalogues,err := marketCatalogueReader.Read(game.ID)
+	marketCatalogues,err := mcr.Read(eventID)
 	if err != nil {
-		var tmp Game
+		var tmp Event
 		return tmp,err
 	}
 
 	var markets aping.MarketBooks
 	for _,ids := range marketCatalogues.Take40MarketIDs() {
-		mb, err := marketBookReader.Read(ids, time.Second)
+		mb, err := mbr.Read(ids, time.Second)
 		if err != nil {
 			continue
 		}
 		markets = append(markets, mb...)
 	}
-	return newGame(game, marketCatalogues[0].Event.OpenDate, markets), nil
+	return newGame(eventID, markets), nil
 }
 
 

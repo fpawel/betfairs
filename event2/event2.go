@@ -8,15 +8,14 @@ import (
 )
 
 type Event struct {
-	ID          int       `json:"id"`
-	OpenDate    time.Time `json:"openDate"`
-	CompetitionID   int `json:"сompetition_id"`
-	CompetitionName string `json:"сompetition_name"`
-	Home        string   `json:"home"`
-	Away        string   `json:"away"`
-	Markets     []Market `json:"markets"`
-	CountryCode string `json:"countryCode"`
-
+	ID              int       `json:"id"`
+	OpenDate        time.Time `json:"openDate"`
+	CompetitionID   int       `json:"сompetition_id"`
+	CompetitionName string    `json:"сompetition_name"`
+	Home            string    `json:"home"`
+	Away            string    `json:"away"`
+	Markets         []Market  `json:"markets"`
+	CountryCode     string    `json:"countryCode"`
 }
 
 type Market struct {
@@ -30,29 +29,26 @@ func NewEvent(eventID int, xs aping.MarketCatalogues, home, away string) Event {
 		log.Fatal(aping.ErrorNoMarkets)
 	}
 	ev := xs[0].Event
-	n,err := strconv.Atoi(ev.ID)
+	n, err := strconv.Atoi(ev.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if n != eventID {
 		log.Fatalf("%d != %d", n, eventID)
 	}
-
-	competitionID,err := strconv.Atoi(xs[0].Competition.ID)
+	competitionID, err := strconv.Atoi(xs[0].Competition.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-
 	return Event{
-		ID: eventID,
-		Home:        home,
-		Away:        away,
-		OpenDate:    ev.OpenDate,
-		CompetitionID:competitionID,
-		CompetitionName:xs[0].Competition.Name,
-		Markets:     markets(xs),
-		CountryCode: ev.CountryCode,
+		ID:              eventID,
+		Home:            home,
+		Away:            away,
+		OpenDate:        ev.OpenDate,
+		CompetitionID:   competitionID,
+		CompetitionName: xs[0].Competition.Name,
+		Markets:         markets(xs),
+		CountryCode:     ev.CountryCode,
 	}
 }
 
