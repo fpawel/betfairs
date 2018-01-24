@@ -66,7 +66,7 @@ func runWebSocketFootball(conn *websocket.Conn, betfair BetfairClient) {
 			break
 		}
 	}
-	atomic.AddInt32(&interruptReadGames, 1)
+	atomic.AddInt32( &interruptReadGames, 1)
 	close(sendGames)
 	<- doneSendGames
 }
