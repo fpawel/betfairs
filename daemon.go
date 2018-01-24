@@ -99,7 +99,7 @@ func daemon() {
 			return
 		}
 
-		setJsonResult(w, event2.NewEvent(marketCatalogues, home, away), nil)
+		setJsonResult(w, event2.NewEvent(eventID, marketCatalogues, home, away), nil)
 	})
 
 	if os.Getenv("PORT") == "" {
