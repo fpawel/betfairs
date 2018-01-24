@@ -98,8 +98,7 @@ func daemon() {
 			http.Error(w, fmt.Sprintf("game not found: %d", eventID), http.StatusBadRequest)
 			return
 		}
-
-		setJsonResult(w, event2.NewEvent(eventID, marketCatalogues, home, away), nil)
+		setCompressedJSON(w, event2.NewEvent(eventID, marketCatalogues, home, away))
 	})
 
 	if os.Getenv("PORT") == "" {
@@ -188,3 +187,4 @@ func setJsonResult(w http.ResponseWriter, data interface{}, err error) {
 	setCompressedJSON(w, &y)
 
 }
+
