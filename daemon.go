@@ -66,7 +66,7 @@ func daemon() {
 
 		conn, err := websocketUpgrader.Upgrade(w, r, nil)
 		check(err)
-		runWebSocketFootballLive( conn, betfairReader.Football)
+		runWebSocketFootballLive( conn, betfairReader)
 		conn.Close()
 	})
 

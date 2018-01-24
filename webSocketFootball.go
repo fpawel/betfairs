@@ -8,6 +8,7 @@ import (
 	"github.com/fpawel/betfairs/football/football2"
 	"sync/atomic"
 	"github.com/fpawel/betfairs/football"
+	"github.com/fpawel/betfairs/aping"
 )
 
 func runWebSocketFootball(conn *websocket.Conn, betfair BetfairClient) {
@@ -72,7 +73,7 @@ func runWebSocketFootball(conn *websocket.Conn, betfair BetfairClient) {
 	<- doneSendGames
 }
 
-func runWebSocketFootballLive(conn *websocket.Conn, footballReader *football.GamesReader) {
+func runWebSocketFootballLive(conn *websocket.Conn, rdr BetfairClient) {
 	conn.EnableWriteCompression(true)
 	done := make(chan bool)
 	var interruptReadGames int32
@@ -83,7 +84,7 @@ func runWebSocketFootballLive(conn *websocket.Conn, footballReader *football.Gam
 		}()
 		for {
 			var games []football.Game
-			games, err := footballReader.Read()
+			games, err := rdr.Football.Read()
 			if atomic.LoadInt32(&interruptReadGames) > 0 {
 				return
 			}
@@ -96,7 +97,14 @@ func runWebSocketFootballLive(conn *websocket.Conn, footballReader *football.Gam
 				if !game.InPlay || !game.HasMinute() {
 					continue
 				}
-				err = conn.WriteJSON(game.Live())
+				mc,err := rdr.ListMarketCatalogue.Read(game.ID)
+				if err != nil {
+					if err != aping.ErrorNoMarkets{
+						fmt.Println("ERROR football 2:", err )
+					}
+					continue
+				}
+				err = conn.WriteJSON(game.GameLive(mc[0].Event.OpenDate))
 				if err != nil {
 					fmt.Println("WebSocket: error 3:", err)
 					return

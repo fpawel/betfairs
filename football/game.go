@@ -6,6 +6,7 @@ import (
 	"strconv"
 	tablewriter "github.com/olekukonko/tablewriter"
 	"regexp"
+	"time"
 )
 
 type Game struct {
@@ -22,16 +23,18 @@ type Game struct {
 
 type GameLive struct {
 	ID        int `json:"id"`
+	OpenDate time.Time `json:"open_date"`
 	ScoreHome int `json:"score_home"`
 	ScoreAway int `json:"score_away"`
 	Minute    int `json:"minute"`
 }
 
 
-func (x Game) Live() GameLive {
+func (x Game) GameLive(openDate time.Time ) GameLive {
 	minute,_ := x.Minute()
 	return GameLive{
 		ID:x.ID,
+		OpenDate:openDate,
 		ScoreHome:x.ScoreHome,
 		ScoreAway:x.ScoreAway,
 		Minute:minute,

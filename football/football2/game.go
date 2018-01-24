@@ -32,9 +32,6 @@ type Game struct {
 	Error string `json:"error"`
 }
 
-
-
-
 func (x Game) Changes(y Game) (r GameChanges){
 	r.ID = x.ID
 	if x.ID != y.ID {
