@@ -7,6 +7,7 @@ import (
 
 	"github.com/fpawel/betfairs/football/football2"
 	"sync/atomic"
+	"github.com/fpawel/betfairs/football"
 )
 
 func runWebSocketFootball(conn *websocket.Conn, betfair BetfairClient) {
@@ -69,4 +70,54 @@ func runWebSocketFootball(conn *websocket.Conn, betfair BetfairClient) {
 	atomic.AddInt32( &interruptReadGames, 1)
 	close(sendGames)
 	<- doneSendGames
+}
+
+func runWebSocketFootballLive(conn *websocket.Conn, footballReader *football.GamesReader) {
+	conn.EnableWriteCompression(true)
+	done := make(chan bool)
+	var interruptReadGames int32
+
+	go func() {
+		defer func() {
+			done <- true
+		}()
+		for {
+			var games []football.Game
+			games, err := footballReader.Read()
+			if atomic.LoadInt32(&interruptReadGames) > 0 {
+				return
+			}
+			if err != nil {
+				fmt.Println("ERROR football:", err )
+				continue
+			}
+
+			for _, game := range games {
+				if !game.InPlay || !game.HasMinute() {
+					continue
+				}
+				err = conn.WriteJSON(game.Live())
+				if err != nil {
+					fmt.Println("WebSocket: error 3:", err)
+					return
+				}
+			}
+		}
+	}()
+
+	for {
+		messageType, _, err := conn.ReadMessage()
+		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
+				fmt.Println("WebSocket error 4:", err)
+			}
+			break
+		}
+		switch messageType {
+		case websocket.CloseMessage:
+			break
+		}
+	}
+	atomic.AddInt32(&interruptReadGames, 1)
+	<- done
 }

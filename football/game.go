@@ -19,6 +19,25 @@ type Game struct {
 	Time      string `json:"time"`
 }
 
+
+type GameLive struct {
+	ID        int `json:"id"`
+	ScoreHome int `json:"score_home"`
+	ScoreAway int `json:"score_away"`
+	Minute    int `json:"minute"`
+}
+
+
+func (x Game) Live() GameLive {
+	minute,_ := x.Minute()
+	return GameLive{
+		ID:x.ID,
+		ScoreHome:x.ScoreHome,
+		ScoreAway:x.ScoreAway,
+		Minute:minute,
+	}
+}
+
 func (x Game) String() string {
 	strScore := ""
 	if x.InPlay {
@@ -33,6 +52,11 @@ func (x Game) Minute() (int,error) {
 		return strconv.Atoi(m[1])
 	}
 	return 0,fmt.Errorf("%s: time does not match", x.Time)
+}
+
+func (x Game) HasMinute() bool {
+	_,err := x.Minute()
+	return err == nil
 }
 
 

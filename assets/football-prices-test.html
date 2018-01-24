@@ -19,7 +19,7 @@
                 if (location.protocol === "https:"){
                     proto = "wss:"
                 }
-                ws = new WebSocket(proto + "//"+location.host+"/football/prices");
+                ws = new WebSocket(proto + "//"+location.host+"/football/live");
                 ws.onopen = function() {
                     print("OPEN");
                 }

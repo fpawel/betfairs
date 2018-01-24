@@ -125,6 +125,10 @@ func (x *Session) ListMarketCatalogue(eventID int) (MarketCatalogues, error) {
 		return nil, ErrorNoMarkets
 	}
 
+	for i := range response.Result{
+		response.Result[i].InvalidateRunners()
+	}
+
 	return response.Result, nil
 }
 

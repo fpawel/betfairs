@@ -18,7 +18,7 @@ import (
 	"github.com/fpawel/betfairs/webclient"
 	"io/ioutil"
 	"strconv"
-	"time"
+	"github.com/fpawel/betfairs/event2"
 )
 
 func daemon() {
@@ -36,6 +36,12 @@ func daemon() {
 	var websocketUpgrader = websocket.Upgrader{EnableCompression: true}
 
 	fileServer(router, "/", http.Dir("assets"))
+
+
+	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
+		games, err := betfairReader.Football.Read()
+		setJsonResult(w, games, err)
+	})
 
 	router.Get("/football/games2", func(w http.ResponseWriter, r *http.Request) {
 		var tmp int32
@@ -55,41 +61,13 @@ func daemon() {
 		setJsonResult(w, games, err)
 	})
 
-	router.Get("/markets/{eventID}", func(w http.ResponseWriter, r *http.Request) {
-		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		markets, err := betfairReader.ListMarketCatalogue.Read(eventID)
 
-		setJsonResult(w, markets, err)
-	})
+	router.Get("/football/live", func(w http.ResponseWriter, r *http.Request) {
 
-
-
-	router.Get("/prices/{eventID}", func(w http.ResponseWriter, r *http.Request) {
-		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		marketCatalogues, err := betfairReader.ListMarketCatalogue.Read(eventID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		var marketBooks aping.MarketBooks
-		for _,xs := range marketCatalogues.Take40MarketIDs(){
-			ms,err := betfairReader.ListMarketBook.Read(xs, time.Hour)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			marketBooks = append(marketBooks, ms ...)
-		}
-		setJsonResult(w, marketBooks, nil)
+		conn, err := websocketUpgrader.Upgrade(w, r, nil)
+		check(err)
+		runWebSocketFootballLive( conn, betfairReader.Football)
+		conn.Close()
 	})
 
 	router.Get("/football", func(w http.ResponseWriter, r *http.Request) {
@@ -101,6 +79,27 @@ func daemon() {
 
 	router.Get("/redirect-betfair/*", func(w http.ResponseWriter, r *http.Request) {
 		redirect(webclient.NewURL(chi.URLParam(r, "*") ), w, r)
+	})
+
+
+	router.Get("/event/{eventID}", func(w http.ResponseWriter, r *http.Request) {
+		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		marketCatalogues, err := betfairReader.ListMarketCatalogue.Read(eventID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		home, away,ok := betfairReader.Football.TeamsByID(eventID)
+		if !ok {
+			http.Error(w, fmt.Sprintf("game not found: %d", eventID), http.StatusBadRequest)
+			return
+		}
+
+		setJsonResult(w, event2.NewEvent(marketCatalogues, home, away), nil)
 	})
 
 	if os.Getenv("PORT") == "" {

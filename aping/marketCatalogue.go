@@ -31,6 +31,23 @@ type MarketCatalogue struct {
 	Event Event `json:"event,omitempty"`
 }
 
+///The static data about runners in a market
+type RunnerCatalogue struct {
+
+	// The unique id of the runner (selection)
+	ID RunnerID `json:"selectionId"`
+
+	// The name of the runner
+	Name string `json:"runnerName,omitempty"`
+
+	//The sort priority of this runner
+	//SortPriority int `json:"sortPriority,omitempty"`
+
+	// The handicap.  Enter the specific handicap value (returned by RUNNER in listMaketBook)
+	// if the market is an Asian handicap market.
+	//Handicap float64 `json:"handicap,omitempty"`
+}
+
 func (x MarketCatalogue) Runner(id RunnerID) (r RunnerCatalogue, ok bool)  {
 	for i := range  x.Runners{
 		if x.Runners[i].ID == id {
@@ -38,6 +55,18 @@ func (x MarketCatalogue) Runner(id RunnerID) (r RunnerCatalogue, ok bool)  {
 			ok = true
 			break
 		}
+	}
+	return
+}
+
+func (x *MarketCatalogue) InvalidateRunners()   {
+	m := make(map[RunnerID] RunnerCatalogue)
+	for _,r := range  x.Runners{
+		m[r.ID] = r
+	}
+	x.Runners = nil
+	for _,r := range m {
+		x.Runners = append(x.Runners, r)
 	}
 	return
 }

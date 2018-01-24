@@ -9,7 +9,12 @@ import (
 type GamesReader struct {
 	muConsumers   sync.RWMutex
 	consumers     []chan resultReadGames
+	teams map[int] teams
 
+}
+
+type teams struct {
+	home,away string
 }
 
 type resultReadGames struct {
@@ -18,15 +23,33 @@ type resultReadGames struct {
 }
 
 
-
+func (x *GamesReader) TeamsByID(id int) (string, string, bool){
+	x.muConsumers.RLock()
+	t,ok := x.teams[id]
+	x.muConsumers.RUnlock()
+	if ok {
+		return t.home, t.away, true
+	}
+	return "", "", false
+}
 
 func (x *GamesReader) read() {
 	var r resultReadGames
+
 	r.games, r.error = FetchGames()
+
 	x.muConsumers.Lock()
 	consumers := make([]chan resultReadGames, len(x.consumers))
 	copy(consumers, x.consumers )
 	x.consumers = nil
+	if r.error == nil {
+		if x.teams == nil {
+			x.teams = make(map[int]teams)
+		}
+		for _,game := range r.games{
+			x.teams[game.ID] = teams{game.Home, game.Away}
+		}
+	}
 	x.muConsumers.Unlock()
 
 	if len(consumers) == 0 {
