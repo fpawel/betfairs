@@ -93,6 +93,8 @@ func runWebSocketFootballLive(conn *websocket.Conn, rdr BetfairClient) {
 				continue
 			}
 
+			var gamesLive []football.GameLive
+
 			for _, game := range games {
 				if !game.InPlay || !game.HasMinute() {
 					continue
@@ -104,11 +106,13 @@ func runWebSocketFootballLive(conn *websocket.Conn, rdr BetfairClient) {
 					}
 					continue
 				}
-				err = conn.WriteJSON(game.GameLive(mc[0].Event.OpenDate))
-				if err != nil {
-					fmt.Println("WebSocket: error 3:", err)
-					return
-				}
+				gamesLive = append(gamesLive, game.GameLive(mc[0].Event.OpenDate))
+			}
+
+			err = conn.WriteJSON(gamesLive)
+			if err != nil {
+				fmt.Println("WebSocket: error 3:", err)
+				return
 			}
 		}
 	}()
