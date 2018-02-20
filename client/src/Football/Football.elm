@@ -116,7 +116,7 @@ view model =
             ]
 
 
-renderLoadingHeader : Html Msg
+renderLoadingHeader : Html Msg      cxseaqDW2q1weds34r
 renderLoadingHeader =
     Ui.Header.view
         [ renderTitle

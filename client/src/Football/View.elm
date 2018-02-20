@@ -1,1 +1,0 @@
-module Football.View exposing (..)
