@@ -9,6 +9,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 
 	"errors"
+	"io/ioutil"
 )
 
 var ErrorNoGames = errors.New("NO GAMES")
@@ -82,6 +83,13 @@ func FetchGames() (games []Game, err error) {
 
 	err = webclient.Fetch(URLStr, func(document *goquery.Document) error {
 		games, err = parseGames(document)
+		if err != nil {
+			s,err := document.Html()
+			if err != nil {
+				s = err.Error()
+			}
+			ioutil.WriteFile("error.html", []byte(s),0644)
+		}
 		return err
 	})
 	return
