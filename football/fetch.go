@@ -1,12 +1,12 @@
 package football
 
 import (
-	"strings"
+	"fmt"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/fpawel/betfairs/webclient"
 	"os"
 	"strconv"
-	"fmt"
-	"github.com/fpawel/betfairs/webclient"
-	"github.com/PuerkitoBio/goquery"
+	"strings"
 
 	"errors"
 	"io/ioutil"
@@ -17,22 +17,22 @@ var ErrorNotReady = errors.New("NOT READY")
 var ErrorHTMLSelectionNotFound = errors.New("NOT FOUND HTML SELECTION")
 var ErrorHTMLSelectionDublikat = errors.New("NOT HTML SELECTION DUBLIKAT")
 
-
-func parseGame ( node *goquery.Selection) (Game, error) {
+func parseGame(node *goquery.Selection) (Game, error) {
 
 	var (
-		x Game
-		err error)
+		x   Game
+		err error
+	)
 
-	strDataEventID, _ := node.Parent().Parent().Parent().Attr("data-eventid")
+	strDataEventID, _ := node.Attr("data-eventid")
 	x.ID, err = strconv.Atoi(strDataEventID)
 	if err != nil {
 		return x, fmt.Errorf("data-eventid not ok: %v", err)
 
 	}
 
-	x.Home = strings.TrimSpace(node.Find("span.home-team-name").Text())
-	x.Away = strings.TrimSpace(node.Find("span.away-team-name").Text())
+	x.Home = strings.TrimSpace(node.Find("div.teams-container span.team-name:nth-child(1)").Text())
+	x.Away = strings.TrimSpace(node.Find("div.teams-container span.team-name:nth-child(2)").Text())
 
 	x.ScoreHome, err = strconv.Atoi(strings.TrimSpace(node.Find("span.ui-score-home").Text()))
 	if err == nil {
@@ -52,9 +52,9 @@ func parseGame ( node *goquery.Selection) (Game, error) {
 	return x, nil
 }
 
-func parseGames (document *goquery.Document) ( games []Game, err error) {
+func parseGames(document *goquery.Document) (games []Game, err error) {
 
-	document.Find("div[data-eventid] div.details-event div a").Each(func(i int, node *goquery.Selection) {
+	document.Find("div[data-eventid]").Each(func(i int, node *goquery.Selection) {
 		var x Game
 		x, err = parseGame(node)
 		x.Order = i
@@ -63,19 +63,17 @@ func parseGames (document *goquery.Document) ( games []Game, err error) {
 		}
 	})
 
-	if len(games) == 0{
+	if len(games) == 0 {
 		err = ErrorNoGames
 	}
 	return
 }
 
-
-
 func FetchGames() (games []Game, err error) {
 
 	var URLStr string
 
-	if strings.ToLower(os.Getenv("BETFAIR_COM_NOT_ALLOWED") ) == "true" {
+	if strings.ToLower(os.Getenv("BETFAIR_COM_NOT_ALLOWED")) == "true" {
 		URLStr = "https://betfairs.herokuapp.com/redirect-betfair/sport/football"
 	} else {
 		URLStr = webclient.NewURL("sport/football")
@@ -84,11 +82,11 @@ func FetchGames() (games []Game, err error) {
 	err = webclient.Fetch(URLStr, func(document *goquery.Document) error {
 		games, err = parseGames(document)
 		if err != nil {
-			s,err := document.Html()
+			s, err := document.Html()
 			if err != nil {
 				s = err.Error()
 			}
-			ioutil.WriteFile("error.html", []byte(s),0644)
+			ioutil.WriteFile("assets/error.html", []byte(s), 0644)
 		}
 		return err
 	})
