@@ -32,8 +32,8 @@ func daemon() {
 		ListMarketBook:      listMarketBook.New(apingSession),
 	}
 
-	footballHub := footballHub{betfairClient: betfairClient}
-	go footballHub.run()
+	footballHub := newFootballHub(betfairClient)
+
 
 	router := chi.NewRouter()
 	var websocketUpgrader = websocket.Upgrader{EnableCompression: true}
