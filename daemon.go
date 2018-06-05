@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/go-chi/chi"
 	"github.com/fpawel/betfairs/football"
+	"github.com/go-chi/chi"
 	"log"
 	"net/http"
 	"os"
@@ -11,14 +11,14 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"github.com/fpawel/betfairs/aping"
 	"github.com/fpawel/betfairs/aping/listMarketBook"
 	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
+	"github.com/fpawel/betfairs/event2"
 	"github.com/fpawel/betfairs/webclient"
+	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"strconv"
-	"github.com/fpawel/betfairs/event2"
 )
 
 func daemon() {
@@ -26,54 +26,47 @@ func daemon() {
 	apingSession := aping.NewSession(adminBetfairUser, adminBetfairPass)
 	fmt.Println(apingSession.GetSession())
 
-	betfairReader := BetfairClient{
+	betfairClient := BetfairClient{
 		Football:            new(football.GamesReader),
 		ListMarketCatalogue: listMarketCatalogue.New(apingSession),
 		ListMarketBook:      listMarketBook.New(apingSession),
 	}
+
+	footballHub := footballHub{betfairClient: betfairClient}
+	go footballHub.run()
 
 	router := chi.NewRouter()
 	var websocketUpgrader = websocket.Upgrader{EnableCompression: true}
 
 	fileServer(router, "/", http.Dir("assets"))
 
-
 	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
-		games, err := betfairReader.Football.Read()
+		games, err := betfairClient.Football.Read()
 		setJsonResult(w, games, err)
 	})
 
 	router.Get("/football/games2", func(w http.ResponseWriter, r *http.Request) {
-		var tmp int32
-		games, err := betfairReader.ReadFootballGames2(&tmp)
+		games, err := betfairClient.ReadFootballGames2()
 		setJsonResult(w, games, err)
 	})
 
 	router.Get("/football/games3", func(w http.ResponseWriter, r *http.Request) {
 		var tmp int32
-		games, err := betfairReader.ReadFootballGames3(&tmp)
+		games, err := betfairClient.ReadFootballGames3(&tmp)
 		setJsonResult(w, games, err)
-	})
-
-	router.Get("/football/live", func(w http.ResponseWriter, r *http.Request) {
-
-		conn, err := websocketUpgrader.Upgrade(w, r, nil)
-		check(err)
-		runWebSocketFootballLive( conn, betfairReader)
-		conn.Close()
 	})
 
 	router.Get("/football", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := websocketUpgrader.Upgrade(w, r, nil)
-		check(err)
-		runWebSocketFootball( conn, betfairReader)
-		conn.Close()
+		if err != nil {
+			panic(err)
+		}
+		footballHub.add(conn)
 	})
 
 	router.Get("/redirect-betfair/*", func(w http.ResponseWriter, r *http.Request) {
-		redirect(webclient.NewURL(chi.URLParam(r, "*") ), w, r)
+		redirect(webclient.NewURL(chi.URLParam(r, "*")), w, r)
 	})
-
 
 	router.Get("/event/{eventID}", func(w http.ResponseWriter, r *http.Request) {
 		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))
@@ -81,12 +74,12 @@ func daemon() {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		marketCatalogues, err := betfairReader.ListMarketCatalogue.Read(eventID)
+		marketCatalogues, err := betfairClient.ListMarketCatalogue.Read(eventID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		home, away,ok := betfairReader.Football.TeamsByID(eventID)
+		home, away, ok := betfairClient.Football.TeamsByID(eventID)
 		if !ok {
 			http.Error(w, fmt.Sprintf("game not found: %d", eventID), http.StatusBadRequest)
 			return
@@ -153,13 +146,17 @@ func redirect(urlStr string, w http.ResponseWriter, r *http.Request) {
 
 func setCompressedJSON(w http.ResponseWriter, data interface{}) {
 	gz, err := gzip.NewWriterLevel(w, gzip.DefaultCompression)
-	check(err)
+	if err != nil {
+		panic(err)
+	}
 	defer gz.Close()
 	w.Header().Set("Content-Encoding", "gzip")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	encoder := json.NewEncoder(gz)
 	encoder.SetIndent("", "    ")
-	check(encoder.Encode(data))
+	if err := encoder.Encode(data); err != nil {
+		panic(err)
+	}
 }
 
 func setJsonResult(w http.ResponseWriter, data interface{}, err error) {
@@ -180,4 +177,3 @@ func setJsonResult(w http.ResponseWriter, data interface{}, err error) {
 	setCompressedJSON(w, &y)
 
 }
-

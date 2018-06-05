@@ -18,23 +18,17 @@ type BetfairClient struct {
 	ListMarketBook      *listMarketBook.Reader
 }
 
-func (x *BetfairClient) ReadFootballGames2(interrupt *int32) (games2 football2.Games, err error) {
+func (x *BetfairClient) ReadFootballGames2() (games2 football2.Games, err error) {
 	var games []football.Game
 	games, err = x.Football.Read()
 	if err != nil {
 		return
 	}
-	if atomic.LoadInt32(interrupt) > 0 {
-		err = ErrorInterrupted
-		return
-	}
 	for _, game := range games {
 		game := football2.Game{Game: game}
 		game.Read(x.ListMarketCatalogue, x.ListMarketBook)
-		if atomic.LoadInt32(interrupt) > 0 {
-			err = ErrorInterrupted
-			return
-		}
+
+
 		games2 = append(games2, game)
 	}
 	return
