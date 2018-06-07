@@ -20,7 +20,6 @@ type Game struct {
 	Time      string `json:"time"`
 }
 
-
 type GameLive struct {
 	ID        int `json:"id"`
 	OpenDate time.Time `json:"open_date"`
@@ -62,7 +61,6 @@ func (x Game) HasMinute() bool {
 	return err == nil
 }
 
-
 func PrintGames(games []Game){
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"№", "ID", "HOME", "AWAY", "SCORE", })
@@ -75,6 +73,3 @@ func PrintGames(games []Game){
 	}
 	table.Render()
 }
-
-
-

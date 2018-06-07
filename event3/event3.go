@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/fpawel/betfairs/aping"
-	"strconv"
 	"log"
 	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
 	"github.com/fpawel/betfairs/aping/listMarketBook"

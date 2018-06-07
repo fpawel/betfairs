@@ -2,7 +2,6 @@ package football2
 
 import (
 	"github.com/fpawel/betfairs/football"
-
 	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
 	"fmt"
 	"github.com/fpawel/betfairs/aping/listMarketBook"
@@ -83,7 +82,6 @@ func (x Game) Changes(y Game) (r GameChanges){
 	if x.TotalAvailable != y.TotalAvailable {
 		r.TotalAvailable = &y.TotalAvailable
 	}
-
 	if x.Error != y.Error {
 		r.Error = &y.Error
 	}
@@ -146,7 +144,4 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 			break
 		}
 	}
-
-
-
 }

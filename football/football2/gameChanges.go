@@ -37,5 +37,4 @@ func (x GameChanges) Empty() bool {
 		x.DrawLay == nil &&
 		x.TotalMatched == nil &&
 		x.TotalAvailable == nil
-
 }
