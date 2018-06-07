@@ -27,8 +27,6 @@ func (x *BetfairClient) ReadFootballGames2() (games2 football2.Games, err error)
 	for _, game := range games {
 		game := football2.Game{Game: game}
 		game.Read(x.ListMarketCatalogue, x.ListMarketBook)
-
-
 		games2 = append(games2, game)
 	}
 	return
