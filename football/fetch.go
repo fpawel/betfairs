@@ -89,7 +89,7 @@ func FetchGames() (games []Game, err error) {
 
 	var URLStr string
 
-	if strings.ToLower(os.Getenv("BETFAIR_COM_NOT_ALLOWED")) == "true" {
+	if len(os.Getenv("LOCALHOST")) > 0 {
 		URLStr = "https://betfairs.herokuapp.com/redirect-betfair/sport/football"
 	} else {
 		URLStr = webclient.NewURL("sport/football")
