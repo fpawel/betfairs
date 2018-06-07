@@ -10,7 +10,7 @@ import (
 	"github.com/fpawel/betfairs/aping"
 	"log"
 	"strings"
-	"github.com/fpawel/betfairs/utils"
+	"math"
 )
 
 type Games []Game
@@ -139,8 +139,8 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 		if m.ID == mainMarket.ID {
 			prices6 := m.Prices6()
 			x.WinBack, x.WinLay, x.LoseBack, x.LoseLay, x.DrawBack, x.DrawLay = prices6[0],prices6[1],prices6[2],prices6[3],prices6[4],prices6[5]
-			x.TotalMatched = utils.Float64ToFixed(m.TotalMatched,0)
-			x.TotalAvailable = utils.Float64ToFixed(m.TotalAvailable,0)
+			x.TotalMatched = math.Round(m.TotalMatched)
+			x.TotalAvailable = math.Round(m.TotalAvailable)
 			break
 		}
 	}

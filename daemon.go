@@ -19,6 +19,7 @@ import (
 	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"strconv"
+	"github.com/gobuffalo/packr"
 )
 
 func daemon() {
@@ -37,8 +38,6 @@ func daemon() {
 
 	router := chi.NewRouter()
 	var websocketUpgrader = websocket.Upgrader{EnableCompression: true}
-
-	fileServer(router, "/", http.Dir("assets"))
 
 	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
 		games, err := betfairClient.Football.Read()
@@ -90,8 +89,26 @@ func daemon() {
 	if os.Getenv("PORT") == "" {
 		os.Setenv("PORT", "8080")
 	}
+
+
+	//fileServer(router, "/", http.Dir("assets"))
+	const assetsPath = "./../../../../../../Frontend/betfairf/dist"
+
+	if len(os.Getenv("LOCALHOST")) > 0 {
+		fileServer(router, "/", http.Dir(assetsPath))
+	} else {
+		boxAssets := packr.NewBox(assetsPath)
+		fsAssets := http.StripPrefix("/", http.FileServer(boxAssets))
+		router.Get("/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fsAssets.ServeHTTP(w, r)
+		}))
+	}
+
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+
 }
+
+
 
 // fileServer conveniently sets up a http.fileServer handler to serve
 // static files from a http.FileSystem.
