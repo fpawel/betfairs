@@ -1,0 +1,65 @@
+{
+	"ImportPath": "github.com/fpawel/betfairs",
+	"GoVersion": "go1.10",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/OneOfOne/struct2ts",
+			"Comment": "v1.0.2",
+			"Rev": "fd3df313e34b3786c2586e9fe134be8b5e96ecd2"
+		},
+		{
+			"ImportPath": "github.com/PuerkitoBio/goquery",
+			"Comment": "v1.1.0-11-g1a71cc7",
+			"Rev": "1a71cc719d0d5b9e4f14ae072bef08b576b0bab5"
+		},
+		{
+			"ImportPath": "github.com/andybalholm/cascadia",
+			"Rev": "349dd0209470eabd9514242c688c403c0926d266"
+		},
+		{
+			"ImportPath": "github.com/go-chi/chi",
+			"Comment": "v3.3.2-5-gcca4135",
+			"Rev": "cca4135d8dddff765463feaf1118047a9e506b4a"
+		},
+		{
+			"ImportPath": "github.com/gobuffalo/packr",
+			"Comment": "v1.11.0-2-g0bf9d54",
+			"Rev": "0bf9d540d5ca816fe15be6c18f3bd9849578c773"
+		},
+		{
+			"ImportPath": "github.com/gorilla/websocket",
+			"Comment": "v1.2.0-43-gc17c80c",
+			"Rev": "c17c80cb48b806045fc338c94c849909a2e41c12"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-runewidth",
+			"Comment": "v0.0.2-3-g97311d9",
+			"Rev": "97311d9f7767e3d6f422ea06661bc2c7a19e8a5d"
+		},
+		{
+			"ImportPath": "github.com/nu7hatch/gouuid",
+			"Rev": "179d4d0c4d8d407a32af483c2354df1d2c91e6c3"
+		},
+		{
+			"ImportPath": "github.com/olekukonko/tablewriter",
+			"Rev": "a7a4c189eb47ed33ce7b35f2880070a0c82a67d4"
+		},
+		{
+			"ImportPath": "github.com/pkg/errors",
+			"Comment": "v0.8.0-12-g816c908",
+			"Rev": "816c9085562cd7ee03e7f8188a1cfd942858cded"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "1e491301e022f8f977054da4c2d852decd59571f"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html/atom",
+			"Rev": "1e491301e022f8f977054da4c2d852decd59571f"
+		}
+	]
+}
