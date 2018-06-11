@@ -36,38 +36,38 @@ func daemon() {
 	footballHub := newFootballHub(betfairClient)
 
 
-	router := chi.NewRouter()
-	var websocketUpgrader = websocket.Upgrader{EnableCompression: true}
+	r := chi.NewRouter()
+	u := websocket.Upgrader{EnableCompression: true}
 
-	router.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/football/games", func(w http.ResponseWriter, r *http.Request) {
 		games, err := betfairClient.Football.Read()
-		setJsonResult(w, games, err)
+		renderResultJSON(w, games, err)
 	})
 
-	router.Get("/football/games2", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/football/games2", func(w http.ResponseWriter, r *http.Request) {
 		games, err := betfairClient.ReadFootballGames2()
-		setJsonResult(w, games, err)
+		renderResultJSON(w, games, err)
 	})
 
-	router.Get("/football/games3", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/football/games3", func(w http.ResponseWriter, r *http.Request) {
 		var tmp int32
 		games, err := betfairClient.ReadFootballGames3(&tmp)
-		setJsonResult(w, games, err)
+		renderResultJSON(w, games, err)
 	})
 
-	router.Get("/football", func(w http.ResponseWriter, r *http.Request) {
-		conn, err := websocketUpgrader.Upgrade(w, r, nil)
+	r.Get("/football", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := u.Upgrade(w, r, nil)
 		if err != nil {
 			panic(err)
 		}
 		footballHub.add(conn)
 	})
 
-	router.Get("/redirect-betfair/*", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/redirect-betfair/*", func(w http.ResponseWriter, r *http.Request) {
 		redirect(webclient.NewURL(chi.URLParam(r, "*")), w, r)
 	})
 
-	router.Get("/event/{eventID}", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/event/{eventID}", func(w http.ResponseWriter, r *http.Request) {
 		eventID, err := strconv.Atoi(chi.URLParam(r, "eventID"))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -83,29 +83,26 @@ func daemon() {
 			http.Error(w, fmt.Sprintf("game not found: %d", eventID), http.StatusBadRequest)
 			return
 		}
-		setCompressedJSON(w, event2.NewEvent(eventID, marketCatalogues, home, away))
+		renderJSON(w, event2.NewEvent(eventID, marketCatalogues, home, away))
 	})
 
 	if os.Getenv("PORT") == "" {
 		os.Setenv("PORT", "8080")
 	}
 
-
-	//fileServer(router, "/", http.Dir("assets"))
 	const assetsPath = "./../../../../../../Frontend/betfairf/dist"
 
 	if len(os.Getenv("LOCALHOST")) > 0 {
-		fileServer(router, "/", http.Dir(assetsPath))
+		fileServer(r, "/", http.Dir(assetsPath))
 	} else {
 		boxAssets := packr.NewBox(assetsPath)
 		fsAssets := http.StripPrefix("/", http.FileServer(boxAssets))
-		router.Get("/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			fsAssets.ServeHTTP(w, r)
 		}))
 	}
 
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
-
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), r))
 }
 
 
@@ -161,7 +158,7 @@ func redirect(urlStr string, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func setCompressedJSON(w http.ResponseWriter, data interface{}) {
+func renderJSON(w http.ResponseWriter, data interface{}) {
 	gz, err := gzip.NewWriterLevel(w, gzip.DefaultCompression)
 	if err != nil {
 		panic(err)
@@ -176,14 +173,14 @@ func setCompressedJSON(w http.ResponseWriter, data interface{}) {
 	}
 }
 
-func setJsonResult(w http.ResponseWriter, data interface{}, err error) {
+func renderResultJSON(w http.ResponseWriter, data interface{}, err error) {
 
 	if err != nil {
 		var y struct {
 			Error string `json:"error"`
 		}
 		y.Error = err.Error()
-		setCompressedJSON(w, &y)
+		renderJSON(w, &y)
 		return
 	}
 
@@ -191,6 +188,6 @@ func setJsonResult(w http.ResponseWriter, data interface{}, err error) {
 		Ok interface{} `json:"ok"`
 	}
 	y.Ok = data
-	setCompressedJSON(w, &y)
+	renderJSON(w, &y)
 
 }
