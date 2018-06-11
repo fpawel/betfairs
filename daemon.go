@@ -35,7 +35,6 @@ func daemon() {
 
 	footballHub := newFootballHub(betfairClient)
 
-
 	r := chi.NewRouter()
 	u := websocket.Upgrader{EnableCompression: true}
 
@@ -105,8 +104,6 @@ func daemon() {
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), r))
 }
 
-
-
 // fileServer conveniently sets up a http.fileServer handler to serve
 // static files from a http.FileSystem.
 func fileServer(r chi.Router, path string, root http.FileSystem) {
@@ -174,7 +171,6 @@ func renderJSON(w http.ResponseWriter, data interface{}) {
 }
 
 func renderResultJSON(w http.ResponseWriter, data interface{}, err error) {
-
 	if err != nil {
 		var y struct {
 			Error string `json:"error"`
@@ -183,11 +179,9 @@ func renderResultJSON(w http.ResponseWriter, data interface{}, err error) {
 		renderJSON(w, &y)
 		return
 	}
-
 	var y struct {
 		Ok interface{} `json:"ok"`
 	}
 	y.Ok = data
 	renderJSON(w, &y)
-
 }
