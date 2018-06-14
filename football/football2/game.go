@@ -114,6 +114,11 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 	} else {
 		x.Country = mc[0].Event.CountryCode
 	}
+
+	if strings.Contains(x.Competition, x.Country + " ")  {
+		x.Competition = strings.Replace(x.Competition, x.Country + " ", "", -1)
+	}
+
 	mainMarket,ok := mc.MainMarket()
 	if !ok {
 		err = fmt.Errorf("рынок ставок на результат не найден")
