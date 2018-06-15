@@ -9,9 +9,6 @@ var (
 	adminBetfairPass = os.Getenv("BETFAIR_LOGIN_PASS")
 )
 
-
-func main (){
+func main() {
 	daemon()
 }
-
-

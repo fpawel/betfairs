@@ -1,37 +1,37 @@
 package football2
 
 import (
-	"github.com/fpawel/betfairs/football"
-	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
 	"fmt"
-	"github.com/fpawel/betfairs/aping/listMarketBook"
-	"github.com/fpawel/betfairs/countries"
-	"time"
 	"github.com/fpawel/betfairs/aping"
+	"github.com/fpawel/betfairs/aping/listMarketBook"
+	"github.com/fpawel/betfairs/aping/listMarketCatalogue"
+	"github.com/fpawel/betfairs/countries"
+	"github.com/fpawel/betfairs/football"
 	"log"
-	"strings"
 	"math"
+	"strings"
+	"time"
 )
 
 type Games []Game
 
 type Game struct {
 	football.Game
-	Competition string `json:"competition"`
-	Country string `json:"country"`
-	OpenDate time.Time `json:"open_date"`
-	WinBack float64 `json:"win_back"`
-	WinLay float64 `json:"win_lay"`
-	LoseBack float64 `json:"lose_back"`
-	LoseLay float64 `json:"lose_lay"`
-	DrawBack float64 `json:"draw_back"`
-	DrawLay float64 `json:"draw_lay"`
-	TotalMatched float64 `json:"total_matched"`
-	TotalAvailable float64 `json:"total_available"`
-	Error string `json:"error"`
+	Competition    string    `json:"competition"`
+	Country        string    `json:"country"`
+	OpenDate       time.Time `json:"open_date"`
+	WinBack        float64   `json:"win_back"`
+	WinLay         float64   `json:"win_lay"`
+	LoseBack       float64   `json:"lose_back"`
+	LoseLay        float64   `json:"lose_lay"`
+	DrawBack       float64   `json:"draw_back"`
+	DrawLay        float64   `json:"draw_lay"`
+	TotalMatched   float64   `json:"total_matched"`
+	TotalAvailable float64   `json:"total_available"`
+	Error          string    `json:"error"`
 }
 
-func (x Game) Changes(y Game) (r GameChanges){
+func (x Game) Changes(y Game) (r GameChanges) {
 	r.ID = x.ID
 	if x.ID != y.ID {
 		log.Fatal("IDs must be the same")
@@ -88,9 +88,8 @@ func (x Game) Changes(y Game) (r GameChanges){
 	return
 }
 
-
-func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBookReader  *listMarketBook.Reader)  {
-	mc,err := marketCatalogueReader.Read(x.ID)
+func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBookReader *listMarketBook.Reader) {
+	mc, err := marketCatalogueReader.Read(x.ID)
 	defer func() {
 		if err != nil {
 			x.Error = err.Error()
@@ -115,11 +114,11 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 		x.Country = mc[0].Event.CountryCode
 	}
 
-	if strings.Contains(x.Competition, x.Country + " ")  {
-		x.Competition = strings.Replace(x.Competition, x.Country + " ", "", -1)
+	if strings.Contains(x.Competition, x.Country+" ") {
+		x.Competition = strings.Replace(x.Competition, x.Country+" ", " ", -1)
 	}
 
-	mainMarket,ok := mc.MainMarket()
+	mainMarket, ok := mc.MainMarket()
 	if !ok {
 		err = fmt.Errorf("рынок ставок на результат не найден")
 		return
@@ -140,10 +139,10 @@ func (x *Game) Read(marketCatalogueReader *listMarketCatalogue.Reader, marketBoo
 	if err != nil {
 		return
 	}
-	for _,m := range mb{
+	for _, m := range mb {
 		if m.ID == mainMarket.ID {
 			prices6 := m.Prices6()
-			x.WinBack, x.WinLay, x.LoseBack, x.LoseLay, x.DrawBack, x.DrawLay = prices6[0],prices6[1],prices6[2],prices6[3],prices6[4],prices6[5]
+			x.WinBack, x.WinLay, x.LoseBack, x.LoseLay, x.DrawBack, x.DrawLay = prices6[0], prices6[1], prices6[2], prices6[3], prices6[4], prices6[5]
 			x.TotalMatched = math.Round(m.TotalMatched)
 			x.TotalAvailable = math.Round(m.TotalAvailable)
 			break
